@@ -34,13 +34,13 @@ Create the user service database and a user that can access it.
 ```javascript
 use userServiceDB
 db.createUser(
-    {
-        user: "userService",
-        pwd: "hKsnyX284nYN4gp7RCDa",
-        roles: [
-            { role: "readWrite", db: "userServiceDB" }
-        ]
-    }
+  {
+    user: "userService",
+    pwd: "hKsnyX284nYN4gp7RCDa",
+    roles: [
+      { role: "readWrite", db: "userServiceDB" }
+    ]
+  }
 )
 ```
 

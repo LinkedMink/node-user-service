@@ -1,6 +1,7 @@
 import { Router } from "express";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
+import { packageJson } from "../infastructure/config";
 
 export const swaggerRouter = Router();
 
@@ -12,8 +13,9 @@ const swaggerJsDocOptions: swaggerJsDoc.Options = {
   definition: {
     openapi: "3.0.2",
     info: {
-      title: "Node User Service",
-      version: "0.1.0",
+      title: packageJson.name,
+      version: packageJson.version,
+      description: packageJson.description,
     },
   },
   apis: [

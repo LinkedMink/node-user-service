@@ -27,7 +27,7 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     }
 
     const claimArray = new Types.Array<IUserClaim>();
-    const claimObjects = model.claims.forEach((claim) => {
+    model.claims.forEach((claim) => {
       claimArray.push({ name: claim } as IUserClaim);
     });
 

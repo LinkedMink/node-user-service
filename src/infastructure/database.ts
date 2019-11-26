@@ -37,7 +37,7 @@ mongoose.connection.on("error", (error) => {
 });
 
 export const connectSingletonDatabase = () => {
-  mongoose
+  return mongoose
     .connect(connectionString, {
       useNewUrlParser: true,
       reconnectTries: RECONNECT_TRIES,
@@ -45,7 +45,7 @@ export const connectSingletonDatabase = () => {
     })
     .catch((error) => {
       logger.error(error);
-      logger.info(`MongoDB initial connect failed: ${connectionString}`);
+      logger.warn(`MongoDB initial connect failed: ${connectionString}`);
       process.exit(1);
     });
 };

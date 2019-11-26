@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import fs from "fs";
 
 export enum ConfigKey {
@@ -21,6 +22,10 @@ const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
 ]);
 
 export const isEnvironmentLocal = !process.env.NODE_ENV || process.env.NODE_ENV === "local";
+
+if (process.env.NODE_ENV === "test") {
+  dotenv.config({ path: ".env.test" });
+}
 
 export const getConfigValue = (key: ConfigKey): string => {
   let configValue = process.env[key];
@@ -46,6 +51,10 @@ const loadPackageJson = () => {
 };
 
 const loadSecretKeyFile = (): Buffer => {
+  if (process.env.NODE_ENV === "test") {
+    return Buffer.alloc(0);
+  }
+
   const filePath = getConfigValue(ConfigKey.JwtSecretKeyFile);
   return fs.readFileSync(filePath);
 };

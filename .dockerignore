@@ -5,6 +5,7 @@ src
 tests
 .dockerignore
 .gitignore
+deployment.yaml
 Dockerfile
 combined.log
 jest.config.js

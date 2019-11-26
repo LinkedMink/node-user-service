@@ -1,8 +1,7 @@
-import { ConfigKey, getConfigValue } from "./infastructure/config";
-import { connectSingletonDatabase } from "./infastructure/database";
-import { logger } from "./infastructure/logger";
-import { UserConverter } from "./models/converters/userConverter";
-import { IUser, User } from "./models/database/user";
+import { connectSingletonDatabase } from "../infastructure/database";
+import { logger } from "../infastructure/logger";
+import { UserConverter } from "../models/converters/userConverter";
+import { IUser, User } from "../models/database/user";
 
 const ADD_USER_PROGRAM_DESCRIPTOR = "node-user-service addUser.ts";
 

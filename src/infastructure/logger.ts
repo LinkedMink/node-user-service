@@ -16,3 +16,18 @@ if (isEnvironmentLocal) {
     format: winston.format.simple(),
   }));
 }
+
+process.on("unhandledRejection", (reason, p) => {
+  let errorMessage = `Unhandled Rejection at: Promise: ${p}`;
+
+  const error = reason as Error;
+  if (error.message) {
+    errorMessage += `message: ${error.message}`;
+  }
+
+  if (error.stack) {
+    errorMessage += `stack: ${error.stack}`;
+  }
+
+  logger.warn(errorMessage);
+});
