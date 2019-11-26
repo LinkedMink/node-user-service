@@ -3,6 +3,16 @@ export enum ResponseStatus {
   Failed = "failed",
 }
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *   ErrorResponse:
+ *     type: object
+ *     properties:
+ *       status: { type: string }
+ *       data: { type: string }
+ */
 export interface IResponseObject {
   status: ResponseStatus;
   data: object | string | null;

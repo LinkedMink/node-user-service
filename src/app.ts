@@ -9,6 +9,7 @@ import { connectSingletonDatabase } from "./infastructure/database";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/passport";
 import { authenticationRouter } from "./routes/authentication";
 import { pingRouter } from "./routes/ping";
+import { swaggerRouter } from "./routes/swagger";
 
 connectSingletonDatabase();
 
@@ -27,6 +28,7 @@ app.use(cors({
 
 app.use(morgan("dev"));
 
+app.use("/api-docs", swaggerRouter);
 app.use("/authenticate", authenticationRouter);
 app.use("/", pingRouter);
 

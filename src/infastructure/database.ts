@@ -3,16 +3,49 @@ import mongoose from "mongoose";
 import { ConfigKey, getConfigValue } from "../infastructure/config";
 import { logger } from "./logger";
 
-export const connectSingletonDatabase = () => {
-  const connectionString = getConfigValue(ConfigKey.MongoDbConnectionString);
-  mongoose.connect(connectionString, { useNewUrlParser: true }, (error) => {
-    logger.error(error);
-    logger.info("Intialize MongoDB connection required: exiting");
-    process.exit(1);
-  });
+const RECONNECT_TRIES = 60;
+const RECONNECT_INTERVAL = 1000;
 
-  mongoose.connection.on("error", (error) => {
-    logger.error(error);
-    // TODO handle disconnect
-  });
+const connectionString = getConfigValue(ConfigKey.MongoDbConnectionString);
+
+mongoose.connection.on("connecting", () => {
+  logger.info(`MongoDB connecting: ${connectionString}`);
+});
+
+mongoose.connection.on("connected", () => {
+  logger.info(`MongoDB connected: ${connectionString}`);
+});
+
+mongoose.connection.on("disconnected", () => {
+  logger.info(`MongoDB disconnected: ${connectionString}`);
+});
+
+mongoose.connection.on("reconnected", () => {
+  logger.info(`MongoDB reconnected: ${connectionString}`);
+});
+
+mongoose.connection.on("reconnectFailed", () => {
+  logger.error(`MongoDB failed to reconnect: ${connectionString}`);
+  // TODO email admin?
+
+  process.exit(1);
+});
+
+mongoose.connection.on("error", (error) => {
+  logger.error(`MongoDB Error: ${error}`);
+  // TODO handle error
+});
+
+export const connectSingletonDatabase = () => {
+  mongoose
+    .connect(connectionString, {
+      useNewUrlParser: true,
+      reconnectTries: RECONNECT_TRIES,
+      reconnectInterval: RECONNECT_INTERVAL,
+    })
+    .catch((error) => {
+      logger.error(error);
+      logger.info(`MongoDB initial connect failed: ${connectionString}`);
+      process.exit(1);
+    });
 };

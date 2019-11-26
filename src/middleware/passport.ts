@@ -3,7 +3,7 @@ import { PassportStatic } from "passport";
 import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions as JwtStrategyOptions } from "passport-jwt";
 import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport-local";
 
-import { ConfigKey, getConfigValue } from "../infastructure/config";
+import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
 import { User } from "../models/database/user";
 
 export const addLocalStrategy = (passport: PassportStatic) => {
@@ -37,7 +37,7 @@ export const addLocalStrategy = (passport: PassportStatic) => {
 export const addJwtStrategy = (passport: PassportStatic) => {
   const options: JwtStrategyOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: getConfigValue(ConfigKey.JwtSecretKey),
+    secretOrKey: jwtSecretKey,
     audience: getConfigValue(ConfigKey.JwtAudience),
     issuer: getConfigValue(ConfigKey.JwtIssuer),
   };

@@ -1,4 +1,4 @@
-import { getResponseObject, ResponseStatus } from "../../src/infastructure/response";
+import { getResponseObject, ResponseStatus } from "../../src/models/response";
 
 test("getMessageObject should return standard empty response interface", async () => {
   // Act
