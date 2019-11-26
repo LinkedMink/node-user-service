@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-user-service
+  template:
+    metadata:
+      labels:
+        app: node-user-service
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: node-user-service
+        image: linkedmink/node-user-service
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ALLOWED_ORIGINS
+          value: "https://[Your Host]"
+        - name: MONGO_DB_CONNECTION_STRING
+          value: "mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database.collection][?options]]"
+        - name: JWT_SECRET_KEY_FILE
+          value: "jwtRS256.key"
+        - name: JWT_AUDIENCE
+          value: "client.[Your Domain]"
+        - name: JWT_ISSUER
+          value: "api.[Your Domain]"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-user-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: node-user-service
