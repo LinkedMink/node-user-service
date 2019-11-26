@@ -1,6 +1,6 @@
 import { Document, model, Schema, SchemaTypes, Types } from "mongoose";
 
-import { ITrackedEntity, trackedEntityPreSaveFunc, trackedEntitySchemaDefinition } from "./trackedEntity";
+import { ITrackedEntity, trackedEntityPreValidateFunc, trackedEntitySchemaDefinition } from "./trackedEntity";
 
 const claimSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
   name: {
@@ -13,7 +13,7 @@ const claimSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
 });
 
 const claimSchema = new Schema(claimSchemaDefinition);
-claimSchema.pre("save", trackedEntityPreSaveFunc);
+claimSchema.pre("validate", trackedEntityPreValidateFunc);
 
 export interface IClaim extends ITrackedEntity {
   name: string;

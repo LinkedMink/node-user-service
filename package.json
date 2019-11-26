@@ -20,7 +20,8 @@
     "test": "cross-env NODE_ENV=test jest",
     "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
     "lintTest": "tslint --fix -c tslint.json 'tests/**/*.ts'",
-    "containerize": "npm run build && docker build -t linkedmink/node-user-service ."
+    "containerize": "npm run build && docker build -t linkedmink/node-user-service .",
+    "addUser": "node -r dotenv/config ./build/src/addUser.js"
   },
   "dependencies": {
     "bcrypt": "^3.0.7",

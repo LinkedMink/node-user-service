@@ -1,6 +1,6 @@
 import { Document, model, Schema, SchemaTypes, Types } from "mongoose";
 
-import { ITrackedEntity, trackedEntityPreSaveFunc, trackedEntitySchemaDefinition } from "./trackedEntity";
+import { ITrackedEntity, trackedEntityPreValidateFunc, trackedEntitySchemaDefinition } from "./trackedEntity";
 
 export const HASH_COST_FACTOR = 10;
 
@@ -33,7 +33,7 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
 });
 
 const userSchema = new Schema(userSchemaDefinition);
-userSchema.pre("save", trackedEntityPreSaveFunc);
+userSchema.pre("validate", trackedEntityPreValidateFunc);
 
 export interface IUser extends ITrackedEntity {
   email: string;

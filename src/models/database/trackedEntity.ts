@@ -3,14 +3,12 @@ import { Document, HookNextFunction, SchemaDefinition, SchemaTypes } from "mongo
 export const trackedEntitySchemaDefinition: SchemaDefinition = {
   createdDate: {
     type: SchemaTypes.Date,
-    required: true,
   },
   createdBy: {
     type: SchemaTypes.String,
   },
   modifiedDate: {
     type: SchemaTypes.Date,
-    required: true,
   },
   modifiedBy: {
     type: SchemaTypes.String,
@@ -24,9 +22,9 @@ export interface ITrackedEntity extends Document {
   modifiedBy: string;
 }
 
-export function trackedEntityPreSaveFunc(this: any, next: HookNextFunction) {
+export function trackedEntityPreValidateFunc(this: any, next: HookNextFunction) {
   const currentDateTime = new Date();
-  if (!this.id) {
+  if (!this.createdDate) {
     this.createdDate = currentDateTime;
   }
 

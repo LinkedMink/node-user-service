@@ -24,7 +24,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/src/App.ts",
+      "program": "${workspaceFolder}/src/app.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/build/**/*.js"],
       "envFile": "${workspaceFolder}/.env",
@@ -32,6 +32,20 @@
         "NODE_ENV": "local",
         "DEBUG": "true" 
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Add User",
+      "program": "${workspaceFolder}/src/addUser.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/build/**/*.js"],
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "NODE_ENV": "local",
+        "DEBUG": "true" 
+      },
+      "args": ["test@test.com", "tempPass*1", "UserManage"]
     }
   ]
 }

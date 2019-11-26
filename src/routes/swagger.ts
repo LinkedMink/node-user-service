@@ -17,10 +17,8 @@ const swaggerJsDocOptions: swaggerJsDoc.Options = {
     },
   },
   apis: [
-    "../models/response.ts",
-    "./ping.ts",
-    "./authentication.ts",
-    "./user",
+    "./src/models/*.ts",
+    "./src/routes/*.ts",
   ],
 };
 

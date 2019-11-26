@@ -26,9 +26,12 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
       returnModel.password = await bcrypt.hash(model.password, HASH_COST_FACTOR);
     }
 
-    returnModel.claims = new Types.Array(...model.claims.map((claim) => {
-      return { name: claim } as IUserClaim;
-    }));
+    const claimArray = new Types.Array<IUserClaim>();
+    const claimObjects = model.claims.forEach((claim) => {
+      claimArray.push({ name: claim } as IUserClaim);
+    });
+
+    returnModel.claims = claimArray;
 
     return returnModel;
   }
