@@ -13,7 +13,7 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
 
   const router = Router();
 
-  router.get("/{entityId}", authorizeJwtClaim([requiredClaim]),
+  router.get("/:entityId", authorizeJwtClaim([requiredClaim]),
     async (req: Request<ParamsDictionary, any, any>, res: Response) => {
       const entityId = req.params.entityId;
       const entity = await model.findById(entityId).exec();
@@ -48,7 +48,7 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
       }
     });
 
-  router.put("/{entityId}", authorizeJwtClaim([requiredClaim]),
+  router.put("/:entityId", authorizeJwtClaim([requiredClaim]),
     async (req: Request<ParamsDictionary, any, any>, res: Response) => {
       const entityId = req.params.entityId;
       const updateModel = modelConverter.convertToBackend(req.body);
@@ -64,7 +64,7 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
       }
     });
 
-  router.delete("/{entityId}", authorizeJwtClaim([requiredClaim]),
+  router.delete("/:entityId", authorizeJwtClaim([requiredClaim]),
     async (req: Request<ParamsDictionary, any, any>, res: Response) => {
       const entityId = req.params.entityId;
       const deletedCount = await model.findByIdAndDelete(entityId).exec();

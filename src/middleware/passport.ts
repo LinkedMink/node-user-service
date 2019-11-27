@@ -6,6 +6,16 @@ import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport
 import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
 import { User } from "../models/database/user";
 
+export interface IJwtPayload {
+  aud: string;
+  claims: string[];
+  email: string;
+  exp: number;
+  iat: number;
+  iss: string;
+  sub: string;
+}
+
 export const addLocalStrategy = (passport: PassportStatic) => {
   const options: IStrategyOptionsWithRequest = {
     usernameField: "email",
@@ -40,11 +50,12 @@ export const addJwtStrategy = (passport: PassportStatic) => {
     secretOrKey: jwtSecretKey,
     audience: getConfigValue(ConfigKey.JwtAudience),
     issuer: getConfigValue(ConfigKey.JwtIssuer),
+    algorithms: [getConfigValue(ConfigKey.JwtSigningAlgorithm)],
   };
 
-  passport.use(new JwtStrategy(options, (jwtPayload, done) => {
-    if (jwtPayload.exp && Date.now() > jwtPayload.exp) {
-      return done("jwt expired");
+  passport.use(new JwtStrategy(options, (jwtPayload: IJwtPayload, done) => {
+    if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
+      return done("JWT Expired");
     }
 
     return done(null, jwtPayload);

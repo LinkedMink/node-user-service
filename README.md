@@ -50,6 +50,7 @@ The node-user-server uses the private key to sign while the consuming services w
 public key to validate.
 
 ```sh
+ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
 openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 ```
 

@@ -4,9 +4,10 @@ import fs from "fs";
 export enum ConfigKey {
   AllowedOrigins = "ALLOWED_ORIGINS",
   JwtAudience = "JWT_AUDIENCE",
-  JwtExpirationSecords = "JWT_EXPIRATION_SECORDS",
+  JwtExpirationDays = "JWT_EXPIRATION_DAYS",
   JwtIssuer = "JWT_ISSUER",
   JwtSecretKeyFile = "JWT_SECRET_KEY_FILE",
+  JwtSigningAlgorithm = "JWT_SIGNING_ALGORITHM",
   ListenPort = "LISTEN_PORT",
   LogFile = "LOG_FILE",
   LogLevel = "LOG_LEVEL",
@@ -15,7 +16,8 @@ export enum ConfigKey {
 
 const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
   [ConfigKey.AllowedOrigins, "*"],
-  [ConfigKey.JwtExpirationSecords, String(30 * 24 * 60 * 60)],
+  [ConfigKey.JwtExpirationDays, String(30)],
+  [ConfigKey.JwtSigningAlgorithm, "RS256"],
   [ConfigKey.ListenPort, "8080"],
   [ConfigKey.LogFile, "combined.log"],
   [ConfigKey.LogLevel, "info"],

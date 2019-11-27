@@ -4,6 +4,7 @@ import { sign, SignOptions } from "jsonwebtoken";
 import passport from "passport";
 
 import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
+import { IUser } from "../models/database/user";
 import { getResponseObject, ResponseStatus } from "../models/response";
 
 export const authenticationRouter = Router();
@@ -47,16 +48,19 @@ export const authenticationRouter = Router();
  *           $ref: '#/definitions/ErrorResponse'
  */
 authenticationRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
-  passport.authenticate("local", { session: false }, (authError, user) => {
+  passport.authenticate("local", { session: false }, (authError, user: IUser) => {
     if (authError || !user) {
       res.status(400)
         .send(getResponseObject(ResponseStatus.Failed, authError));
     }
 
+    const claims: string[] = [];
+    user.claims.forEach((claim) => claims.push(claim.name));
+
     /** This is what ends up in our JWT */
     const payload = {
       email: user.email,
-      claims: user.claims,
+      claims,
     };
 
     /** assigns payload to req.user */
@@ -67,15 +71,16 @@ authenticationRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: R
       }
 
       const signOptions: SignOptions = {
-        expiresIn: getConfigValue(ConfigKey.JwtExpirationSecords),
+        expiresIn: `${getConfigValue(ConfigKey.JwtExpirationDays)} days`,
         audience: getConfigValue(ConfigKey.JwtAudience),
         issuer: getConfigValue(ConfigKey.JwtIssuer),
         subject: user.id,
+        algorithm: getConfigValue(ConfigKey.JwtSigningAlgorithm),
       };
 
       /** generate a signed json web token and return it in the response */
       const token = sign(
-        JSON.stringify(payload),
+        payload,
         jwtSecretKey,
         signOptions);
 

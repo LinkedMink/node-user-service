@@ -1,8 +1,8 @@
 {
   "name": "node-user-service",
   "version": "0.1.0",
-  "description": "TODO",
-  "license": "TODO",
+  "description": "Service for authenticating and managing users",
+  "license": "MIT",
   "author": {
     "name": "Harlan Sang",
     "email": "harlan@linkedmink.space"
@@ -16,7 +16,7 @@
     "start": "npm run build && npm run startApp",
     "build": "tsc",
     "startApp": "node -r dotenv/config ./build/src/app.js",
-    "watch": "ts-node-dev --respawn --transpileOnly ./src/app.ts",
+    "watch": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./src/app.ts",
     "test": "cross-env NODE_ENV=test jest",
     "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
     "lintTest": "tslint --fix -c tslint.json 'tests/**/*.ts'",
