@@ -1,4 +1,8 @@
 # Node User Service
+This service authenticates users against records in a MongoDB. When authenticated, users
+are issued a JWT token with a set of claims describing operations a user can perform. 
+Endpoints also exist for CRUD operations on users.
+
 ## Microservice Collection
 This project is part of a collection of microservices for supporting a larger project.
 
@@ -36,7 +40,7 @@ use userServiceDB
 db.createUser(
   {
     user: "userService",
-    pwd: "hKsnyX284nYN4gp7RCDa",
+    pwd: "[STRONG PASSWORD]",
     roles: [
       { role: "readWrite", db: "userServiceDB" }
     ]
@@ -44,9 +48,16 @@ db.createUser(
 )
 ```
 
+Seed the database with the initial user and claims.
+
+```sh
+npm run seedClaims
+npm run addUser myuser@email.com StrongPass*1 UserManage ClaimManage
+```
+
 ### Config
 You will need to generate a private/public key pair. This is used to sign the JWT tokens. 
-The node-user-server uses the private key to sign while the consuming services will use the 
+The node-user-service uses the private key to sign while the consuming services will use the 
 public key to validate.
 
 ```sh
