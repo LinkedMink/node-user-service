@@ -16,15 +16,16 @@ export const trackedEntitySchemaDefinition: SchemaDefinition = {
 };
 
 export interface ITrackedEntity extends Document {
+  id: string;
   createdDate: Date;
   createdBy: string;
   modifiedDate: Date;
   modifiedBy: string;
 }
 
-export function trackedEntityPreValidateFunc(this: any, next: HookNextFunction) {
+export function trackedEntityPreValidateFunc(this: ITrackedEntity, next: HookNextFunction) {
   const currentDateTime = new Date();
-  if (!this.createdDate) {
+  if (this.isNew) {
     this.createdDate = currentDateTime;
   }
 

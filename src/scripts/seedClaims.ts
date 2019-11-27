@@ -6,7 +6,7 @@ import { IClaimModel } from "../models/claimModel";
 import { ClaimConverter } from "../models/converters/claimConverter";
 import { Claim, IClaim } from "../models/database/claim";
 
-const ADD_USER_PROGRAM_DESCRIPTOR = "node-user-service seedClaims.ts";
+const PROGRAM_DESCRIPTOR = "node-user-service seedClaims.ts";
 
 const loadJson = (filePath: string) => {
   const data = fs.readFileSync(filePath, "utf8");
@@ -23,8 +23,6 @@ let hasProcessed = 0;
 
 const saveClaim = (toSave: IClaim) => {
   const user = new Claim(toSave);
-  user.createdBy = ADD_USER_PROGRAM_DESCRIPTOR;
-  user.modifiedBy = ADD_USER_PROGRAM_DESCRIPTOR;
   user.save()
     .then(() => {
       hasProcessed++;
@@ -43,5 +41,6 @@ const saveClaim = (toSave: IClaim) => {
 
 const converter = new ClaimConverter();
 claims.forEach((claim: IClaimModel) => {
-  saveClaim(converter.convertToBackend(claim));
+  const entity = converter.convertToBackend(claim, undefined, PROGRAM_DESCRIPTOR);
+  saveClaim(entity);
 });

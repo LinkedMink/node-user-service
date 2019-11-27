@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
+import { Request } from "express-serve-static-core";
 import { PassportStatic } from "passport";
-import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions as JwtStrategyOptions } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions as JwtStrategyOptions, VerifiedCallback } from "passport-jwt";
 import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport-local";
 
 import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
@@ -51,13 +52,15 @@ export const addJwtStrategy = (passport: PassportStatic) => {
     audience: getConfigValue(ConfigKey.JwtAudience),
     issuer: getConfigValue(ConfigKey.JwtIssuer),
     algorithms: [getConfigValue(ConfigKey.JwtSigningAlgorithm)],
+    passReqToCallback: true,
   };
 
-  passport.use(new JwtStrategy(options, (jwtPayload: IJwtPayload, done) => {
+  passport.use(new JwtStrategy(options, (req: Request, jwtPayload: IJwtPayload, done: VerifiedCallback) => {
     if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
       return done("JWT Expired");
     }
 
+    req.user = jwtPayload;
     return done(null, jwtPayload);
   }));
 };

@@ -3,7 +3,7 @@ import { logger } from "../infastructure/logger";
 import { UserConverter } from "../models/converters/userConverter";
 import { IUser, User } from "../models/database/user";
 
-const ADD_USER_PROGRAM_DESCRIPTOR = "node-user-service addUser.ts";
+const PROGRAM_DESCRIPTOR = "node-user-service addUser.ts";
 
 connectSingletonDatabase();
 
@@ -24,8 +24,6 @@ const userData = {
 
 const saveUser = (toSave: IUser) => {
   const user = new User(toSave);
-  user.createdBy = ADD_USER_PROGRAM_DESCRIPTOR;
-  user.modifiedBy = ADD_USER_PROGRAM_DESCRIPTOR;
   user.save()
     .then(() => { process.exit(0); })
     .catch((error) => {
@@ -35,10 +33,6 @@ const saveUser = (toSave: IUser) => {
 };
 
 const converter = new UserConverter();
-converter
-  .convertToBackend(userData)
-  .then(saveUser)
-  .catch((error) => {
-    logger.error(error.stack);
-    process.exit(1);
-  });
+const userModel = converter.convertToBackend(
+  userData, undefined, PROGRAM_DESCRIPTOR);
+saveUser(userModel);

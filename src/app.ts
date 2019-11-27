@@ -8,6 +8,7 @@ import { ConfigKey, getConfigValue } from "./infastructure/config";
 import { connectSingletonDatabase } from "./infastructure/database";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/passport";
 import { authenticationRouter } from "./routes/authentication";
+import { claimRouter } from "./routes/claim";
 import { pingRouter } from "./routes/ping";
 import { swaggerRouter } from "./routes/swagger";
 import { userRouter } from "./routes/user";
@@ -29,9 +30,10 @@ app.use(cors({
   optionsSuccessStatus: 200,
 }));
 
+app.use("/", pingRouter);
 app.use("/docs", swaggerRouter);
 app.use("/authenticate", authenticationRouter);
-app.use("/", pingRouter);
 app.use("/users", userRouter);
+app.use("/claims", claimRouter);
 
 export const server = app.listen(getConfigValue(ConfigKey.ListenPort));

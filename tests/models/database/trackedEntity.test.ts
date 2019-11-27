@@ -1,4 +1,4 @@
-import { trackedEntityPreValidateFunc } from "../../../src/models/database/trackedEntity";
+import { ITrackedEntity, trackedEntityPreValidateFunc } from "../../../src/models/database/trackedEntity";
 
 describe("trackedEntity.ts", () => {
   test("trackedEntityPreValidateFunc should update modified and call next", async () => {
@@ -7,7 +7,7 @@ describe("trackedEntity.ts", () => {
     const mockTrackedEntity = {
       createdDate: null,
       modifiedDate: null,
-    };
+    } as unknown as ITrackedEntity;
 
     // Act
     const boundFunction = trackedEntityPreValidateFunc.bind(mockTrackedEntity);
