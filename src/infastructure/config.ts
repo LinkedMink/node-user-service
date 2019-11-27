@@ -1,6 +1,12 @@
 import dotenv from "dotenv";
 import fs from "fs";
 
+export enum Environment {
+  Local = "local",
+  Test = "test",
+  Production = "production",
+}
+
 export enum ConfigKey {
   AllowedOrigins = "ALLOWED_ORIGINS",
   JwtAudience = "JWT_AUDIENCE",
@@ -12,6 +18,8 @@ export enum ConfigKey {
   LogFile = "LOG_FILE",
   LogLevel = "LOG_LEVEL",
   MongoDbConnectionString = "MONGO_DB_CONNECTION_STRING",
+  UserPassHashCostFactor = "USER_PASS_HASH_COST_FACTOR",
+  UserPassMinLength = "USER_PASS_MIN_LENGTH",
 }
 
 const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
@@ -21,11 +29,13 @@ const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
   [ConfigKey.ListenPort, "8080"],
   [ConfigKey.LogFile, "combined.log"],
   [ConfigKey.LogLevel, "info"],
+  [ConfigKey.UserPassHashCostFactor, String(10)],
+  [ConfigKey.UserPassMinLength, String(10)],
 ]);
 
-export const isEnvironmentLocal = !process.env.NODE_ENV || process.env.NODE_ENV === "local";
+export const isEnvironmentLocal = !process.env.NODE_ENV || process.env.NODE_ENV === Environment.Local;
 
-if (process.env.NODE_ENV === "test") {
+if (process.env.NODE_ENV === Environment.Test) {
   dotenv.config({ path: ".env.test" });
 }
 
@@ -53,7 +63,7 @@ const loadPackageJson = () => {
 };
 
 const loadSecretKeyFile = (): Buffer => {
-  if (process.env.NODE_ENV === "test") {
+  if (process.env.NODE_ENV === Environment.Test) {
     return Buffer.alloc(0);
   }
 

@@ -29,23 +29,21 @@
       "outFiles": ["${workspaceFolder}/build/**/*.js"],
       "envFile": "${workspaceFolder}/.env",
       "env": {
-        "NODE_ENV": "local",
-        "DEBUG": "true" 
+        "NODE_ENV": "local"
       }
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Launch Add User",
-      "program": "${workspaceFolder}/src/addUser.ts",
+      "program": "${workspaceFolder}/src/scripts/addUser.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/build/**/*.js"],
       "envFile": "${workspaceFolder}/.env",
       "env": {
-        "NODE_ENV": "local",
-        "DEBUG": "true" 
+        "NODE_ENV": "local"
       },
-      "args": ["test@test.com", "tempPass*1", "UserManage"]
+      "args": ["test1@test.com", "tempPass*1", "UserManage"]
     }
   ]
 }

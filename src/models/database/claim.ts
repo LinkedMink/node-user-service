@@ -10,6 +10,10 @@ const claimSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
     dropDups: true,
     required: true,
   },
+  applications: {
+    type: [SchemaTypes.String],
+    required: true,
+  },
 });
 
 const claimSchema = new Schema(claimSchemaDefinition);
@@ -17,6 +21,7 @@ claimSchema.pre("validate", trackedEntityPreValidateFunc);
 
 export interface IClaim extends ITrackedEntity {
   name: string;
+  applications: Types.Array<string>;
 }
 
-export const User = model<IClaim>("Claim", claimSchema);
+export const Claim = model<IClaim>("Claim", claimSchema);

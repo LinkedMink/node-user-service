@@ -9,6 +9,11 @@ const getClaimMissingError = (claim: string[]) => {
   return `User requires claims to perform this operation: ${claim}`;
 };
 
+export enum AuthorizationClaim {
+  UserManage = "UserManage",
+  ClaimManage = "ClaimManage",
+}
+
 export const authorizeJwtClaim = (claimNames: string[]) => {
   return (req: Request<ParamsDictionary, any, any>, res: Response, next: NextFunction) => {
 

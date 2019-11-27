@@ -1,8 +1,7 @@
 import { Document, model, Schema, SchemaTypes, Types } from "mongoose";
 
+import { validateEmail } from "../../infastructure/validators";
 import { ITrackedEntity, trackedEntityPreValidateFunc, trackedEntitySchemaDefinition } from "./trackedEntity";
-
-export const HASH_COST_FACTOR = 10;
 
 const userClaimSchemaDefinition = {
   name: {
@@ -24,6 +23,7 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
     unique: true,
     dropDups: true,
     required: true,
+    validate: [validateEmail, "Must be a valid email"],
   },
   password: {
     type: SchemaTypes.String,

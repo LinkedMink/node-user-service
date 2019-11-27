@@ -29,7 +29,7 @@ const saveUser = (toSave: IUser) => {
   user.save()
     .then(() => { process.exit(0); })
     .catch((error) => {
-      logger.error(error);
+      logger.error(error.stack);
       process.exit(1);
     });
 };
@@ -39,6 +39,6 @@ converter
   .convertToBackend(userData)
   .then(saveUser)
   .catch((error) => {
-    logger.error(error);
+    logger.error(error.stack);
     process.exit(1);
   });
