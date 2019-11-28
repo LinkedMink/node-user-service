@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 
-import { packageJson } from "../infastructure/config";
+import { Environment, packageJson } from "../infastructure/config";
 import { getResponseObject } from "../models/response";
 
 export const pingRouter = Router();
@@ -23,10 +23,18 @@ export const pingRouter = Router();
  */
 pingRouter.get("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const pingResponse = getResponseObject();
-  pingResponse.data = {
-    application: packageJson.name,
-    version: packageJson.version,
-  };
+
+  if (process.env.NODE_ENV === Environment.Production) {
+    pingResponse.data = {
+      mark: Date.now(),
+    };
+  } else {
+    pingResponse.data = {
+      mark: Date.now(),
+      application: packageJson.name,
+      version: packageJson.version,
+    };
+  }
 
   res.send(pingResponse);
 });

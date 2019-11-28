@@ -24,14 +24,14 @@ registerRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: Respons
 /**
  * @swagger
  * /register:
- *   put:
+ *   get:
  *     description: Verify the email address of the specified user
  *     tags: [Register]
  *     responses:
  *       200:
  *         description: The user was registered successfully.
  */
-registerRouter.put("/:email", (req: Request<ParamsDictionary, any, any>, res: Response) => {
+registerRouter.get("/:email/:code", (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const pingResponse = getResponseObject();
   res.send(pingResponse);
 });

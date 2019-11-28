@@ -8,6 +8,8 @@ export enum Environment {
 }
 
 export enum ConfigKey {
+  AppName = "APP_NAME",
+  ServiceBaseUrl = "SERVICE_BASE_URL",
   AllowedOrigins = "ALLOWED_ORIGINS",
   JwtAudience = "JWT_AUDIENCE",
   JwtExpirationDays = "JWT_EXPIRATION_DAYS",
@@ -26,9 +28,15 @@ export enum ConfigKey {
   UserPassMaxAttempts = "USER_PASS_MAX_ATTEMPTS",
   UserLockoutMinutes = "USER_LOCKOUT_MINUTES",
   UserTemporaryKeyMinutes = "USER_TEMPORARY_KEY_MINUTES",
+
+  SystemEmailAddress = "SYSTEM_EMAIL_ADDRESS",
+  NodeMailerTransport = "NODE_MAILER_TRANSPORT",
+  PasswordResetUiUrl = "PASSWORD_RESET_UI_URL",
 }
 
 const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
+  [ConfigKey.AppName, "LinkedMink"],
+  [ConfigKey.ServiceBaseUrl, "http://localhost:8080"],
   [ConfigKey.AllowedOrigins, "*"],
   [ConfigKey.JwtExpirationDays, String(30)],
   [ConfigKey.JwtSigningAlgorithm, "RS256"],
@@ -42,7 +50,11 @@ const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
   [ConfigKey.UserPassMinLength, String(8)],
   [ConfigKey.UserPassMaxAttempts, String(5)],
   [ConfigKey.UserLockoutMinutes, String(5)],
-  [ConfigKey.UserTemporaryKeyMinutes, String(60)],
+  [ConfigKey.UserTemporaryKeyMinutes, String(120)],
+
+  [ConfigKey.SystemEmailAddress, "noreply@linkedmink.space"],
+  [ConfigKey.NodeMailerTransport, ""],
+  [ConfigKey.PasswordResetUiUrl, "http://localhost/passwordReset"],
 ]);
 
 export const isEnvironmentLocal = !process.env.NODE_ENV || process.env.NODE_ENV === Environment.Local;

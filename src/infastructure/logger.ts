@@ -1,6 +1,6 @@
 import winston from "winston";
 
-import { ConfigKey, getConfigValue, isEnvironmentLocal } from "./config";
+import { ConfigKey, Environment, getConfigValue } from "./config";
 
 export const logger = winston.createLogger({
   level: getConfigValue(ConfigKey.LogLevel),
@@ -11,7 +11,7 @@ export const logger = winston.createLogger({
   ],
 });
 
-if (isEnvironmentLocal) {
+if (process.env.NODE_ENV !== Environment.Test) {
   logger.add(new winston.transports.Console({
     format: winston.format.simple(),
   }));
