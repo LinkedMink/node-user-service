@@ -34,6 +34,27 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
     required: true,
     minlength: Number(getConfigValue(ConfigKey.UserPassMinLength)),
   },
+  isEmailVerified: {
+    type: SchemaTypes.Boolean,
+    required: true,
+  },
+  isLocked: {
+    type: SchemaTypes.Boolean,
+    required: true,
+  },
+  isLockedDate: {
+    type: SchemaTypes.Date,
+  },
+  authenticationAttempts: {
+    type: SchemaTypes.Number,
+  },
+  temporaryKey: {
+    type: SchemaTypes.String,
+  },
+  temporaryKeyDate: {
+    type: SchemaTypes.Date,
+  },
+  authenticationDates: [SchemaTypes.Date],
   claims: [userClaimSchema],
 });
 
@@ -44,11 +65,23 @@ userSchema.post("validate", async function(this: IUser) {
   if (this.isNew || this.modifiedPaths().includes("password")) {
     this.password = await bcrypt.hash(this.password, hashCostFactor);
   }
+
+  if (!this.isLocked && this.modifiedPaths().includes("isLocked")) {
+    this.authenticationAttempts = undefined;
+    this.isLockedDate = undefined;
+  }
 });
 
 export interface IUser extends ITrackedEntity {
   email: string;
   password: string;
+  isEmailVerified: boolean;
+  isLocked: boolean;
+  isLockedDate?: Date;
+  authenticationAttempts?: number;
+  temporaryKey?: string;
+  temporaryKeyDate?: Date;
+  authenticationDates: Types.Array<Date>;
   claims: Types.Array<IUserClaim>;
 }
 

@@ -7,9 +7,11 @@ import passport from "passport";
 import { ConfigKey, getConfigValue } from "./infastructure/config";
 import { connectSingletonDatabase } from "./infastructure/database";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/passport";
-import { authenticationRouter } from "./routes/authentication";
+import { authenticateRouter } from "./routes/authenticate";
 import { claimRouter } from "./routes/claim";
+import { passwordRouter } from "./routes/password";
 import { pingRouter } from "./routes/ping";
+import { registerRouter } from "./routes/register";
 import { swaggerRouter } from "./routes/swagger";
 import { userRouter } from "./routes/user";
 
@@ -30,10 +32,15 @@ app.use(cors({
   optionsSuccessStatus: 200,
 }));
 
-app.use("/", pingRouter);
+app.use("/ping", pingRouter);
 app.use("/docs", swaggerRouter);
-app.use("/authenticate", authenticationRouter);
+app.use("/authenticate", authenticateRouter);
 app.use("/users", userRouter);
 app.use("/claims", claimRouter);
+
+if (getConfigValue(ConfigKey.UserRegistrationIsEnabled).toLowerCase() === "true") {
+  app.use("/password", passwordRouter);
+  app.use("/register", registerRouter);
+}
 
 export const server = app.listen(getConfigValue(ConfigKey.ListenPort));

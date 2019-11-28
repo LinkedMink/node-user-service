@@ -11,6 +11,10 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     let returnModel: IUserModel = {
       id: model.id,
       email: model.email,
+      isEmailVerified: model.isEmailVerified,
+      isLocked: model.isLocked,
+      isLockedDate: model.isLockedDate,
+      authenticationDates: model.authenticationDates.map((e) => e),
       claims: claimArray,
     };
 
@@ -43,7 +47,16 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
       claimArray.push({ name: claim } as IUserClaim);
     });
 
+    const dateArray = new Types.Array<Date>();
+    if (model.authenticationDates) {
+      model.authenticationDates.forEach((date) => {
+        dateArray.push(date);
+      });
+    }
+
     returnModel.email = model.email;
+    returnModel.isEmailVerified = model.isEmailVerified;
+    returnModel.isLocked = model.isLocked;
     returnModel.claims = claimArray;
 
     return returnModel;

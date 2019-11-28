@@ -18,8 +18,14 @@ export enum ConfigKey {
   LogFile = "LOG_FILE",
   LogLevel = "LOG_LEVEL",
   MongoDbConnectionString = "MONGO_DB_CONNECTION_STRING",
+
+  UserRegistrationIsEnabled = "USER_REGISTRATION_IS_ENABLED",
+  UserDefaultClaims = "USER_DEFAULT_CLAIMS",
   UserPassHashCostFactor = "USER_PASS_HASH_COST_FACTOR",
   UserPassMinLength = "USER_PASS_MIN_LENGTH",
+  UserPassMaxAttempts = "USER_PASS_MAX_ATTEMPTS",
+  UserLockoutMinutes = "USER_LOCKOUT_MINUTES",
+  UserTemporaryKeyMinutes = "USER_TEMPORARY_KEY_MINUTES",
 }
 
 const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
@@ -29,8 +35,14 @@ const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
   [ConfigKey.ListenPort, "8080"],
   [ConfigKey.LogFile, "combined.log"],
   [ConfigKey.LogLevel, "info"],
+
+  [ConfigKey.UserRegistrationIsEnabled, "true"],
+  [ConfigKey.UserDefaultClaims, ""],
   [ConfigKey.UserPassHashCostFactor, String(10)],
-  [ConfigKey.UserPassMinLength, String(10)],
+  [ConfigKey.UserPassMinLength, String(8)],
+  [ConfigKey.UserPassMaxAttempts, String(5)],
+  [ConfigKey.UserLockoutMinutes, String(5)],
+  [ConfigKey.UserTemporaryKeyMinutes, String(60)],
 ]);
 
 export const isEnvironmentLocal = !process.env.NODE_ENV || process.env.NODE_ENV === Environment.Local;

@@ -7,6 +7,12 @@ import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport
 import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
 import { User } from "../models/database/user";
 
+const errors = {
+  GENERIC: "The username or password was incorrect.",
+  NOT_VERIFIED: "The user's email address has not been verified",
+  IS_LOCKED: `The user has been locked out for ${getConfigValue(ConfigKey.UserLockoutMinutes)} minutes`,
+};
+
 export interface IJwtPayload {
   aud: string;
   claims: string[];
@@ -18,6 +24,9 @@ export interface IJwtPayload {
 }
 
 export const addLocalStrategy = (passport: PassportStatic) => {
+  const maxLoginAttempts = Number(getConfigValue(ConfigKey.UserPassMaxAttempts));
+  const lockoutMilliseonds = Number(getConfigValue(ConfigKey.UserLockoutMinutes)) * 60 * 1000;
+
   const options: IStrategyOptionsWithRequest = {
     usernameField: "email",
     passwordField: "password",
@@ -27,17 +36,46 @@ export const addLocalStrategy = (passport: PassportStatic) => {
 
   passport.use(new LocalStrategy(options, async (request, email, password, done) => {
     try {
-      const userDocument = await User.findOne({email}).exec();
-      if (!userDocument) {
-        return done("Incorrect Username / Password");
+      const user = await User.findOne({email}).exec();
+      if (!user) {
+        return done(errors.GENERIC);
       }
 
-      const passwordsMatch = await bcrypt.compare(password, userDocument.password);
+      if (!user.isEmailVerified) {
+        return done(errors.NOT_VERIFIED);
+      }
+
+      if (user.isLocked) {
+        if (user.isLockedDate && Date.now() - user.isLockedDate.getTime() > lockoutMilliseonds) {
+          user.isLocked = false;
+          user.isLockedDate = undefined;
+          user.authenticationAttempts = undefined;
+        } else {
+          return done(errors.IS_LOCKED);
+        }
+      }
+
+      const passwordsMatch = await bcrypt.compare(password, user.password);
 
       if (passwordsMatch) {
-        return done(null, userDocument);
+        user.authenticationAttempts = undefined;
+        user.authenticationDates.push(new Date());
+        await user.save();
+
+        return done(null, user);
       } else {
-        return done("Incorrect Username / Password");
+        user.authenticationAttempts = user.authenticationAttempts
+          ? user.authenticationAttempts + 1 : 1;
+
+        if (user.authenticationAttempts > maxLoginAttempts) {
+          user.isLocked = true;
+          user.isLockedDate = new Date();
+          await user.save();
+          return done(errors.IS_LOCKED);
+        }
+
+        await user.save();
+        return done(errors.GENERIC);
       }
     } catch (error) {
       done(error);

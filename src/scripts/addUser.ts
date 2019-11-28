@@ -2,6 +2,7 @@ import { connectSingletonDatabase } from "../infastructure/database";
 import { logger } from "../infastructure/logger";
 import { UserConverter } from "../models/converters/userConverter";
 import { IUser, User } from "../models/database/user";
+import { IUserModel } from "../models/userModel";
 
 const PROGRAM_DESCRIPTOR = "node-user-service addUser.ts";
 
@@ -16,10 +17,12 @@ const email = process.argv[2];
 const password = process.argv[3];
 const claims = process.argv.slice(4);
 
-const userData = {
+const userData: IUserModel = {
   email,
   password,
   claims,
+  isEmailVerified: true,
+  isLocked: false,
 };
 
 const saveUser = (toSave: IUser) => {

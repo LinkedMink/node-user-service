@@ -1,8 +1,11 @@
 import { ITrackedEntityModel } from "./trackedEntityModel";
 
 export interface IUserModel extends ITrackedEntityModel {
-  id?: string;
   email: string;
   password?: string;
+  isEmailVerified: boolean;
+  isLocked: boolean;
+  isLockedDate?: Date;
+  authenticationDates?: Date[];
   claims: string[];
 }

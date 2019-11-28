@@ -7,7 +7,7 @@ import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config
 import { IUser } from "../models/database/user";
 import { getResponseObject, ResponseStatus } from "../models/response";
 
-export const authenticationRouter = Router();
+export const authenticateRouter = Router();
 
 /**
  * @swagger
@@ -47,7 +47,7 @@ export const authenticationRouter = Router();
  *         schema:
  *           $ref: '#/definitions/ErrorResponse'
  */
-authenticationRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
+authenticateRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
   passport.authenticate("local", { session: false }, (authError, user: IUser) => {
     if (authError || !user) {
       res.status(400)

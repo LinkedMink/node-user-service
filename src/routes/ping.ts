@@ -21,7 +21,7 @@ export const pingRouter = Router();
  *             application: { type: string }
  *             version: { type: string }
  */
-pingRouter.get("/ping", (req: Request<ParamsDictionary, any, any>, res: Response) => {
+pingRouter.get("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const pingResponse = getResponseObject();
   pingResponse.data = {
     application: packageJson.name,
