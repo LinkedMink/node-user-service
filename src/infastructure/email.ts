@@ -1,5 +1,6 @@
 import Email from "email-templates";
 import nodemailer from "nodemailer";
+import Mail from "nodemailer/lib/mailer";
 
 import { ConfigKey, getConfigValue } from "../infastructure/config";
 
@@ -12,15 +13,25 @@ const loadTransportConfig = () => {
   return config;
 };
 
-const transporter = nodemailer.createTransport(loadTransportConfig());
-
-const email = new Email({
+const emailOptions = {
   message: {
     from: getConfigValue(ConfigKey.SystemEmailAddress),
   },
-  transport: transporter,
-  send: true,
-});
+  transport: {
+    jsonTransport: true,
+  } as any,
+  send: false,
+};
+
+const transportConfig = loadTransportConfig();
+let transporter: Mail;
+if (transportConfig) {
+  transporter = nodemailer.createTransport(transportConfig);
+  emailOptions.transport = transporter;
+  emailOptions.send = true;
+}
+
+const email = new Email(emailOptions);
 
 export const sendVerifyEmail = (toEmail: string, verifyCode: string) => {
   return email.send({

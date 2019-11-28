@@ -70,11 +70,9 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
           return res.send(getResponseObject(ResponseStatus.Failed, message));
         }
 
-        if (saveModel) {
-          const response = getResponseObject();
-          response.data = modelConverter.convertToFrontend(saveModel);
-          return res.send(response);
-        }
+        const response = getResponseObject();
+        response.data = modelConverter.convertToFrontend(saveModel);
+        return res.send(response);
       });
     });
 

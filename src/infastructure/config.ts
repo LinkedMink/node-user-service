@@ -70,7 +70,7 @@ export const getConfigValue = (key: ConfigKey): string => {
   }
 
   configValue = configDefaultMap.get(key);
-  if (configValue) {
+  if (configValue !== undefined) {
     return configValue;
   }
 

@@ -14,7 +14,6 @@ const tempKeyValidMilliseonds = Number(getConfigValue(ConfigKey.UserTemporaryKey
 
 export const passwordRouter = Router();
 
-// TODO
 /**
  * @swagger
  * /password:
@@ -53,8 +52,6 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
         res.status(500);
         return res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));
       });
-
-    return res.send(getResponseObject());
   });
 });
 
@@ -68,48 +65,48 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
  *       200:
  *         description: The request was successful.
  */
-passwordRouter.put("/:email", objectDescriptorBodyVerify(passwordResetRequestDescriptor),
+passwordRouter.put("/:email",
+  objectDescriptorBodyVerify(passwordResetRequestDescriptor),
   async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+    const email = req.params.email;
+    const requestData = req.body as IPasswordResetRequest;
 
-  const email = req.params.email;
-  const requestData = req.body as IPasswordResetRequest;
-
-  const user = await User.findOne({ email }).exec();
-  if (!user) {
-    res.status(404);
-    return res.send(getResponseObject(ResponseStatus.Failed));
-  }
-
-  if (!user.temporaryKey || !user.temporaryKeyDate) {
-    res.status(400);
-    return res.send(getResponseObject(ResponseStatus.Failed, "No reset token has been issued."));
-  }
-
-  if (Date.now() - user.temporaryKeyDate.getTime() > tempKeyValidMilliseonds) {
-    res.status(400);
-    res.send(getResponseObject(ResponseStatus.Failed, "The reset token is no longer valid."));
-  }
-
-  if (user.temporaryKey !== requestData.resetToken) {
-    res.status(400);
-    return res.send(getResponseObject(ResponseStatus.Failed, "The reset token is not valid."));
-  }
-
-  user.temporaryKey = undefined;
-  user.temporaryKeyDate = undefined;
-  user.password = requestData.password;
-
-  await user.save((error) => {
-    if (error) {
-      let message = error.message;
-      if (error.errors) {
-        message = error.errors;
-      }
-
-      res.status(400);
-      return res.send(getResponseObject(ResponseStatus.Failed, message));
+    const user = await User.findOne({ email }).exec();
+    if (!user) {
+      res.status(404);
+      return res.send(getResponseObject(ResponseStatus.Failed));
     }
 
-    return res.send(getResponseObject());
+    if (!user.temporaryKey || !user.temporaryKeyDate) {
+      res.status(400);
+      return res.send(getResponseObject(ResponseStatus.Failed, "No reset token has been issued."));
+    }
+
+    if (Date.now() - user.temporaryKeyDate.getTime() > tempKeyValidMilliseonds) {
+      res.status(400);
+      res.send(getResponseObject(ResponseStatus.Failed, "The reset token is no longer valid."));
+    }
+
+    if (user.temporaryKey !== requestData.resetToken) {
+      res.status(400);
+      return res.send(getResponseObject(ResponseStatus.Failed, "The reset token is not valid."));
+    }
+
+    user.temporaryKey = undefined;
+    user.temporaryKeyDate = undefined;
+    user.password = requestData.password;
+
+    await user.save((error) => {
+      if (error) {
+        let message = error.message;
+        if (error.errors) {
+          message = error.errors;
+        }
+
+        res.status(400);
+        return res.send(getResponseObject(ResponseStatus.Failed, message));
+      }
+
+      return res.send(getResponseObject());
+    });
   });
-});
