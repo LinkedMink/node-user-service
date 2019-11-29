@@ -55,6 +55,7 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
     type: SchemaTypes.Date,
   },
   authenticationDates: [SchemaTypes.Date],
+  // TODO validate claims exist, include ID to reference
   claims: [userClaimSchema],
 });
 

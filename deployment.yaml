@@ -30,6 +30,8 @@ spec:
           value: "client.[Your Domain]"
         - name: JWT_ISSUER
           value: "api.[Your Domain]"
+        - name: NODE_MAILER_TRANSPORT
+          value: '{"service": "gmail", "auth": {"user": "[YOUR EMAIL]", "pass": "[YOUR KEY]"}}'
 ---
 apiVersion: v1
 kind: Service
@@ -37,7 +39,6 @@ metadata:
   name: node-user-service
 spec:
   ports:
-  - port: 80
-    targetPort: 8080
+  - port: 8080
   selector:
     app: node-user-service

@@ -1,11 +1,12 @@
 import bodyParser from "body-parser";
-import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import passport from "passport";
 
 import { ConfigKey, getConfigValue } from "./infastructure/config";
+import { corsMiddleware } from "./infastructure/cors";
 import { connectSingletonDatabase } from "./infastructure/database";
+import { errorMiddleware } from "./infastructure/error";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/passport";
 import { authenticateRouter } from "./routes/authenticate";
 import { claimRouter } from "./routes/claim";
@@ -20,17 +21,14 @@ connectSingletonDatabase();
 const app = express();
 
 app.use(morgan("dev"));
-
 app.use(bodyParser.json());
 
 addJwtStrategy(passport);
 addLocalStrategy(passport);
 app.use(passport.initialize());
 
-app.use(cors({
-  origin: getConfigValue(ConfigKey.AllowedOrigins),
-  optionsSuccessStatus: 200,
-}));
+app.use(corsMiddleware);
+app.use(errorMiddleware);
 
 app.use("/ping", pingRouter);
 app.use("/docs", swaggerRouter);
