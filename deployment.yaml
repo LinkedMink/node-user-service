@@ -21,7 +21,7 @@ spec:
         - containerPort: 8080
         env:
         - name: ALLOWED_ORIGINS
-          value: "https://[Your Host]"
+          value: '["https://[Your Host]"]'
         - name: MONGO_DB_CONNECTION_STRING
           value: "mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database.collection][?options]]"
         - name: JWT_SECRET_KEY_FILE

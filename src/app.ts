@@ -4,9 +4,9 @@ import morgan from "morgan";
 import passport from "passport";
 
 import { ConfigKey, getConfigValue } from "./infastructure/config";
-import { corsMiddleware } from "./infastructure/cors";
 import { connectSingletonDatabase } from "./infastructure/database";
-import { errorMiddleware } from "./infastructure/error";
+import { corsMiddleware } from "./middleware/cors";
+import { errorMiddleware } from "./middleware/error";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/passport";
 import { authenticateRouter } from "./routes/authenticate";
 import { claimRouter } from "./routes/claim";

@@ -14,7 +14,7 @@ export enum AuthorizationClaim {
   ClaimManage = "ClaimManage",
 }
 
-export const authorizeJwtClaim = (claimNames: string[]) => {
+export const authorizeJwtClaim = (claimNames?: string[]) => {
   return (req: Request<ParamsDictionary, any, any>, res: Response, next: NextFunction) => {
 
     passport.authenticate("jwt", { session: false }, (error: any, payload: IJwtPayload, info: any) => {
@@ -30,6 +30,10 @@ export const authorizeJwtClaim = (claimNames: string[]) => {
       if (errorMessage)  {
         res.status(401);
         return res.send(getResponseObject(ResponseStatus.Failed, errorMessage));
+      }
+
+      if (!claimNames) {
+        return next();
       }
 
       let missingClaims = claimNames.slice();

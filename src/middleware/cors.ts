@@ -1,6 +1,6 @@
 import cors from "cors";
 
-import { ConfigKey, getConfigValue } from "./config";
+import { ConfigKey, getConfigValue } from "../infastructure/config";
 
 export const CORS_ERROR = "Not allowed by CORS";
 

@@ -18,27 +18,30 @@ describe("passport.ts", () => {
     // Arrange
     addJwtStrategy(passport);
     const jwtHandler = (passport as any)._strategies.jwt._verify;
-    const jwtPayload = { exp: Date.now() - 100 };
+    const jwtPayload = { exp: (Date.now() - 1000) / 1000 };
     const doneFunc = jest.fn();
+    const mockReq = {};
 
     // Act
-    jwtHandler(jwtPayload, doneFunc);
+    jwtHandler(mockReq, jwtPayload, doneFunc);
 
     // Assert
-    expect(doneFunc).toBeCalledWith("jwt expired");
+    expect(doneFunc).toBeCalledWith("JWT Expired");
   });
 
-  test("JwtStrategy should pass payload to next function", async () => {
+  test("JwtStrategy should pass payload to next function and set user", async () => {
     // Arrange
     addJwtStrategy(passport);
     const jwtHandler = (passport as any)._strategies.jwt._verify;
     const jwtPayload = { test: "TEST" };
     const doneFunc = jest.fn();
+    const mockReq = { user: undefined };
 
     // Act
-    jwtHandler(jwtPayload, doneFunc);
+    jwtHandler(mockReq, jwtPayload, doneFunc);
 
     // Assert
     expect(doneFunc).toBeCalledWith(null, jwtPayload);
+    expect(mockReq.user).toEqual(jwtPayload);
   });
 });
