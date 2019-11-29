@@ -1,13 +1,13 @@
 import winston from "winston";
 
-import { ConfigKey, Environment, getConfigValue } from "./config";
+import { config, ConfigKey, Environment } from "./config";
 
 export const logger = winston.createLogger({
-  level: getConfigValue(ConfigKey.LogLevel),
+  level: config.getString(ConfigKey.LogLevel),
   format: winston.format.json(),
   // defaultMeta: { service: "user-service" },
   transports: [
-    new winston.transports.File({ filename: getConfigValue(ConfigKey.LogFile) }),
+    new winston.transports.File({ filename: config.getString(ConfigKey.LogFile) }),
   ],
 });
 

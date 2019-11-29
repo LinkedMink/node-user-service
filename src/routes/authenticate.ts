@@ -3,7 +3,7 @@ import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 import { sign, SignOptions } from "jsonwebtoken";
 import passport from "passport";
 
-import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
+import { config, ConfigKey } from "../infastructure/config";
 import { IUser } from "../models/database/user";
 import { getResponseObject, ResponseStatus } from "../models/response";
 
@@ -71,17 +71,17 @@ authenticateRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: Res
       }
 
       const signOptions: SignOptions = {
-        expiresIn: `${getConfigValue(ConfigKey.JwtExpirationDays)} days`,
-        audience: getConfigValue(ConfigKey.JwtAudience),
-        issuer: getConfigValue(ConfigKey.JwtIssuer),
+        expiresIn: `${config.getString(ConfigKey.JwtExpirationDays)} days`,
+        audience: config.getString(ConfigKey.JwtAudience),
+        issuer: config.getString(ConfigKey.JwtIssuer),
         subject: user.id,
-        algorithm: getConfigValue(ConfigKey.JwtSigningAlgorithm),
+        algorithm: config.getString(ConfigKey.JwtSigningAlgorithm),
       };
 
       /** generate a signed json web token and return it in the response */
       const token = sign(
         payload,
-        jwtSecretKey,
+        config.getFileBuffer(ConfigKey.JwtSecretKeyFile),
         signOptions);
 
       const response = getResponseObject();

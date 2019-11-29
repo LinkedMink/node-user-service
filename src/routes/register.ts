@@ -2,7 +2,7 @@ import cryptoRandomString from "crypto-random-string";
 import { Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 
-import { ConfigKey, getConfigValue } from "../infastructure/config";
+import { config, ConfigKey } from "../infastructure/config";
 import { sendVerifyEmail } from "../infastructure/email";
 import { objectDescriptorBodyVerify } from "../infastructure/objectDescriptor";
 import { UserConverter } from "../models/converters/userConverter";
@@ -62,7 +62,7 @@ registerRouter.post("/",
     userData.isEmailVerified = false,
     userData.isLocked = false,
     userData.claims = [];
-    const rawClaims = getConfigValue(ConfigKey.UserDefaultClaims).split(",");
+    const rawClaims = config.getString(ConfigKey.UserDefaultClaims).split(",");
     rawClaims.forEach((rawClaim) => {
       const claim = rawClaim.trim();
       if (claim.length > 0) {

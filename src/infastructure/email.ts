@@ -2,20 +2,11 @@ import Email from "email-templates";
 import nodemailer from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 
-import { ConfigKey, getConfigValue } from "../infastructure/config";
-
-const loadTransportConfig = () => {
-  const config = getConfigValue(ConfigKey.NodeMailerTransport).trim();
-  if (config[0] === "{") {
-    return JSON.parse(config);
-  }
-
-  return config;
-};
+import { config, ConfigKey } from "../infastructure/config";
 
 const emailOptions = {
   message: {
-    from: getConfigValue(ConfigKey.SystemEmailAddress),
+    from: config.getString(ConfigKey.SystemEmailAddress),
   },
   transport: {
     jsonTransport: true,
@@ -23,7 +14,7 @@ const emailOptions = {
   send: false,
 };
 
-const transportConfig = loadTransportConfig();
+const transportConfig = config.getJsonOrString(ConfigKey.NodeMailerTransport);
 let transporter: Mail;
 if (transportConfig) {
   transporter = nodemailer.createTransport(transportConfig);
@@ -40,10 +31,10 @@ export const sendVerifyEmail = (toEmail: string, verifyCode: string) => {
       to: toEmail,
     },
     locals: {
-      appName: getConfigValue(ConfigKey.AppName),
+      appName: config.getString(ConfigKey.AppName),
       email: encodeURIComponent(toEmail),
       code: verifyCode,
-      url: getConfigValue(ConfigKey.ServiceBaseUrl),
+      url: config.getString(ConfigKey.ServiceBaseUrl),
     },
   });
 };
@@ -55,10 +46,10 @@ export const sendPasswordReset = (toEmail: string, resetCode: string) => {
       to: toEmail,
     },
     locals: {
-      appName: getConfigValue(ConfigKey.AppName),
+      appName: config.getString(ConfigKey.AppName),
       email: encodeURIComponent(toEmail),
       code: resetCode,
-      url: getConfigValue(ConfigKey.PasswordResetUiUrl),
+      url: config.getString(ConfigKey.PasswordResetUiUrl),
     },
   });
 };

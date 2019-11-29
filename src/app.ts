@@ -3,7 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import passport from "passport";
 
-import { ConfigKey, getConfigValue } from "./infastructure/config";
+import { config, ConfigKey } from "./infastructure/config";
 import { connectSingletonDatabase } from "./infastructure/database";
 import { corsMiddleware } from "./middleware/cors";
 import { errorMiddleware } from "./middleware/error";
@@ -36,9 +36,9 @@ app.use("/authenticate", authenticateRouter);
 app.use("/users", userRouter);
 app.use("/claims", claimRouter);
 
-if (getConfigValue(ConfigKey.UserRegistrationIsEnabled).toLowerCase() === "true") {
+if (config.getBool(ConfigKey.UserRegistrationIsEnabled)) {
   app.use("/password", passwordRouter);
   app.use("/register", registerRouter);
 }
 
-export const server = app.listen(getConfigValue(ConfigKey.ListenPort));
+export const server = app.listen(config.getString(ConfigKey.ListenPort));

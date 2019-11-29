@@ -1,11 +1,9 @@
 import bcrypt from "bcrypt";
 import { model, Schema, SchemaTypes, Types } from "mongoose";
 
-import { ConfigKey, getConfigValue } from "../../infastructure/config";
+import { config, ConfigKey } from "../../infastructure/config";
 import { validateEmail } from "../../infastructure/validators";
 import { ITrackedEntity, trackedEntityPreValidateFunc, trackedEntitySchemaDefinition } from "./trackedEntity";
-
-const hashCostFactor = Number(getConfigValue(ConfigKey.UserPassHashCostFactor));
 
 const userClaimSchemaDefinition = {
   name: {
@@ -32,7 +30,7 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
   password: {
     type: SchemaTypes.String,
     required: true,
-    minlength: Number(getConfigValue(ConfigKey.UserPassMinLength)),
+    minlength: config.getNumber(ConfigKey.UserPassMinLength),
   },
   isEmailVerified: {
     type: SchemaTypes.Boolean,
@@ -64,7 +62,9 @@ userSchema.pre("validate", trackedEntityPreValidateFunc);
 
 userSchema.post("validate", async function(this: IUser) {
   if (this.isNew || this.modifiedPaths().includes("password")) {
-    this.password = await bcrypt.hash(this.password, hashCostFactor);
+    this.password = await bcrypt.hash(
+      this.password,
+      config.getNumber(ConfigKey.UserPassHashCostFactor));
   }
 
   if (!this.isLocked && this.modifiedPaths().includes("isLocked")) {

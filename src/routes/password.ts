@@ -2,7 +2,7 @@ import cryptoRandomString from "crypto-random-string";
 import { Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 
-import { ConfigKey, getConfigValue } from "../infastructure/config";
+import { config, ConfigKey } from "../infastructure/config";
 import { sendPasswordReset } from "../infastructure/email";
 import { objectDescriptorBodyVerify } from "../infastructure/objectDescriptor";
 import { User } from "../models/database/user";
@@ -10,7 +10,7 @@ import { IPasswordResetRequest, passwordResetRequestDescriptor } from "../models
 import { getResponseObject, ResponseStatus } from "../models/response";
 
 const tempKeyLength = 30;
-const tempKeyValidMilliseonds = Number(getConfigValue(ConfigKey.UserTemporaryKeyMinutes)) * 60 * 1000;
+const tempKeyValidMilliseonds = config.getNumber(ConfigKey.UserTemporaryKeyMinutes) * 60 * 1000;
 
 export const passwordRouter = Router();
 

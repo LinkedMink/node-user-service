@@ -1,22 +1,17 @@
 import cors from "cors";
 
-import { ConfigKey, getConfigValue } from "../infastructure/config";
+import { config, ConfigKey } from "../infastructure/config";
 
 export const CORS_ERROR = "Not allowed by CORS";
 
-const loadAllowedOrigins = () => {
-  const config = getConfigValue(ConfigKey.AllowedOrigins).trim();
-  if (config[0] === "[") {
-    return JSON.parse(config);
-  }
-
-  return config;
+const originsData = config.getJsonOrString(ConfigKey.AllowedOrigins);
+const corsOptions = {
+  origin: originsData as any,
+  optionsSuccessStatus: 200,
 };
 
-const originsData = loadAllowedOrigins();
-let originsFunc = originsData;
 if (originsData.length) {
-  originsFunc = (origin: string, callback: any) => {
+  corsOptions.origin = (origin: string, callback: any) => {
     if (originsData.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -25,7 +20,4 @@ if (originsData.length) {
   };
 }
 
-export const corsMiddleware = cors({
-  origin: originsFunc,
-  optionsSuccessStatus: 200,
-});
+export const corsMiddleware = cors(corsOptions);

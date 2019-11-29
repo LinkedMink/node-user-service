@@ -4,13 +4,13 @@ import { PassportStatic } from "passport";
 import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions as JwtStrategyOptions, VerifiedCallback } from "passport-jwt";
 import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport-local";
 
-import { ConfigKey, getConfigValue, jwtSecretKey } from "../infastructure/config";
+import { config, ConfigKey } from "../infastructure/config";
 import { User } from "../models/database/user";
 
 const errors = {
   GENERIC: "The username or password was incorrect.",
   NOT_VERIFIED: "The user's email address has not been verified",
-  IS_LOCKED: `The user has been locked out for ${getConfigValue(ConfigKey.UserLockoutMinutes)} minutes`,
+  IS_LOCKED: `The user has been locked out for ${config.getString(ConfigKey.UserLockoutMinutes)} minutes`,
 };
 
 export interface IJwtPayload {
@@ -24,8 +24,8 @@ export interface IJwtPayload {
 }
 
 export const addLocalStrategy = (passport: PassportStatic) => {
-  const maxLoginAttempts = Number(getConfigValue(ConfigKey.UserPassMaxAttempts));
-  const lockoutMilliseonds = Number(getConfigValue(ConfigKey.UserLockoutMinutes)) * 60 * 1000;
+  const maxLoginAttempts = config.getNumber(ConfigKey.UserPassMaxAttempts);
+  const lockoutMilliseonds = config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
 
   const options: IStrategyOptionsWithRequest = {
     usernameField: "email",
@@ -86,10 +86,10 @@ export const addLocalStrategy = (passport: PassportStatic) => {
 export const addJwtStrategy = (passport: PassportStatic) => {
   const options: JwtStrategyOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: jwtSecretKey,
-    audience: getConfigValue(ConfigKey.JwtAudience),
-    issuer: getConfigValue(ConfigKey.JwtIssuer),
-    algorithms: [getConfigValue(ConfigKey.JwtSigningAlgorithm)],
+    secretOrKey: config.getFileBuffer(ConfigKey.JwtSecretKeyFile),
+    audience: config.getString(ConfigKey.JwtAudience),
+    issuer: config.getString(ConfigKey.JwtIssuer),
+    algorithms: [config.getString(ConfigKey.JwtSigningAlgorithm)],
     passReqToCallback: true,
   };
 
