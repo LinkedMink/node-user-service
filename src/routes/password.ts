@@ -65,13 +65,12 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
  *       200:
  *         description: The request was successful.
  */
-passwordRouter.put("/:email",
+passwordRouter.put("/",
   objectDescriptorBodyVerify(passwordResetRequestDescriptor),
   async (req: Request<ParamsDictionary, any, any>, res: Response) => {
-    const email = req.params.email;
     const requestData = req.body as IPasswordResetRequest;
 
-    const user = await User.findOne({ email }).exec();
+    const user = await User.findOne({ email: requestData.email }).exec();
     if (!user) {
       res.status(404);
       return res.send(getResponseObject(ResponseStatus.Failed));

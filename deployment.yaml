@@ -32,6 +32,8 @@ spec:
           value: "api.[Your Domain]"
         - name: NODE_MAILER_TRANSPORT
           value: '{"service": "gmail", "auth": {"user": "[YOUR EMAIL]", "pass": "[YOUR KEY]"}}'
+        - name: USER_DEFAULT_CLAIMS
+          value: "comma,sepearted,list"
 ---
 apiVersion: v1
 kind: Service

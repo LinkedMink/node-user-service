@@ -133,7 +133,7 @@ export class EnvironmentalConfig {
       return Buffer.alloc(0);
     }
 
-    const filePath = this.getConfigValue(ConfigKey.JwtSecretKeyFile);
+    const filePath = this.getConfigValue(key);
     const data = fs.readFileSync(filePath);
     this.fileBuffers.set(key, data);
     return data;
