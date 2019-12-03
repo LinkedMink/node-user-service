@@ -9,7 +9,7 @@ const corsOptions = {
   origin: originsData as any,
   optionsSuccessStatus: 200,
 };
-
+/*
 if (originsData.length) {
   corsOptions.origin = (origin: string, callback: any) => {
     if (originsData.indexOf(origin) !== -1) {
@@ -19,5 +19,5 @@ if (originsData.length) {
     }
   };
 }
-
+*/
 export const corsMiddleware = cors(corsOptions);

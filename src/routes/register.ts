@@ -49,6 +49,12 @@ export const registerRouter = Router();
  *   post:
  *     description: Register a new user
  *     tags: [Register]
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/IRegisterRequest'
  *     responses:
  *       200:
  *         description: The user was registered successfully.
@@ -93,10 +99,17 @@ registerRouter.post("/",
 
 /**
  * @swagger
- * /register:
+ * /register/{email}/{code}:
  *   get:
  *     description: Verify the email address of the specified user
  *     tags: [Register]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *       - in: path
+ *         name: code
+ *         required: true
  *     responses:
  *       200:
  *         description: The user was verified successfully.
@@ -128,10 +141,14 @@ registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary, any, a
 
 /**
  * @swagger
- * /register:
+ * /register/{email}:
  *   get:
  *     description: Send the verification email again
  *     tags: [Register]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
  *     responses:
  *       200:
  *         description: The email was sent successfully.

@@ -1,5 +1,24 @@
 import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/objectDescriptor";
 
+/**
+ * @swagger
+ * definitions:
+ *   IPasswordResetRequest:
+ *     type: object
+ *     properties:
+ *       email:
+ *         type: string
+ *         format: email
+ *       resetToken:
+ *         type: string
+ *       password:
+ *         type: string
+ *         format: password
+ *     required:
+ *       - email
+ *       - resetToken
+ *       - password
+ */
 export interface IPasswordResetRequest {
   email: string;
   resetToken: string;

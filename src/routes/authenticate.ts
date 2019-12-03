@@ -11,7 +11,6 @@ export const authenticateRouter = Router();
 
 /**
  * @swagger
- *
  * definitions:
  *   SuccessResponse:
  *     type: object
@@ -20,26 +19,20 @@ export const authenticateRouter = Router();
  *       data:
  *         type: string
  *         description: The authentication token as a string
- */
-
-/**
- * @swagger
+ *
  * /authenticate:
  *   post:
  *     description: Authenticate the user credentials and retrieve a token for subsequent request
  *     tags: [Authenticate]
  *     parameters:
  *       - in: body
- *         name: email
- *         type: string
+ *         name: body
  *         required: true
- *       - in: body
- *         name: password
- *         type: string
- *         required: true
+ *         schema:
+ *           $ref: '#/definitions/IAuthenticateRequest'
  *     responses:
  *       200:
- *         description: The package name and version that's running this service
+ *         description: The authentication token for the specified user
  *         schema:
  *           $ref: '#/definitions/SuccessResponse'
  *       400:

@@ -8,6 +8,26 @@ export const pingRouter = Router();
 
 /**
  * @swagger
+ * definitions:
+ *   PingMark:
+ *     type: object
+ *     properties:
+ *       mark:
+ *         type: integer
+ *       application:
+ *         type: string
+ *       version:
+ *         type: string
+ *   PingSuccessResponse:
+ *     type: object
+ *     properties:
+ *       status:
+ *         type: integer
+ *       data:
+ *         type: object
+ *         schema:
+ *           $ref: '#/definitions/PingMark'
+ *
  * /ping:
  *   get:
  *     description: Get a response to determine if the service is running
@@ -15,11 +35,10 @@ export const pingRouter = Router();
  *     responses:
  *       200:
  *         description: The package name and version that's running this service
- *         schema:
- *           type: object
- *           properties:
- *             application: { type: string }
- *             version: { type: string }
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/PingSuccessResponse'
  */
 pingRouter.get("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const pingResponse = getResponseObject();

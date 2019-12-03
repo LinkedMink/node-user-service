@@ -18,8 +18,17 @@ const swaggerJsDocOptions: swaggerJsDoc.Options = {
       description: config.packageJson.description,
     },
   },
+  securityDefinitions: {
+    bearerAuth: {
+      type: "apiKey",
+      name: "Authorization",
+      scheme: "bearer",
+      in: "header",
+    },
+  },
   apis: [
     "./src/models/*.ts",
+    "./src/models/requests/*.ts",
     "./src/routes/*.ts",
   ],
 };

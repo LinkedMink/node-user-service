@@ -3,7 +3,7 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/objectDes
 /**
  * @swagger
  * definitions:
- *   IRegisterRequest:
+ *   IAuthenticateRequest:
  *     type: object
  *     properties:
  *       email:
@@ -16,12 +16,12 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/objectDes
  *       - email
  *       - password
  */
-export interface IRegisterRequest {
+export interface IAuthenticateRequest {
   email: string;
   password: string;
 }
 
-export const registerRequestDescriptor = new ObjectDescriptor<IRegisterRequest>({
+export const registerRequestDescriptor = new ObjectDescriptor<IAuthenticateRequest>({
   email: [ObjectAttribute.Required],
   password: [ObjectAttribute.Required],
 });

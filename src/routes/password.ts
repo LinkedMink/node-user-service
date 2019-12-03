@@ -16,10 +16,14 @@ export const passwordRouter = Router();
 
 /**
  * @swagger
- * /password:
- *   post:
+ * /password/{email}:
+ *   get:
  *     description: Send a request to retrieve a temporary reset link
- *     tags: [Password, Reset]
+ *     tags: [Password]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
  *     responses:
  *       200:
  *         description: The request was successful.
@@ -60,7 +64,13 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
  * /password:
  *   put:
  *     description: Use the temporary reset key to change a user's password
- *     tags: [Password, Reset]
+ *     tags: [Password]
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/IPasswordResetRequest'
  *     responses:
  *       200:
  *         description: The request was successful.

@@ -7,6 +7,119 @@ import { IJwtPayload } from "../middleware/passport";
 import { IModelConverter } from "../models/converters/modelConverter";
 import { getResponseObject, ResponseStatus } from "../models/response";
 
+/**
+ * Template for specific routers where {entity} = definition type and {entityModel} = transfer model
+ * @swagger
+ * /{entity}:
+ *   get:
+ *     description: Get the details of a specific {entity}
+ *     tags: [{entity}]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: The retrieved list of {entity}
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/{entity}'
+ *       400:
+ *         description: The supplied parameters are invalid
+ *
+ * @swagger
+ * /{entity}/{id}:
+ *   get:
+ *     description: Get the details of a specific {entity}
+ *     tags: [{entity}]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: The retrieved {entity}
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               $ref: '#/components/schemas/{entity}'
+ *       404:
+ *         description: The id doesn't match a {entity}
+ *
+ * @swagger
+ * /{entity}:
+ *   post:
+ *     description: Save a new {entity}
+ *     tags: [{entity}]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/{entity}'
+ *     responses:
+ *       200:
+ *         description: The saved {entity}
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/{entity}'
+ *       400:
+ *         description: The supplied {entity} is invalid
+ *
+ * @swagger
+ * /{entity}/{id}:
+ *   put:
+ *     description: Update an existing {entity}
+ *     tags: [{entity}]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/{entity}'
+ *     responses:
+ *       200:
+ *         description: The updated {entity}
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/{entity}'
+ *       400:
+ *         description: The supplied {entity} is invalid
+ *       404:
+ *         description: The id doesn't match a {entity}
+ *
+ * @swagger
+ * /{entity}/{id}:
+ *   delete:
+ *     description: Delete a specific {entity}
+ *     tags: [{entity}]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: The {entity} was deleted
+ *       404:
+ *         description: The id doesn't match a {entity}
+ */
 export const createCrudRouter = <TFrontend extends object, TBackend extends Document>(
   requiredClaim: string,
   model: Model<TBackend, {}>,

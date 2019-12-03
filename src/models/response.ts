@@ -5,13 +5,14 @@ export enum ResponseStatus {
 
 /**
  * @swagger
- *
  * definitions:
  *   ErrorResponse:
  *     type: object
  *     properties:
- *       status: { type: string }
- *       data: { type: string }
+ *       status:
+ *         type: integer
+ *       data:
+ *         type: string
  */
 export interface IResponseObject {
   status: ResponseStatus;
