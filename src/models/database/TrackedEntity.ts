@@ -1,0 +1,35 @@
+import { Document, HookNextFunction, SchemaDefinition, SchemaTypes } from "mongoose";
+
+export const trackedEntitySchemaDefinition: SchemaDefinition = {
+  createdDate: {
+    type: SchemaTypes.Date,
+  },
+  createdBy: {
+    type: SchemaTypes.String,
+  },
+  modifiedDate: {
+    type: SchemaTypes.Date,
+  },
+  modifiedBy: {
+    type: SchemaTypes.String,
+  },
+};
+
+export interface ITrackedEntity extends Document {
+  id: string;
+  createdDate: Date;
+  createdBy: string;
+  modifiedDate: Date;
+  modifiedBy: string;
+}
+
+export function trackedEntityPreValidateFunc(this: ITrackedEntity, next: HookNextFunction) {
+  const currentDateTime = new Date();
+  if (this.isNew) {
+    this.createdDate = currentDateTime;
+  }
+
+  this.modifiedDate = currentDateTime;
+
+  next();
+}
