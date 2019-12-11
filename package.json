@@ -15,14 +15,14 @@
   "scripts": {
     "start": "npm run build && npm run startApp",
     "build": "tsc",
-    "startApp": "node -r dotenv/config ./build/src/app.js",
-    "watch": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./src/app.ts",
+    "startApp": "node -r dotenv/config ./build/src/App.js",
+    "watch": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./src/App.ts",
     "test": "cross-env NODE_ENV=test jest",
     "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
     "lintTest": "tslint --fix -c tslint.json 'tests/**/*.ts'",
     "containerize": "npm run build && docker build -t linkedmink/node-user-service .",
-    "addUser": "node -r dotenv/config ./build/src/scripts/addUser.js",
-    "seedClaims": "node -r dotenv/config ./build/src/scripts/seedClaims.js"
+    "addUser": "node -r dotenv/config ./build/src/scripts/AddUser.js",
+    "seedClaims": "node -r dotenv/config ./build/src/scripts/SeedClaims.js"
   },
   "dependencies": {
     "bcrypt": "^3.0.7",

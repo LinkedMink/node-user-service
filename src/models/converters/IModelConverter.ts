@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
-import { ITrackedEntity } from "../database/trackedEntity";
-import { ITrackedEntityModel } from "../trackedEntityModel";
+import { ITrackedEntity } from "../database/TrackedEntity";
+import { ITrackedEntityModel } from "../ITrackedEntityModel";
 
 export const setUserModifier = <TEntity extends ITrackedEntity>(entity: ITrackedEntity, modifier: string): TEntity => {
   if (!entity.id || !entity.createdBy) {

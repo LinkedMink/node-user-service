@@ -1,4 +1,4 @@
-import { ITrackedEntityModel } from "./trackedEntityModel";
+import { ITrackedEntityModel } from "./ITrackedEntityModel";
 
 /**
  * @swagger
