@@ -51,8 +51,8 @@ db.createUser(
 Seed the database with the initial user and claims.
 
 ```sh
-npm run seedClaims
-npm run addUser myuser@email.com StrongPass*1 UserManage ClaimManage
+npm run SeedClaims
+npm run AddUser myuser@email.com StrongPass*1 UserManage ClaimManage
 ```
 
 ### Config
