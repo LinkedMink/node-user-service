@@ -8,6 +8,7 @@ import { connectSingletonDatabase } from "./infastructure/Database";
 import { corsMiddleware } from "./middleware/Cors";
 import { errorMiddleware } from "./middleware/Error";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/Passport";
+import { accountRouter } from "./routes/Account";
 import { authenticateRouter } from "./routes/Authenticate";
 import { claimRouter } from "./routes/Claim";
 import { passwordRouter } from "./routes/Password";
@@ -30,10 +31,11 @@ app.use(passport.initialize());
 app.use(corsMiddleware);
 app.use(errorMiddleware);
 
-app.use("/ping", pingRouter);
+app.use("/account", accountRouter);
 app.use("/authenticate", authenticateRouter);
-app.use("/users", userRouter);
+app.use("/ping", pingRouter);
 app.use("/claims", claimRouter);
+app.use("/users", userRouter);
 
 if (config.getBool(ConfigKey.UserRegistrationIsEnabled)) {
   app.use("/password", passwordRouter);

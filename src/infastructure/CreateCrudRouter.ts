@@ -3,11 +3,10 @@ import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 import { Document, DocumentQuery, Model } from "mongoose";
 
 import { authorizeJwtClaim } from "../middleware/Authorization";
-import { UserInputError } from "../middleware/Error";
 import { IJwtPayload } from "../middleware/Passport";
 import { IModelConverter } from "../models/converters/IModelConverter";
+import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 import { ISearchRequest, searchRequestDescriptor } from "../models/requests/ISearchRequest";
-import { getResponseObject, ResponseStatus } from "../models/Response";
 import { objectDescriptorBodyVerify } from "./ObjectDescriptor";
 
 const DEFAULT_ITEMS_PER_PAGE = 20;

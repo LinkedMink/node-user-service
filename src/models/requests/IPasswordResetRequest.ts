@@ -1,3 +1,4 @@
+import { config, ConfigKey } from "../../infastructure/Config";
 import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
 
 /**
@@ -28,5 +29,11 @@ export interface IPasswordResetRequest {
 export const passwordResetRequestDescriptor = new ObjectDescriptor<IPasswordResetRequest>({
   email: [ObjectAttribute.Required],
   resetToken: [ObjectAttribute.Required],
-  password: [ObjectAttribute.Required],
+  password: [
+    ObjectAttribute.Required,
+    {
+      value: ObjectAttribute.Length,
+      params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
+    },
+  ],
 });

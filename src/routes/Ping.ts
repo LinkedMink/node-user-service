@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 
 import { config, Environment } from "../infastructure/Config";
-import { getResponseObject } from "../models/Response";
+import { getResponseObject } from "../models/IResponseData";
 
 export const pingRouter = Router();
 

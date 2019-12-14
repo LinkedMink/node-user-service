@@ -1,3 +1,4 @@
+import { config, ConfigKey } from "../../infastructure/Config";
 import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
 
 /**
@@ -23,5 +24,11 @@ export interface IRegisterRequest {
 
 export const registerRequestDescriptor = new ObjectDescriptor<IRegisterRequest>({
   email: [ObjectAttribute.Required],
-  password: [ObjectAttribute.Required],
+  password: [
+    ObjectAttribute.Required,
+    {
+      value: ObjectAttribute.Length,
+      params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
+    },
+  ],
 });

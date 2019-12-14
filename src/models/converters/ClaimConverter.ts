@@ -42,3 +42,5 @@ export class ClaimConverter implements IModelConverter<IClaimModel, IClaim> {
     return returnModel;
   }
 }
+
+export const claimConverter = new ClaimConverter();

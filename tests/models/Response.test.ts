@@ -1,4 +1,4 @@
-import { getResponseObject, ResponseStatus } from "../../src/models/Response";
+import { getResponseObject, ResponseStatus } from "../../src/models/IResponseData";
 
 describe("response.ts", () => {
   test("getMessageObject should return standard empty response interface", async () => {

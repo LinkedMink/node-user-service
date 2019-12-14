@@ -1,6 +1,6 @@
 import { createCrudRouter } from "../infastructure/CreateCrudRouter";
 import { AuthorizationClaim } from "../middleware/Authorization";
-import { ClaimConverter } from "../models/converters/ClaimConverter";
+import { claimConverter } from "../models/converters/ClaimConverter";
 import { Claim } from "../models/database/Claim";
 
 /**
@@ -100,5 +100,5 @@ import { Claim } from "../models/database/Claim";
  */
 export const claimRouter = createCrudRouter(
     Claim,
-    new ClaimConverter(),
+    claimConverter,
     AuthorizationClaim.ClaimManage);

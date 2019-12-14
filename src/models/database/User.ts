@@ -67,6 +67,10 @@ userSchema.post("validate", async function(this: IUser) {
       config.getNumber(ConfigKey.UserPassHashCostFactor));
   }
 
+  if (this.modifiedPaths().includes("email")) {
+    this.isEmailVerified = false;
+  }
+
   if (!this.isLocked && this.modifiedPaths().includes("isLocked")) {
     this.authenticationAttempts = undefined;
     this.isLockedDate = undefined;

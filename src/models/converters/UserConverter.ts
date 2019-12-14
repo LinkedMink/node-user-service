@@ -62,3 +62,5 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     return returnModel;
   }
 }
+
+export const userConverter = new UserConverter();

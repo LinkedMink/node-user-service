@@ -6,8 +6,8 @@ import { config, ConfigKey } from "../infastructure/Config";
 import { sendPasswordReset } from "../infastructure/Email";
 import { objectDescriptorBodyVerify } from "../infastructure/ObjectDescriptor";
 import { User } from "../models/database/User";
+import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 import { IPasswordResetRequest, passwordResetRequestDescriptor } from "../models/requests/IPasswordResetRequest";
-import { getResponseObject, ResponseStatus } from "../models/Response";
 
 const tempKeyLength = 30;
 const tempKeyValidMilliseonds = config.getNumber(ConfigKey.UserTemporaryKeyMinutes) * 60 * 1000;

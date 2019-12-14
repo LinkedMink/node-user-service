@@ -1,6 +1,6 @@
 import { createCrudRouter } from "../infastructure/CreateCrudRouter";
 import { AuthorizationClaim } from "../middleware/Authorization";
-import { UserConverter } from "../models/converters/UserConverter";
+import { userConverter } from "../models/converters/UserConverter";
 import { User } from "../models/database/User";
 
 /**
@@ -100,5 +100,5 @@ import { User } from "../models/database/User";
  */
 export const userRouter = createCrudRouter(
     User,
-    new UserConverter(),
+    userConverter,
     AuthorizationClaim.UserManage);

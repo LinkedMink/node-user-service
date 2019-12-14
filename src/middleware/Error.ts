@@ -1,5 +1,5 @@
 import { logger } from "../infastructure/Logger";
-import { getResponseObject, ResponseStatus } from "../models/Response";
+import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 import { CORS_ERROR } from "./Cors";
 
 export class UserInputError extends Error {

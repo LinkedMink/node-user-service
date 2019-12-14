@@ -5,7 +5,7 @@ import passport from "passport";
 
 import { config, ConfigKey } from "../infastructure/Config";
 import { IUser } from "../models/database/User";
-import { getResponseObject, ResponseStatus } from "../models/Response";
+import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 
 export const authenticateRouter = Router();
 
