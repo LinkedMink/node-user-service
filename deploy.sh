@@ -1,28 +1,30 @@
 #/bin/sh
 
+IMAGE_NAME="node-user-service"
+
+if [ -z "$DOCKER_SCOPE" ]; then
+  DOCKER_SCOPE="linkedmink/" 
+fi
+
 if [ -z "$DOCKER_REGISTRY" ]; then
   DOCKER_REGISTRY="" 
 fi
 
 npm run containerize
 
-sleep 1
-
 docker tag \
-  linkedmink/node-user-service \
-  "${DOCKER_REGISTRY}linkedmink/node-user-service"
+  "${DOCKER_SCOPE}${IMAGE_NAME}" \
+  "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
 
-sleep 1
-
-docker push "${DOCKER_REGISTRY}linkedmink/node-user-service"
-
-sleep 1
+docker push "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
 
 kubectl set image \
-  deployment/node-user-service \
-  node-user-service="${DOCKER_REGISTRY}linkedmink/node-user-service:latest" \
+  "deployment/${IMAGE_NAME}" \
+  $IMAGE_NAME="${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
+
+kubectl set image \
+  "deployment/${IMAGE_NAME}" \
+  $IMAGE_NAME="${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:latest" \
   --record
 
-sleep 1
-
-kubectl rollout status deployment/node-user-service
+kubectl rollout status "deployment/${IMAGE_NAME}"

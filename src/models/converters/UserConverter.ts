@@ -9,7 +9,6 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     model.claims.forEach((claim) => claimArray.push(claim.name));
 
     let returnModel: IUserModel = {
-      id: model.id,
       email: model.email,
       isEmailVerified: model.isEmailVerified,
       isLocked: model.isLocked,

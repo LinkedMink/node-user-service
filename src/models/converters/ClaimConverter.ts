@@ -6,7 +6,6 @@ import { IModelConverter, mapTrackedEntity, setUserModifier } from "./IModelConv
 export class ClaimConverter implements IModelConverter<IClaimModel, IClaim> {
   public convertToFrontend = (model: IClaim): IClaimModel => {
     let returnModel: IClaimModel = {
-      id: model.id,
       name: model.name,
       applications: model.applications.map((e) => e),
     };

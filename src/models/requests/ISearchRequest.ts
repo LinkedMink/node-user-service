@@ -15,6 +15,10 @@ export enum SortOrder {
  *         type: string
  *       pageNumber:
  *         type: string
+ *       sort:
+ *         type: string
+ *       query:
+ *         type: string
  */
 export interface ISearchRequest {
   pageSize?: number;

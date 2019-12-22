@@ -17,9 +17,12 @@ spec:
       containers:
       - name: node-user-service
         image: linkedmink/node-user-service
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
         env:
+        - name: SERVICE_BASE_URL
+          value: "https://[Your Host]"
         - name: ALLOWED_ORIGINS
           value: '["https://[Your Host]"]'
         - name: MONGO_DB_CONNECTION_STRING

@@ -15,6 +15,7 @@ export const mapTrackedEntity = <TFrontend extends ITrackedEntityModel>(
   entity: ITrackedEntity,
   toMap: TFrontend): TFrontend => {
 
+  toMap.id = entity.id;
   toMap.createdBy = entity.createdBy;
   toMap.createdDate = entity.createdDate;
   toMap.modifiedBy = entity.modifiedBy;
