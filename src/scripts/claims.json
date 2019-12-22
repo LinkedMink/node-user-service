@@ -1,5 +1,9 @@
 [
     {
+        "name": "UserSettings",
+        "applications": [ "node-user-service" ]
+    },
+    {
         "name": "UserManage",
         "applications": [ "node-user-service" ]
     },

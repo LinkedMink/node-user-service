@@ -8,14 +8,15 @@ import { connectSingletonDatabase } from "./infastructure/Database";
 import { corsMiddleware } from "./middleware/Cors";
 import { errorMiddleware } from "./middleware/Error";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/Passport";
-import { accountRouter } from "./routes/Account";
-import { authenticateRouter } from "./routes/Authenticate";
-import { claimRouter } from "./routes/Claim";
-import { passwordRouter } from "./routes/Password";
-import { pingRouter } from "./routes/Ping";
-import { registerRouter } from "./routes/Register";
-import { swaggerRouter } from "./routes/Swagger";
-import { userRouter } from "./routes/User";
+import { accountRouter } from "./routes/AccountRouter";
+import { authenticateRouter } from "./routes/AuthenticateRouter";
+import { claimRouter } from "./routes/ClaimRouter";
+import { passwordRouter } from "./routes/PasswordRouter";
+import { pingRouter } from "./routes/PingRouter";
+import { registerRouter } from "./routes/RegisterRouter";
+import { settingRouter } from "./routes/SettingRouter";
+import { swaggerRouter } from "./routes/SwaggerRouter";
+import { userRouter } from "./routes/UserRouter";
 
 connectSingletonDatabase();
 
@@ -36,6 +37,7 @@ app.use("/authenticate", authenticateRouter);
 app.use("/ping", pingRouter);
 app.use("/claims", claimRouter);
 app.use("/users", userRouter);
+app.use("/settings", settingRouter);
 
 if (config.getBool(ConfigKey.UserRegistrationIsEnabled)) {
   app.use("/password", passwordRouter);

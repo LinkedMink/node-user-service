@@ -14,13 +14,15 @@ npm run containerize
 
 docker tag \
   "${DOCKER_SCOPE}${IMAGE_NAME}" \
-  "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
+  "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:latest"
 
-docker push "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
+sleep 1
 
-kubectl set image \
-  "deployment/${IMAGE_NAME}" \
-  $IMAGE_NAME="${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
+docker push "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:latest"
+
+#kubectl set image \
+#  "deployment/${IMAGE_NAME}" \
+#  $IMAGE_NAME="${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}"
 
 kubectl set image \
   "deployment/${IMAGE_NAME}" \
