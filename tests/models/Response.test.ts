@@ -1,7 +1,7 @@
 import { getResponseObject, ResponseStatus } from "../../src/models/IResponseData";
 
 describe("response.ts", () => {
-  test("getMessageObject should return standard empty response interface", async () => {
+  test("getMessageObject should return standard empty response interface", () => {
     // Act
     const response = getResponseObject();
 

@@ -15,7 +15,7 @@ export class UserInputError extends Error {
   }
 }
 
-export const errorMiddleware = (error: any, req: any, res: any, next: any) => {
+export const errorMiddleware = (error: any, req: any, res: any) => {
   if (error && error.stack) {
     if (error.stack) {
       logger.error(error.stack);

@@ -98,7 +98,7 @@ registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary, any, a
   user.temporaryKey = undefined;
   user.temporaryKeyDate = undefined;
 
-  await user.save(async (error) => {
+  await user.save((error) => {
     if (error) {
       res.status(500);
       return res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));
@@ -129,7 +129,7 @@ registerRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
 
   if (!user.temporaryKey) {
     user.temporaryKey = getEmailVerificationCode();
-    await user.save(async (error) => {
+    await user.save((error) => {
       if (error) {
         res.status(500);
         return res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));

@@ -10,12 +10,12 @@ export enum ObjectAttribute {
 
 export interface IObjectAttributeParams {
   value: ObjectAttribute;
-  params: { [key: string]: any; };
+  params: { [key: string]: any };
 }
 
 export class ObjectDescriptor<TVerify> {
   constructor(
-    private descriptors: { [key: string]: Array<ObjectAttribute | IObjectAttributeParams>; },
+    private descriptors: { [key: string]: Array<ObjectAttribute | IObjectAttributeParams> },
     private isEmptyRequestAllowed: boolean = false,
     private sanitizeFunc?: (toSanitize: TVerify) => TVerify) {}
 
@@ -83,7 +83,7 @@ export class ObjectDescriptor<TVerify> {
 
 export const objectDescriptorBodyVerify = <TVerify>(
   descriptor: ObjectDescriptor<TVerify>,
-  isInBody: boolean = true) => {
+  isInBody = true) => {
   return (req: Request<ParamsDictionary, any, any>, res: Response, next: NextFunction) => {
     let data = req.body;
     if (!isInBody) {

@@ -1,6 +1,6 @@
 {
   "name": "node-user-service",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Service for authenticating and managing users",
   "license": "MIT",
   "author": {
@@ -18,8 +18,8 @@
     "startApp": "node -r dotenv/config ./build/src/App.js",
     "watch": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./src/App.ts",
     "test": "cross-env NODE_ENV=test jest",
-    "lint": "tslint --fix -c tslint.json 'src/**/*.ts'",
-    "lintTest": "tslint --fix -c tslint.json 'tests/**/*.ts'",
+    "lint": "eslint -c .eslintrc.js --ext .ts --fix ./src",
+    "lintTest": "eslint -c .eslintrc.js --ext .ts --fix ./tests",
     "containerize": "npm run build && docker build -t linkedmink/node-user-service .",
     "addUser": "node -r dotenv/config ./build/src/scripts/AddUser.js",
     "seedClaims": "node -r dotenv/config ./build/src/scripts/SeedClaims.js"
@@ -62,11 +62,13 @@
     "@types/swagger-jsdoc": "^3.0.2",
     "@types/swagger-ui-express": "~4.1.0",
     "@types/winston": "^2.4.4",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/parser": "^2.19.0",
     "cross-env": "^6.0.3",
+    "eslint": "^6.8.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
     "ts-node-dev": "^1.0.0-pre.44",
-    "tslint": "^5.20.1",
     "typescript": "^3.7.2"
   }
 }

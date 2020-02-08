@@ -23,8 +23,8 @@ export enum SortOrder {
 export interface ISearchRequest {
   pageSize?: number;
   pageNumber?: number;
-  sort?: { [key: string]: SortOrder; };
-  query?: { [key: string]: any; };
+  sort?: { [key: string]: SortOrder };
+  query?: { [key: string]: any };
 }
 
 export const searchRequestDescriptor = new ObjectDescriptor<ISearchRequest>(

@@ -3,7 +3,7 @@ import { ITrackedEntity } from "../../../src/models/database/TrackedEntity";
 import { ITrackedEntityModel } from "../../../src/models/ITrackedEntityModel";
 
 describe("modelConverter.ts", () => {
-  test("mapTrackedEntity should return tracking info", async () => {
+  test("mapTrackedEntity should return tracking info", () => {
     // Arrrange
     const mockModel: ITrackedEntityModel = {};
     const mockEntity: ITrackedEntity = {
@@ -24,7 +24,7 @@ describe("modelConverter.ts", () => {
     expect(response.modifiedDate).toEqual(mockEntity.modifiedDate);
   });
 
-  test("setUserModifier should set modifiedBy", async () => {
+  test("setUserModifier should set modifiedBy", () => {
     // Arrrange
     const mockModifier = "TEST";
     const mockEntity: ITrackedEntity = {
@@ -43,7 +43,7 @@ describe("modelConverter.ts", () => {
     expect(response.createdBy).not.toEqual(mockModifier);
   });
 
-  test("setUserModifier should set createdBy if new", async () => {
+  test("setUserModifier should set createdBy if new", () => {
     // Arrrange
     const mockModifier = "TEST";
     const mockEntity: ITrackedEntity = {

@@ -1,7 +1,7 @@
 import { ITrackedEntity, trackedEntityPreValidateFunc } from "../../../src/models/database/TrackedEntity";
 
 describe("trackedEntity.ts", () => {
-  test("trackedEntityPreValidateFunc should update modified and call next", async () => {
+  test("trackedEntityPreValidateFunc should update modified and call next", () => {
     // Arrange
     const nextFunction = jest.fn();
     const mockTrackedEntity = {

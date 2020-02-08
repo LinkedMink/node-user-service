@@ -16,7 +16,7 @@ describe("database.ts", () => {
     jest.resetAllMocks();
   });
 
-  test("connectSingletonDatabase should call connect", async () => {
+  test("connectSingletonDatabase should call connect", () => {
     // Act
     connectSingletonDatabase();
 
@@ -24,7 +24,7 @@ describe("database.ts", () => {
     expect(mongoose.connect).toHaveBeenCalledTimes(1);
   });
 
-  test("connectSingletonDatabase should catch connection errors", async () => {
+  test("connectSingletonDatabase should catch connection errors", () => {
     // Arrange
     // Typescript restriction requires never return type on process.exit
     const exitSpy = jest.spyOn(process, "exit")

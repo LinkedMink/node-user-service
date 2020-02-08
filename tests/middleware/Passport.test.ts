@@ -3,7 +3,7 @@ import passport from "passport";
 import { addJwtStrategy } from "../../src/middleware/Passport";
 
 describe("passport.ts", () => {
-  test("addJwtStrategy should use passport JwtStrategy", async () => {
+  test("addJwtStrategy should use passport JwtStrategy", () => {
     // Arrange
     const passportSpy = jest.spyOn(passport, "use");
 
@@ -14,7 +14,7 @@ describe("passport.ts", () => {
     expect(passportSpy).toBeCalledTimes(1);
   });
 
-  test("JwtStrategy should verify expire date", async () => {
+  test("JwtStrategy should verify expire date", () => {
     // Arrange
     addJwtStrategy(passport);
     const jwtHandler = (passport as any)._strategies.jwt._verify;
@@ -29,7 +29,7 @@ describe("passport.ts", () => {
     expect(doneFunc).toBeCalledWith("JWT Expired");
   });
 
-  test("JwtStrategy should pass payload to next function and set user", async () => {
+  test("JwtStrategy should pass payload to next function and set user", () => {
     // Arrange
     addJwtStrategy(passport);
     const jwtHandler = (passport as any)._strategies.jwt._verify;

@@ -44,7 +44,7 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
   const resetCode = cryptoRandomString({length: tempKeyLength, type: "url-safe"});
   user.temporaryKey = resetCode;
   user.temporaryKeyDate = new Date();
-  await user.save(async (error) => {
+  await user.save((error) => {
     if (error) {
       res.status(500);
       return res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));

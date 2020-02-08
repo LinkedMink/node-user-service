@@ -11,7 +11,7 @@ import { objectDescriptorBodyVerify } from "./ObjectDescriptor";
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
-export type GetFilterFunction = (user: IJwtPayload) => { [key: string]: any; };
+export type GetFilterFunction = (user: IJwtPayload) => { [key: string]: any };
 
 export const filterByUserId = (user: IJwtPayload) => ({ userId: user.sub });
 
@@ -21,7 +21,8 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
   requiredClaimRead?: string,
   requiredClaimWrite?: string,
   authorizeWriteHandler?: RequestHandler,
-  getFilterFunc?: GetFilterFunction) => {
+  getFilterFunc?: GetFilterFunction,
+  isPagingMandatory = true) => {
 
   const router = Router();
 
@@ -60,11 +61,13 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
         }
       }
 
-      const itemsPerPage = reqData.pageSize ? reqData.pageSize : DEFAULT_ITEMS_PER_PAGE;
-      query = query.limit(itemsPerPage);
+      if (isPagingMandatory || reqData.pageSize || reqData.pageNumber) {
+        const itemsPerPage = reqData.pageSize ? reqData.pageSize : DEFAULT_ITEMS_PER_PAGE;
+        query = query.limit(itemsPerPage);
 
-      if (reqData.pageNumber) {
-        query = query.skip(itemsPerPage * reqData.pageNumber);
+        if (reqData.pageNumber) {
+          query = query.skip(itemsPerPage * reqData.pageNumber);
+        }
       }
 
       const result = await query.exec();
