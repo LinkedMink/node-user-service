@@ -42,6 +42,7 @@ export const connectSingletonDatabase = () => {
       useNewUrlParser: true,
       reconnectTries: RECONNECT_TRIES,
       reconnectInterval: RECONNECT_INTERVAL,
+      useUnifiedTopology: true
     })
     .catch((error) => {
       logger.error(error);

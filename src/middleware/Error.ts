@@ -15,7 +15,8 @@ export class UserInputError extends Error {
   }
 }
 
-export const errorMiddleware = (error: any, req: any, res: any) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const errorMiddleware = (error: any, req: any, res: any, next: any) => {
   if (error && error.stack) {
     if (error.stack) {
       logger.error(error.stack);
