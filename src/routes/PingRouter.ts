@@ -46,6 +46,7 @@ pingRouter.get("/", (req: Request<ParamsDictionary, any, any>, res: Response) =>
   if (process.env.NODE_ENV === Environment.Production) {
     pingResponse.data = {
       mark: Date.now(),
+      application: config.packageJson.name,
     };
   } else {
     pingResponse.data = {

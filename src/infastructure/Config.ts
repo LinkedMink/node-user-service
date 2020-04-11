@@ -2,10 +2,8 @@ import dotenv from "dotenv";
 import fs from "fs";
 
 export enum Environment {
-  // localhost
   Local = "local",
-  Test = "test",                // Unit Test process
-  // Standalone servers
+  UnitTest = "unitTest",
   Development = "development",
   Production = "production",
 }
@@ -60,15 +58,13 @@ const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
   [ConfigKey.PasswordResetUiUrl, "http://localhost/passwordReset"],
 ]);
 
-if (process.env.NODE_ENV === Environment.Test) {
+if (process.env.NODE_ENV === Environment.UnitTest) {
   dotenv.config({ path: ".env.test" });
 }
 
 export class EnvironmentalConfig {
   private fileBuffers: Map<ConfigKey, Buffer> = new Map();
   private jsonObjects: Map<ConfigKey, { [key: string]: any }> = new Map();
-  private isEnvironmentLocalValue: boolean =
-    !process.env.NODE_ENV || process.env.NODE_ENV === Environment.Local;
   private packageJsonValue: { [key: string]: any };
 
   constructor() {
@@ -79,7 +75,16 @@ export class EnvironmentalConfig {
   }
 
   public get isEnvironmentLocal(): boolean {
-    return this.isEnvironmentLocalValue;
+    return !process.env.NODE_ENV || process.env.NODE_ENV === Environment.Local;
+  }
+
+  public get isEnvironmentUnitTest(): boolean {
+    return process.env.NODE_ENV === Environment.UnitTest;
+  }
+
+  public get isEnvironmentContainerized(): boolean {
+    return process.env.IS_CONTAINER_ENV !== undefined && 
+      process.env.IS_CONTAINER_ENV.trim().toLowerCase() === 'true';
   }
 
   public get packageJson(): { [key: string]: any } {
@@ -132,7 +137,7 @@ export class EnvironmentalConfig {
       return buffer;
     }
 
-    if (process.env.NODE_ENV === Environment.Test) {
+    if (process.env.NODE_ENV === Environment.UnitTest) {
       return Buffer.alloc(0);
     }
 

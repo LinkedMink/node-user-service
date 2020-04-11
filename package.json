@@ -1,6 +1,6 @@
 {
   "name": "node-user-service",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Service for authenticating and managing users",
   "license": "MIT",
   "author": {
@@ -17,9 +17,9 @@
     "build": "tsc",
     "startApp": "node -r dotenv/config ./build/src/App.js",
     "watch": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./src/App.ts",
-    "test": "cross-env NODE_ENV=test jest",
-    "lint": "eslint -c .eslintrc.js --ext .ts --fix ./src",
-    "lintTest": "eslint -c .eslintrc.js --ext .ts --fix ./tests",
+    "test": "cross-env NODE_ENV=unitTest jest",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src ./tests",
+    "lintFix": "eslint -c .eslintrc.js --ext .ts --fix ./src ./tests",
     "containerize": "npm run build && docker build -t linkedmink/node-user-service .",
     "addUser": "node -r dotenv/config ./build/src/scripts/AddUser.js",
     "seedClaims": "node -r dotenv/config ./build/src/scripts/SeedClaims.js"

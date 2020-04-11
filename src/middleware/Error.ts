@@ -1,6 +1,8 @@
-import { logger } from "../infastructure/Logger";
+import { Logger } from "../infastructure/Logger";
 import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 import { CORS_ERROR } from "./Cors";
+
+const logger = Logger.get("Error");
 
 export class UserInputError extends Error {
   private inputErrorValue: boolean;

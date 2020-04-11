@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 
 import { config, ConfigKey } from "./Config";
-import { logger } from "./Logger";
+import { Logger } from "./Logger";
 
 const RECONNECT_TRIES = 60;
 const RECONNECT_INTERVAL = 1000;
 
+const logger = Logger.get("Database");
 const connectionString = config.getString(ConfigKey.MongoDbConnectionString);
 
 mongoose.connection.on("connecting", () => {

@@ -8,7 +8,7 @@ if [ -z "$DOCKER_SCOPE" ]; then
 fi
 
 if [ -z "$DOCKER_REGISTRY" ]; then
-  DOCKER_REGISTRY="" 
+  DOCKER_REGISTRY="registry.linkedmink.space/" 
 fi
 
 if [ -z "$KUBERNETES_NAMESPACE" ]; then
@@ -17,7 +17,7 @@ fi
 
 npm run build
 
-if [ "$1" == "deploy" ]; then
+if [ "$1" = "deploy" ]; then
   kubectl set image \
     "deployment/${IMAGE_NAME}" \
     $IMAGE_NAME="${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}" \
@@ -29,7 +29,7 @@ docker buildx build \
   -t "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:latest" \
   --push .
 
-if [ "$1" == "deploy" ]; then
+if [ "$1" = "deploy" ]; then
   sleep 1
 
   kubectl set image \

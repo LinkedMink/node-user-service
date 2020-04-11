@@ -13,7 +13,7 @@ spec:
         app: node-user-service
     spec:
       nodeSelector:
-        "beta.kubernetes.io/os": linux
+        "kubernetes.io/os": linux
       containers:
       - name: node-user-service
         image: linkedmink/node-user-service
@@ -39,6 +39,7 @@ spec:
           value: "UserSettings"
         - name: PASSWORD_RESET_UI_URL
           value: "https://[Your Host]/"
+
 ---
 apiVersion: v1
 kind: Service
