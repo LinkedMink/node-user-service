@@ -60,6 +60,8 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
 const userSchema = new Schema(userSchemaDefinition);
 userSchema.pre("validate", trackedEntityPreValidateFunc);
 
+// TODO investigate why this works, might save before password set?
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 userSchema.post("validate", async function(this: IUser) {
   if (this.isNew || this.modifiedPaths().includes("password")) {
     this.password = await bcrypt.hash(

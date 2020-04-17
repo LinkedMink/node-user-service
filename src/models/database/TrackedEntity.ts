@@ -23,7 +23,7 @@ export interface ITrackedEntity extends Document {
   modifiedBy: string;
 }
 
-export function trackedEntityPreValidateFunc(this: ITrackedEntity, next: HookNextFunction) {
+export function trackedEntityPreValidateFunc(this: ITrackedEntity, next: HookNextFunction): void {
   const currentDateTime = new Date();
   if (this.isNew) {
     this.createdDate = currentDateTime;

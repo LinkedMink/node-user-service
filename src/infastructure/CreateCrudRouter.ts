@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
-import { Document, DocumentQuery, Model } from "mongoose";
+import { Document, DocumentQuery, Model, FilterQuery } from "mongoose";
 
 import { authorizeJwtClaim } from "../middleware/Authorization";
 import { IJwtPayload } from "../middleware/Passport";
@@ -11,9 +11,9 @@ import { objectDescriptorBodyVerify } from "./ObjectDescriptor";
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
-export type GetFilterFunction = (user: IJwtPayload) => { [key: string]: any };
+export type GetFilterFunction<T> = (user: IJwtPayload) => FilterQuery<T>
 
-export const filterByUserId = (user: IJwtPayload) => ({ userId: user.sub });
+export const filterByUserId: GetFilterFunction<Document> = (user: IJwtPayload) => ({ userId: user.sub });
 
 export const createCrudRouter = <TFrontend extends object, TBackend extends Document>(
   model: Model<TBackend, {}>,
@@ -21,15 +21,15 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
   requiredClaimRead?: string,
   requiredClaimWrite?: string,
   authorizeWriteHandler?: RequestHandler,
-  getFilterFunc?: GetFilterFunction,
-  isPagingMandatory = true) => {
+  getFilterFunc?: GetFilterFunction<TBackend>,
+  isPagingMandatory = true): Router => {
 
   const router = Router();
 
   const getEntityListHandlers: RequestHandler[] = [
     objectDescriptorBodyVerify(searchRequestDescriptor, false),
-    async (req: Request<ParamsDictionary, any, any>, res: Response) => {
-      const reqData = req.query as ISearchRequest;
+    async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
+      const reqData = req.query as ISearchRequest<TBackend>;
 
       let query: DocumentQuery<TBackend[], TBackend, {}>;
       if (reqData.query) {
@@ -42,7 +42,8 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
           }
         } catch (e) {
           res.status(400);
-          return res.send(getResponseFailed("The supplied query is invalid"));
+          res.send(getResponseFailed("The supplied query is invalid"));
+          return;
         }
       } else {
         if (getFilterFunc) {
@@ -57,7 +58,8 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
           query = query.sort(reqData.sort);
         } catch (e) {
           res.status(400);
-          return res.send(getResponseFailed("The supplied sort is invalid"));
+          res.send(getResponseFailed("The supplied sort is invalid"));
+          return;
         }
       }
 
@@ -76,11 +78,11 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
       });
 
       const response = getResponseSuccess(responseData);
-      return res.send(response);
+      res.send(response);
     },
   ];
 
-  const getEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const getEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
     const entityId = req.params.entityId;
 
     let query: DocumentQuery<TBackend | null, TBackend, {}>;
@@ -94,14 +96,14 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
     const entity = await query.exec();
     if (entity) {
       const response = getResponseSuccess(modelConverter.convertToFrontend(entity));
-      return res.send(response);
+      res.send(response);
     } else {
       res.status(404);
-      return res.send(getResponseFailed(`Failed to find ID: ${entityId}`));
+      res.send(getResponseFailed(`Failed to find ID: ${entityId}`));
     }
   }];
 
-  const addEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const addEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
     const userId = (req.user as IJwtPayload).sub;
     const toSave = modelConverter.convertToBackend(req.body, undefined, `User(${userId})`);
     const saveModel = new model(toSave);
@@ -121,35 +123,43 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
     });
   }];
 
-  const updateEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const updateEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
     const entityId = req.params.entityId;
     const toUpdate = await model.findById(entityId).exec();
     if (toUpdate === null) {
       res.status(404);
-      return res.send(getResponseFailed(`Failed to find ID: ${entityId}`));
+      res.send(getResponseFailed(`Failed to find ID: ${entityId}`));
+      return
     }
 
     const userId = (req.user as IJwtPayload).sub;
     const updateModel = modelConverter.convertToBackend(req.body, toUpdate, `User(${userId})`);
-    await updateModel.validate(async (error) => {
-      if (error) {
-        res.status(400);
-        return res.send(getResponseFailed(error));
-      }
-
-      await model.findByIdAndUpdate(entityId, updateModel, (updateError) => {
-        if (!updateError) {
-          const response = getResponseSuccess(modelConverter.convertToFrontend(updateModel));
-          return res.send(response);
-        } else {
-          res.status(500);
-          return res.send(getResponseFailed(updateError.message));
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return new Promise((resolve, reject) => {
+      updateModel.validate(error => {
+        if (error) {
+          res.status(400);
+          res.send(getResponseFailed(error));
+          resolve();
         }
-      }).exec();
+  
+        model.findByIdAndUpdate(entityId, updateModel, updateError => {
+          if (!updateError) {
+            const response = getResponseSuccess(modelConverter.convertToFrontend(updateModel));
+            res.send(response);
+            resolve();
+          } else {
+            res.status(500);
+            res.send(getResponseFailed(updateError.message));
+            resolve();
+          }
+        }).exec();
+      });
     });
   }];
 
-  const deleteEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const deleteEntityHandlers: RequestHandler[] = [async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
     const entityId = req.params.entityId;
 
     let query: DocumentQuery<TBackend | null, TBackend, {}>;
@@ -162,10 +172,10 @@ export const createCrudRouter = <TFrontend extends object, TBackend extends Docu
 
     const deleted = await query.exec();
     if (deleted) {
-      return res.send(getResponseSuccess());
+      res.send(getResponseSuccess());
     } else {
       res.status(404);
-      return res.send(getResponseFailed(`Failed to delete ID: ${entityId}`));
+      res.send(getResponseFailed(`Failed to delete ID: ${entityId}`));
     }
   }];
 

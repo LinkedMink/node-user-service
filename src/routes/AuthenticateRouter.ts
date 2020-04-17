@@ -40,7 +40,7 @@ export const authenticateRouter = Router();
  *         schema:
  *           $ref: '#/definitions/ErrorResponse'
  */
-authenticateRouter.post("/", (req: Request<ParamsDictionary, any, any>, res: Response) => {
+authenticateRouter.post("/", (req: Request<ParamsDictionary>, res: Response) => {
   passport.authenticate("local", { session: false }, (authError, user: IUser) => {
     if (authError || !user) {
       res.status(400)

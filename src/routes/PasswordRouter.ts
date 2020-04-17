@@ -28,7 +28,7 @@ export const passwordRouter = Router();
  *       200:
  *         description: The request was successful.
  */
-passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+passwordRouter.get("/:email", async (req: Request<ParamsDictionary>, res: Response) => {
   const email = req.params.email;
   const user = await User.findOne({ email }).exec();
   if (!user) {
@@ -77,7 +77,7 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, r
  */
 passwordRouter.put("/",
   objectDescriptorBodyVerify(passwordResetRequestDescriptor),
-  async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  async (req: Request<ParamsDictionary>, res: Response) => {
     const requestData = req.body as IPasswordResetRequest;
 
     const user = await User.findOne({ email: requestData.email }).exec();

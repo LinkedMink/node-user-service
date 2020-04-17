@@ -23,7 +23,7 @@ export interface IJwtPayload {
   sub: string;
 }
 
-export const addLocalStrategy = (passport: PassportStatic) => {
+export const addLocalStrategy = (passport: PassportStatic): void => {
   const maxLoginAttempts = config.getNumber(ConfigKey.UserPassMaxAttempts);
   const lockoutMilliseonds = config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
 
@@ -34,6 +34,8 @@ export const addLocalStrategy = (passport: PassportStatic) => {
     passReqToCallback: true,
   };
 
+  // TODO investigate why this works, is async function really a middleware function?
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   passport.use(new LocalStrategy(options, async (request, email, password, done) => {
     try {
       const user = await User.findOne({email}).exec();
@@ -83,7 +85,7 @@ export const addLocalStrategy = (passport: PassportStatic) => {
   }));
 };
 
-export const addJwtStrategy = (passport: PassportStatic) => {
+export const addJwtStrategy = (passport: PassportStatic): void => {
   const options: JwtStrategyOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: config.getFileBuffer(ConfigKey.JwtSecretKeyFile),

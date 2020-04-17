@@ -1,4 +1,5 @@
 import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
+import { FilterQuery } from "mongoose";
 
 export enum SortOrder {
   Descending = -1,
@@ -20,14 +21,14 @@ export enum SortOrder {
  *       query:
  *         type: string
  */
-export interface ISearchRequest {
+export interface ISearchRequest<T> {
   pageSize?: number;
   pageNumber?: number;
   sort?: { [key: string]: SortOrder };
-  query?: { [key: string]: any };
+  query?: FilterQuery<T>;
 }
 
-export const searchRequestDescriptor = new ObjectDescriptor<ISearchRequest>(
+export const searchRequestDescriptor = new ObjectDescriptor<ISearchRequest<Document>>(
   {
     pageSize: [{
       value: ObjectAttribute.Range,
@@ -39,7 +40,7 @@ export const searchRequestDescriptor = new ObjectDescriptor<ISearchRequest>(
     }],
   },
   true,
-  (toSanitize: ISearchRequest) => {
+  (toSanitize: ISearchRequest<Document>) => {
     if (toSanitize.pageSize) {
       toSanitize.pageSize = Number(toSanitize.pageSize);
     }

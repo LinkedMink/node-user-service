@@ -15,6 +15,7 @@ export class AccountConverter implements IModelConverter<IAccountModel, IUser> {
     existing?: IUser | undefined,
     modifier?: string): IUser => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tempReturnModel: any = {};
     if (existing) {
       tempReturnModel = existing;

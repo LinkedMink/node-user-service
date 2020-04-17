@@ -20,6 +20,7 @@ export class ClaimConverter implements IModelConverter<IClaimModel, IClaim> {
     existing?: IClaim | undefined,
     modifier?: string): IClaim => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tempReturnModel: any = {};
     if (existing) {
       tempReturnModel = existing;

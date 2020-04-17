@@ -17,6 +17,7 @@ describe("passport.ts", () => {
   test("JwtStrategy should verify expire date", () => {
     // Arrange
     addJwtStrategy(passport);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const jwtHandler = (passport as any)._strategies.jwt._verify;
     const jwtPayload = { exp: (Date.now() - 1000) / 1000 };
     const doneFunc = jest.fn();
@@ -32,6 +33,7 @@ describe("passport.ts", () => {
   test("JwtStrategy should pass payload to next function and set user", () => {
     // Arrange
     addJwtStrategy(passport);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const jwtHandler = (passport as any)._strategies.jwt._verify;
     const jwtPayload = { test: "TEST" };
     const doneFunc = jest.fn();

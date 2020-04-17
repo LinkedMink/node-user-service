@@ -29,7 +29,7 @@ settingSchema.index(
 export interface ISetting extends IUserEntity {
   name: string;
   applications: Types.Array<string>;
-  data: any;
+  data: unknown;
 }
 
 export const Setting = model<ISetting>("Setting", settingSchema);

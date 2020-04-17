@@ -10,7 +10,7 @@ const PROGRAM_DESCRIPTOR = "node-user-service seedClaims.ts";
 
 const logger = Logger.get();
 
-const loadJson = (filePath: string) => {
+const loadJson = (filePath: string): IClaimModel[] => {
   const data = fs.readFileSync(filePath, "utf8");
   const properties = JSON.parse(data);
 
@@ -23,7 +23,7 @@ connectSingletonDatabase();
 
 let hasProcessed = 0;
 
-const saveClaim = (toSave: IClaim) => {
+const saveClaim = (toSave: IClaim): void => {
   const user = new Claim(toSave);
   user.save()
     .then(() => {
@@ -42,7 +42,7 @@ const saveClaim = (toSave: IClaim) => {
 };
 
 const converter = new ClaimConverter();
-claims.forEach((claim: IClaimModel) => {
+claims.forEach(claim => {
   const entity = converter.convertToBackend(claim, undefined, PROGRAM_DESCRIPTOR);
   saveClaim(entity);
 });

@@ -24,16 +24,18 @@ export const getUserAndCheckVerified = async (res: Response, email: string): Pro
   return user;
 };
 
-export const sendEmailWithCode = (res: Response, email: string, code: string, data: object | null = null) => {
-  sendVerifyEmail(email, code)
-    .then(() => res.send(getResponseObject(ResponseStatus.Success, data)))
+export const sendEmailWithCode = (res: Response, email: string, code: string, data: object | null = null): Promise<void> => {
+  return sendVerifyEmail(email, code)
+    .then(() => {
+      res.send(getResponseObject(ResponseStatus.Success, data))
+    })
     .catch(() => {
       res.status(500);
-      return res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));
+      res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));
     });
 };
 
-export const getEmailVerificationCode = () => {
+export const getEmailVerificationCode = (): string => {
   return cryptoRandomString({
     length: VERIFICATION_KEY_LENGTH,
     type: "url-safe",

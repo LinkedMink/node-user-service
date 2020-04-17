@@ -22,7 +22,7 @@ export const accountRouter = Router();
  *       200:
  *         description: The request was successful.
  */
-accountRouter.get("/", authorizeJwtClaim(), async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+accountRouter.get("/", authorizeJwtClaim(), async (req: Request<ParamsDictionary>, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
   const entity = await User.findById(userId).exec();
 
@@ -54,7 +54,7 @@ accountRouter.get("/", authorizeJwtClaim(), async (req: Request<ParamsDictionary
 accountRouter.put("/",
   authorizeJwtClaim(),
   objectDescriptorBodyVerify(accountRequestDescriptor),
-  async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  async (req: Request<ParamsDictionary>, res: Response) => {
 
   const userId = (req.user as IJwtPayload).sub;
   const account = req.body as IAccountModel;
@@ -70,27 +70,33 @@ accountRouter.put("/",
     user.temporaryKey = getEmailVerificationCode();
   }
 
-  await user.validate(async (error) => {
-    if (error) {
-      res.status(400);
-      return res.send(getResponseFailed(error));
-    }
-
-    await User.findByIdAndUpdate(userId, user, (updateError) => {
-      if (!updateError) {
-        const newRecord = accountConverter.convertToFrontend(user);
-
-        if (account.email) {
-          sendEmailWithCode(res, user.email, user.temporaryKey as string, newRecord);
-        } else {
-          return res.send(getResponseSuccess(newRecord));
-        }
-      } else {
-        res.status(500);
-        return res.send(getResponseFailed(updateError.message));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return new Promise((resolve, reject) => {
+    user.validate(error => {
+      if (error) {
+        res.status(400);
+        res.send(getResponseFailed(error));
+        resolve();
       }
-    }).exec();
-  });
+  
+      User.findByIdAndUpdate(userId, user, (updateError) => {
+        if (!updateError) {
+          const newRecord = accountConverter.convertToFrontend(user);
+  
+          if (account.email) {
+            sendEmailWithCode(res, user.email, user.temporaryKey as string, newRecord).then(resolve);
+          } else {
+            res.send(getResponseSuccess(newRecord));
+            resolve();
+          }
+        } else {
+          res.status(500);
+          res.send(getResponseFailed(updateError.message));
+          resolve();
+        }
+      }).exec();
+    });
+  }); 
 });
 
 /**
@@ -103,7 +109,7 @@ accountRouter.put("/",
  *       200:
  *         description: The request was successful.
  */
-accountRouter.delete("/", authorizeJwtClaim(),  async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+accountRouter.delete("/", authorizeJwtClaim(),  async (req: Request<ParamsDictionary>, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
   const deleted = await User.findByIdAndDelete(userId).exec();
 

@@ -1,6 +1,7 @@
 import { NextFunction, ParamsDictionary, Request, Response } from "express-serve-static-core";
 
 import { getResponseObject, ResponseStatus } from "../models/IResponseData";
+import { isString } from "./Core";
 
 export enum ObjectAttribute {
   Required,
@@ -10,7 +11,7 @@ export enum ObjectAttribute {
 
 export interface IObjectAttributeParams {
   value: ObjectAttribute;
-  params: { [key: string]: any };
+  params: { [key: string]: string | number };
 }
 
 export class ObjectDescriptor<TVerify> {
@@ -19,7 +20,7 @@ export class ObjectDescriptor<TVerify> {
     private isEmptyRequestAllowed: boolean = false,
     private sanitizeFunc?: (toSanitize: TVerify) => TVerify) {}
 
-  public verify = (toVerify: any): string[] | TVerify => {
+  public verify = (toVerify: { [key: string]: unknown }): string[] | TVerify => {
     const errors: string[] = [];
 
     if (!this.isEmptyRequestAllowed &&
@@ -31,34 +32,35 @@ export class ObjectDescriptor<TVerify> {
 
     for (const [property, attributes] of Object.entries(this.descriptors)) {
       attributes.forEach((attribute) => {
-        if (attribute === ObjectAttribute.Required && !toVerify[property]) {
+        const toVerifyProperty = toVerify[property];
+        if (attribute === ObjectAttribute.Required && toVerifyProperty === undefined) {
           errors.push(`${property}: Required`);
           return;
         }
 
-        if (!toVerify[property]) {
+        if (toVerifyProperty === undefined) {
           return;
         }
 
         const complex = (attribute as IObjectAttributeParams);
         if (complex.value === ObjectAttribute.Range) {
           if (complex.params.min !== undefined &&
-            Number(toVerify[property]) < complex.params.min) {
+            Number(toVerifyProperty) < complex.params.min) {
             errors.push(`${property}: must be greater than ${complex.params.min}`);
           }
 
           if (complex.params.max !== undefined &&
-            Number(toVerify[property]) > complex.params.max) {
+            Number(toVerifyProperty) > complex.params.max) {
             errors.push(`${property}: must be less than ${complex.params.max}`);
           }
-        } else if (complex.value === ObjectAttribute.Length) {
+        } else if (complex.value === ObjectAttribute.Length && isString(toVerifyProperty)) {
           if (complex.params.min !== undefined &&
-            toVerify[property].length < complex.params.min) {
+            toVerifyProperty.length < complex.params.min) {
             errors.push(`${property}: must be longer than ${complex.params.min}`);
           }
 
           if (complex.params.max !== undefined &&
-            toVerify[property].length > complex.params.max) {
+            toVerifyProperty.length > complex.params.max) {
             errors.push(`${property}: must be shorter than ${complex.params.max}`);
           }
         }
@@ -69,10 +71,10 @@ export class ObjectDescriptor<TVerify> {
       return errors;
     }
 
-    return toVerify as TVerify;
+    return toVerify as unknown as TVerify;
   }
 
-  public sanitize = (toSanitize: TVerify) => {
+  public sanitize = (toSanitize: TVerify): TVerify => {
     if (this.sanitizeFunc) {
       return this.sanitizeFunc(toSanitize);
     }
@@ -84,7 +86,7 @@ export class ObjectDescriptor<TVerify> {
 export const objectDescriptorBodyVerify = <TVerify>(
   descriptor: ObjectDescriptor<TVerify>,
   isInBody = true) => {
-  return (req: Request<ParamsDictionary, any, any>, res: Response, next: NextFunction) => {
+  return (req: Request<ParamsDictionary>, res: Response, next: NextFunction): void => {
     let data = req.body;
     if (!isInBody) {
       data = req.query;
@@ -94,7 +96,8 @@ export const objectDescriptorBodyVerify = <TVerify>(
     if ((modelCheck as string[]).length) {
       const response = getResponseObject(ResponseStatus.RequestValidation, { errors: modelCheck });
       res.status(400);
-      return res.send(response);
+      res.send(response);
+      return;
     } else {
       if (isInBody) {
         req.body = descriptor.sanitize(modelCheck as TVerify);

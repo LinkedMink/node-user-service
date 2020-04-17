@@ -22,6 +22,7 @@ export class SettingConverter implements IModelConverter<ISettingModel, ISetting
     existing?: ISetting | undefined,
     modifier?: string): ISetting => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tempReturnModel: any = {};
     if (existing) {
       tempReturnModel = existing;

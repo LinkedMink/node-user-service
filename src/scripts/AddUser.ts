@@ -27,7 +27,7 @@ const userData: IUserModel = {
   isLocked: false,
 };
 
-const saveUser = (toSave: IUser) => {
+const saveUser = (toSave: IUser): void => {
   const user = new User(toSave);
   user.save()
     .then(() => { process.exit(0); })

@@ -3,9 +3,6 @@ import mongoose from "mongoose";
 import { config, ConfigKey } from "./Config";
 import { Logger } from "./Logger";
 
-const RECONNECT_TRIES = 60;
-const RECONNECT_INTERVAL = 1000;
-
 const logger = Logger.get("Database");
 const connectionString = config.getString(ConfigKey.MongoDbConnectionString);
 
@@ -37,12 +34,10 @@ mongoose.connection.on("error", (error) => {
   // TODO handle error
 });
 
-export const connectSingletonDatabase = () => {
+export const connectSingletonDatabase = (): Promise<typeof mongoose> => {
   return mongoose
     .connect(connectionString, {
       useNewUrlParser: true,
-      reconnectTries: RECONNECT_TRIES,
-      reconnectInterval: RECONNECT_INTERVAL,
       useUnifiedTopology: true
     })
     .catch((error) => {

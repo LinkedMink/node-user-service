@@ -32,7 +32,7 @@ export const registerRouter = Router();
  */
 registerRouter.post("/",
   objectDescriptorBodyVerify(registerRequestDescriptor),
-  async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  async (req: Request<ParamsDictionary>, res: Response) => {
     const requestData = req.body as IRegisterRequest;
 
     const userData =  requestData as IUserModel;
@@ -83,7 +83,7 @@ registerRouter.post("/",
  *       200:
  *         description: The user was verified successfully.
  */
-registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary>, res: Response) => {
   const email = req.params.email;
   const code = req.params.code;
   const user = await getUserAndCheckVerified(res, email);
@@ -122,7 +122,7 @@ registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary, any, a
  *       200:
  *         description: The email was sent successfully.
  */
-registerRouter.get("/:email", async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+registerRouter.get("/:email", async (req: Request<ParamsDictionary>, res: Response) => {
   const email = req.params.email;
   const user = await getUserAndCheckVerified(res, email);
   if (!user) { return res; }
