@@ -2,19 +2,20 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDes
 
 /**
  * @swagger
- * definitions:
- *   IAuthenticateRequest:
- *     type: object
- *     properties:
- *       email:
- *         type: string
- *         format: email
- *       password:
- *         type: string
- *         format: password
- *     required:
- *       - email
- *       - password
+ * components:
+ *   schemas:
+ *     IAuthenticateRequest:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *         password:
+ *           type: string
+ *           format: password
+ *       required:
+ *         - email
+ *         - password
  */
 export interface IAuthenticateRequest {
   email: string;

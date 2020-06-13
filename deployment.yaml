@@ -1,3 +1,16 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-private-key
+type: Opaque
+stringData:
+  jwtRS256.key: |-
+    -----BEGIN RSA PRIVATE KEY-----
+    ... my private key ...
+    -----END RSA PRIVATE KEY-----
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,12 +27,21 @@ spec:
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
+      volumes:
+      - name: jwt-private-key
+        secret:
+          secretName: jwt-private-key
       containers:
       - name: node-user-service
         image: linkedmink/node-user-service
         imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: jwt-private-key
+          mountPath: /usr/src/app/jwtRS256.key
+          subPath: jwtRS256.key
+          readOnly: true
         env:
         - name: SERVICE_BASE_URL
           value: "https://[Your Host]"

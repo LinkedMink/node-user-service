@@ -16,6 +16,7 @@ if [ -z "$KUBERNETES_NAMESPACE" ]; then
 fi
 
 npm run build
+npm run postBuild
 
 if [ "$1" = "deploy" ]; then
   kubectl set image \

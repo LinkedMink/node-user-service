@@ -1,0 +1,39 @@
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    ObjectId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: object-id
+  responses:
+    200Null:
+       description: The request was successful
+       content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ObjectResponse'
+    400BadRequest:
+      description: The supplied parameters are invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    404NotFound:
+      description: The requested item wasn't found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    500Internal:
+      description: An unspecified error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

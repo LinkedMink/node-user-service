@@ -3,16 +3,23 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDes
 
 /**
  * @swagger
- * definitions:
- *   IAccountModel:
- *     type: object
- *     properties:
- *       email:
- *         type: string
- *         format: email
- *       password:
- *         type: string
- *         format: password
+ * components:
+ *   schemas:
+ *     IAccountModel:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *         password:
+ *           type: string
+ *           format: password
+ *     AccountModelResponse:
+ *       properties:
+ *         status:
+ *           $ref: '#/components/schemas/Response/properties/status'
+ *         data:
+ *           $ref: '#/components/schemas/IAccountModel'
  */
 export interface IAccountModel {
   id?: string;

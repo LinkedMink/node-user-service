@@ -15,6 +15,131 @@ export type GetFilterFunction<T> = (user: IJwtPayload) => FilterQuery<T>
 
 export const filterByUserId: GetFilterFunction<Document> = (user: IJwtPayload) => ({ userId: user.sub });
 
+/**
+ * @swagger
+ * /[ObjectType]:
+ *   get:
+ *     description: Get the details of a list of [ObjectType]
+ *     tags: [[ObjectType]]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: pageNumber
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: The retrieved [ObjectType] list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/[ObjectType]ModelResponse'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
+ * @swagger
+ * /[ObjectType]/{id}:
+ *   get:
+ *     description: Get the details of a specific [ObjectType]
+ *     tags: [[ObjectType]]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/ObjectId'
+ *     responses:
+ *       200:
+ *         description: The retrieved [ObjectType]
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/[ObjectType]ModelResponse'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
+ * 
+ * @swagger
+ * /[ObjectType]:
+ *   post:
+ *     description: Save a new [ObjectType]
+ *     tags: [[ObjectType]]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/I[ObjectType]Model'
+ *     responses:
+ *       200:
+ *         description: The added [ObjectType]
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/[ObjectType]ModelResponse'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
+ * @swagger
+ * /[ObjectType]/{id}:
+ *   put:
+ *     description: Update an existing [ObjectType]
+ *     tags: [[ObjectType]]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/ObjectId'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/I[ObjectType]Model'
+ *     responses:
+ *       200:
+ *         description: The updated [ObjectType]
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/[ObjectType]ModelResponse'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
+ * 
+ * @swagger
+ * /[ObjectType]/{id}:
+ *   delete:
+ *     description: Delete a specific [ObjectType]
+ *     tags: [[ObjectType]]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/ObjectId'
+ *     responses:
+ *       200:
+ *         $ref: '#/components/responses/200Null'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
+ */
 export const createCrudRouter = <TFrontend extends object, TBackend extends Document>(
   model: Model<TBackend, {}>,
   modelConverter: IModelConverter<TFrontend, TBackend>,

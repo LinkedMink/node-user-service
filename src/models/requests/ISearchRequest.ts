@@ -8,18 +8,19 @@ export enum SortOrder {
 
 /**
  * @swagger
- * definitions:
- *   ISearchRequest:
- *     type: object
- *     properties:
- *       pageSize:
- *         type: string
- *       pageNumber:
- *         type: string
- *       sort:
- *         type: string
- *       query:
- *         type: string
+ * components:
+ *   schemas:
+ *     ISearchRequest:
+ *       type: object
+ *       properties:
+ *         pageSize:
+ *           type: string
+ *         pageNumber:
+ *           type: string
+ *         sort:
+ *           type: string
+ *         query:
+ *           type: string
  */
 export interface ISearchRequest<T> {
   pageSize?: number;

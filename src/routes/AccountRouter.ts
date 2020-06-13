@@ -18,9 +18,17 @@ export const accountRouter = Router();
  *   get:
  *     description: Get a user's profile
  *     tags: [Account]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: The request was successful.
+ *         description: The user record matching the input token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AccountModelResponse'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 accountRouter.get("/", authorizeJwtClaim(), async (req: Request<ParamsDictionary>, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
@@ -41,15 +49,25 @@ accountRouter.get("/", authorizeJwtClaim(), async (req: Request<ParamsDictionary
  *   put:
  *     description: Update a user's account
  *     tags: [Account]
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IAccountModel'
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IAccountModel'
  *     responses:
  *       200:
- *         description: The request was successful.
+ *         description: The newly created user record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AccountModelResponse'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 accountRouter.put("/",
   authorizeJwtClaim(),
@@ -105,9 +123,13 @@ accountRouter.put("/",
  *   delete:
  *     description: Delete a user's account
  *     tags: [Account]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: The request was successful.
+ *         $ref: '#/components/responses/200Null'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 accountRouter.delete("/", authorizeJwtClaim(),  async (req: Request<ParamsDictionary>, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;

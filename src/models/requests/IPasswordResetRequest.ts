@@ -3,22 +3,23 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDes
 
 /**
  * @swagger
- * definitions:
- *   IPasswordResetRequest:
- *     type: object
- *     properties:
- *       email:
- *         type: string
- *         format: email
- *       resetToken:
- *         type: string
- *       password:
- *         type: string
- *         format: password
- *     required:
- *       - email
- *       - resetToken
- *       - password
+ * components:
+ *   schemas:
+ *     IPasswordResetRequest:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *         resetToken:
+ *           type: string
+ *         password:
+ *           type: string
+ *           format: password
+ *       required:
+ *         - email
+ *         - resetToken
+ *         - password
  */
 export interface IPasswordResetRequest {
   email: string;

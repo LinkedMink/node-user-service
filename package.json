@@ -1,6 +1,6 @@
 {
   "name": "node-user-service",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "Service for authenticating and managing users",
   "license": "MIT",
   "author": {
@@ -13,14 +13,15 @@
   },
   "private": true,
   "scripts": {
-    "start": "npm run build && npm run startApp",
+    "start": "ts-node-dev --inspect --respawn --transpileOnly -r dotenv/config ./src/App.ts",
     "build": "tsc",
+    "postBuild": "node -r dotenv/config ./build/src/scripts/PostBuild.js",
     "startApp": "node -r dotenv/config ./build/src/App.js",
     "watch": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./src/App.ts",
     "test": "cross-env NODE_ENV=unitTest jest",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src ./tests",
     "lintFix": "eslint -c .eslintrc.js --ext .ts --fix ./src ./tests",
-    "containerize": "npm run build && docker build -t linkedmink/node-user-service .",
+    "containerize": "npm run build && npm run postBuild && docker build -t linkedmink/node-user-service .",
     "addUser": "node -r dotenv/config ./build/src/scripts/AddUser.js",
     "seedClaims": "node -r dotenv/config ./build/src/scripts/SeedClaims.js"
   },
@@ -39,8 +40,8 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pug": "^2.0.4",
-    "swagger-jsdoc": "^3.4.0",
-    "swagger-ui-express": "^4.1.2",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4",
     "winston": "^3.2.1"
   },
   "devDependencies": {
@@ -54,20 +55,21 @@
     "@types/mongodb": "^3.5.8",
     "@types/mongoose": "^5.7.11",
     "@types/morgan": "^1.7.37",
+    "@types/node": "^14.0.11",
     "@types/nodemailer": "^6.2.2",
     "@types/passport": "^1.0.3",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
     "@types/pug": "^2.0.4",
     "@types/swagger-jsdoc": "^3.0.2",
-    "@types/swagger-ui-express": "~4.1.0",
+    "@types/swagger-ui-express": "^4.1.2",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
     "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
+    "ts-jest": "^26.1.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
   }

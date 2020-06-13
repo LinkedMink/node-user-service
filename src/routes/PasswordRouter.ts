@@ -24,9 +24,18 @@ export const passwordRouter = Router();
  *       - in: path
  *         name: email
  *         required: true
+ *         schema:
+ *           type: string
+ *           format: email
  *     responses:
  *       200:
- *         description: The request was successful.
+ *         $ref: '#/components/responses/200Null'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 passwordRouter.get("/:email", async (req: Request<ParamsDictionary>, res: Response) => {
   const email = req.params.email;
@@ -65,15 +74,19 @@ passwordRouter.get("/:email", async (req: Request<ParamsDictionary>, res: Respon
  *   put:
  *     description: Use the temporary reset key to change a user's password
  *     tags: [Password]
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IPasswordResetRequest'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IPasswordResetRequest'
  *     responses:
  *       200:
- *         description: The request was successful.
+ *         $ref: '#/components/responses/200Null'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
  */
 passwordRouter.put("/",
   objectDescriptorBodyVerify(passwordResetRequestDescriptor),

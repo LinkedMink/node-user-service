@@ -7,96 +7,126 @@ import { Setting } from "../models/database/Setting";
  * @swagger
  * /Settings:
  *   get:
- *     description: Get the details of a specific Settings
+ *     description: Get the details of a list of Settings
  *     tags: [Settings]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: query
- *         name: page
- *         type: integer
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: pageNumber
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: The retrieved list of Settings
+ *         description: The retrieved Settings list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/SettingsModelResponse'
  *       400:
- *         description: The supplied parameters are invalid
- *
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
  * @swagger
  * /Settings/{id}:
  *   get:
  *     description: Get the details of a specific Settings
  *     tags: [Settings]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
+ *       - $ref: '#/components/parameters/ObjectId'
  *     responses:
  *       200:
  *         description: The retrieved Settings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SettingsModelResponse'
  *       404:
- *         description: The id doesn't match a Settings
- *
+ *         $ref: '#/components/responses/404NotFound'
+ * 
  * @swagger
  * /Settings:
  *   post:
  *     description: Save a new Settings
  *     tags: [Settings]
  *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/ISettingsModel'
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ISettingsModel'
  *     responses:
  *       200:
- *         description: The saved Settings
+ *         description: The added Settings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SettingsModelResponse'
  *       400:
- *         description: The supplied Settings is invalid
- *
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
  * @swagger
  * /Settings/{id}:
  *   put:
  *     description: Update an existing Settings
  *     tags: [Settings]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/ISettingsModel'
+ *       - $ref: '#/components/parameters/ObjectId'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ISettingsModel'
  *     responses:
  *       200:
  *         description: The updated Settings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SettingsModelResponse'
  *       400:
- *         description: The supplied Settings is invalid
+ *         $ref: '#/components/responses/400BadRequest'
  *       404:
- *         description: The id doesn't match a Settings
- *
+ *         $ref: '#/components/responses/404NotFound'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
+ * 
  * @swagger
  * /Settings/{id}:
  *   delete:
  *     description: Delete a specific Settings
  *     tags: [Settings]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
+ *       - $ref: '#/components/parameters/ObjectId'
  *     responses:
  *       200:
- *         description: The Settings was deleted
+ *         $ref: '#/components/responses/200Null'
  *       404:
- *         description: The id doesn't match a Settings
+ *         $ref: '#/components/responses/404NotFound'
  */
 export const settingRouter = createCrudRouter(
     Setting,

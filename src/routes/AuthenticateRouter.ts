@@ -6,39 +6,31 @@ import passport from "passport";
 import { config, ConfigKey } from "../infastructure/Config";
 import { IUser } from "../models/database/User";
 import { getResponseObject, ResponseStatus } from "../models/IResponseData";
+import { IBearerToken } from "../models/responses/IBearerToken";
 
 export const authenticateRouter = Router();
 
 /**
  * @swagger
- * definitions:
- *   SuccessResponse:
- *     type: object
- *     properties:
- *       status: { type: string }
- *       data:
- *         type: string
- *         description: The authentication token as a string
- *
  * /authenticate:
  *   post:
  *     description: Authenticate the user credentials and retrieve a token for subsequent request
  *     tags: [Authenticate]
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IAuthenticateRequest'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IAuthenticateRequest'
  *     responses:
  *       200:
  *         description: The authentication token for the specified user
- *         schema:
- *           $ref: '#/definitions/SuccessResponse'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BearerTokenResponse'
  *       400:
- *         description: The supplied parameters failed to authenticate
- *         schema:
- *           $ref: '#/definitions/ErrorResponse'
+ *         $ref: '#/components/responses/400BadRequest'
  */
 authenticateRouter.post("/", (req: Request<ParamsDictionary>, res: Response) => {
   passport.authenticate("local", { session: false }, (authError, user: IUser) => {
@@ -80,7 +72,7 @@ authenticateRouter.post("/", (req: Request<ParamsDictionary>, res: Response) => 
       const response = getResponseObject();
       response.data = {
         token,
-      };
+      } as IBearerToken;
 
       res.status(200).send(response);
     });

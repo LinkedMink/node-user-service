@@ -1,33 +1,14 @@
 import { Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 
-import { config, Environment } from "../infastructure/Config";
+import { config } from "../infastructure/Config";
 import { getResponseObject } from "../models/IResponseData";
+import { IPingMark } from "../models/responses/IPingMark";
 
 export const pingRouter = Router();
 
 /**
  * @swagger
- * definitions:
- *   PingMark:
- *     type: object
- *     properties:
- *       mark:
- *         type: integer
- *       application:
- *         type: string
- *       version:
- *         type: string
- *   PingSuccessResponse:
- *     type: object
- *     properties:
- *       status:
- *         type: integer
- *       data:
- *         type: object
- *         schema:
- *           $ref: '#/definitions/PingMark'
- *
  * /ping:
  *   get:
  *     description: Get a response to determine if the service is running
@@ -38,23 +19,16 @@ export const pingRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/definitions/PingSuccessResponse'
+ *               $ref: '#/components/schemas/PingMarkResponse'
  */
 pingRouter.get("/", (req: Request<ParamsDictionary>, res: Response) => {
   const pingResponse = getResponseObject();
 
-  if (process.env.NODE_ENV === Environment.Production) {
-    pingResponse.data = {
-      mark: Date.now(),
-      application: config.packageJson.name,
-    };
-  } else {
-    pingResponse.data = {
-      mark: Date.now(),
-      application: config.packageJson.name,
-      version: config.packageJson.version,
-    };
-  }
+  pingResponse.data = {
+    mark: Date.now(),
+    application: config.packageJson.name,
+    version: config.packageJson.version,
+  } as IPingMark;
 
   res.send(pingResponse);
 });

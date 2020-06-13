@@ -7,96 +7,126 @@ import { User } from "../models/database/User";
  * @swagger
  * /User:
  *   get:
- *     description: Get the details of a specific User
+ *     description: Get the details of a list of User
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: query
- *         name: page
- *         type: integer
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: pageNumber
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: The retrieved list of User
+ *         description: The retrieved User list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserModelResponse'
  *       400:
- *         description: The supplied parameters are invalid
- *
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
  * @swagger
  * /User/{id}:
  *   get:
  *     description: Get the details of a specific User
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
+ *       - $ref: '#/components/parameters/ObjectId'
  *     responses:
  *       200:
  *         description: The retrieved User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserModelResponse'
  *       404:
- *         description: The id doesn't match a User
- *
+ *         $ref: '#/components/responses/404NotFound'
+ * 
  * @swagger
  * /User:
  *   post:
  *     description: Save a new User
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IUserModel'
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IUserModel'
  *     responses:
  *       200:
- *         description: The saved User
+ *         description: The added User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserModelResponse'
  *       400:
- *         description: The supplied User is invalid
- *
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
  * @swagger
  * /User/{id}:
  *   put:
  *     description: Update an existing User
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IUserModel'
+ *       - $ref: '#/components/parameters/ObjectId'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IUserModel'
  *     responses:
  *       200:
  *         description: The updated User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserModelResponse'
  *       400:
- *         description: The supplied User is invalid
+ *         $ref: '#/components/responses/400BadRequest'
  *       404:
- *         description: The id doesn't match a User
- *
+ *         $ref: '#/components/responses/404NotFound'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
+ * 
  * @swagger
  * /User/{id}:
  *   delete:
  *     description: Delete a specific User
  *     tags: [User]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
+ *       - $ref: '#/components/parameters/ObjectId'
  *     responses:
  *       200:
- *         description: The User was deleted
+ *         $ref: '#/components/responses/200Null'
  *       404:
- *         description: The id doesn't match a User
+ *         $ref: '#/components/responses/404NotFound'
  */
 export const userRouter = createCrudRouter(
     User,

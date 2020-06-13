@@ -3,19 +3,20 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDes
 
 /**
  * @swagger
- * definitions:
- *   IRegisterRequest:
- *     type: object
- *     properties:
- *       email:
- *         type: string
- *         format: email
- *       password:
- *         type: string
- *         format: password
- *     required:
- *       - email
- *       - password
+ * components:
+ *   schemas:
+ *     IRegisterRequest:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *         password:
+ *           type: string
+ *           format: password
+ *       required:
+ *         - email
+ *         - password
  */
 export interface IRegisterRequest {
   email: string;

@@ -7,96 +7,126 @@ import { Claim } from "../models/database/Claim";
  * @swagger
  * /Claim:
  *   get:
- *     description: Get the details of a specific Claim
+ *     description: Get the details of a list of Claim
  *     tags: [Claim]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: query
- *         name: page
- *         type: integer
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: pageNumber
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: The retrieved list of Claim
+ *         description: The retrieved Claim list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ClaimModelResponse'
  *       400:
- *         description: The supplied parameters are invalid
- *
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
  * @swagger
  * /Claim/{id}:
  *   get:
  *     description: Get the details of a specific Claim
  *     tags: [Claim]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
+ *       - $ref: '#/components/parameters/ObjectId'
  *     responses:
  *       200:
  *         description: The retrieved Claim
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ClaimModelResponse'
  *       404:
- *         description: The id doesn't match a Claim
- *
+ *         $ref: '#/components/responses/404NotFound'
+ * 
  * @swagger
  * /Claim:
  *   post:
  *     description: Save a new Claim
  *     tags: [Claim]
  *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IClaimModel'
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IClaimModel'
  *     responses:
  *       200:
- *         description: The saved Claim
+ *         description: The added Claim
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ClaimModelResponse'
  *       400:
- *         description: The supplied Claim is invalid
- *
+ *         $ref: '#/components/responses/400BadRequest'
+ * 
  * @swagger
  * /Claim/{id}:
  *   put:
  *     description: Update an existing Claim
  *     tags: [Claim]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IClaimModel'
+ *       - $ref: '#/components/parameters/ObjectId'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IClaimModel'
  *     responses:
  *       200:
  *         description: The updated Claim
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ClaimModelResponse'
  *       400:
- *         description: The supplied Claim is invalid
+ *         $ref: '#/components/responses/400BadRequest'
  *       404:
- *         description: The id doesn't match a Claim
- *
+ *         $ref: '#/components/responses/404NotFound'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
+ * 
  * @swagger
  * /Claim/{id}:
  *   delete:
  *     description: Delete a specific Claim
  *     tags: [Claim]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
+ *       - $ref: '#/components/parameters/ObjectId'
  *     responses:
  *       200:
- *         description: The Claim was deleted
+ *         $ref: '#/components/responses/200Null'
  *       404:
- *         description: The id doesn't match a Claim
+ *         $ref: '#/components/responses/404NotFound'
  */
 export const claimRouter = createCrudRouter(
     Claim,

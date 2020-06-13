@@ -3,7 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import passport from "passport";
 
-import { config, ConfigKey, Environment } from "./infastructure/Config";
+import { config, ConfigKey } from "./infastructure/Config";
 import { connectSingletonDatabase } from "./infastructure/Database";
 import { corsMiddleware } from "./middleware/Cors";
 import { errorMiddleware } from "./middleware/Error";
@@ -29,6 +29,10 @@ addJwtStrategy(passport);
 addLocalStrategy(passport);
 app.use(passport.initialize());
 
+if (config.getBool(ConfigKey.IsSwaggerEnabled)) {
+  app.use("/docs", swaggerRouter);
+}
+
 app.use(corsMiddleware);
 app.use(errorMiddleware);
 
@@ -42,10 +46,6 @@ app.use("/settings", settingRouter);
 if (config.getBool(ConfigKey.UserRegistrationIsEnabled)) {
   app.use("/password", passwordRouter);
   app.use("/register", registerRouter);
-}
-
-if (process.env.NODE_ENV !== Environment.Production) {
-  app.use("/docs", swaggerRouter);
 }
 
 export const server = app.listen(config.getString(ConfigKey.ListenPort));

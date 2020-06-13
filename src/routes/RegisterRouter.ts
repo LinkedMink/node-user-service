@@ -20,15 +20,21 @@ export const registerRouter = Router();
  *   post:
  *     description: Register a new user
  *     tags: [Register]
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/IRegisterRequest'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IRegisterRequest'
  *     responses:
  *       200:
- *         description: The user was registered successfully.
+ *         description: The newly created user record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserModelResponse'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 registerRouter.post("/",
   objectDescriptorBodyVerify(registerRequestDescriptor),
@@ -76,12 +82,19 @@ registerRouter.post("/",
  *       - in: path
  *         name: email
  *         required: true
+ *         schema:
+ *           type: string
+ *           format: email
  *       - in: path
  *         name: code
  *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: The user was verified successfully.
+ *         $ref: '#/components/responses/200Null'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary>, res: Response) => {
   const email = req.params.email;
@@ -118,9 +131,14 @@ registerRouter.get("/:email/:code", async (req: Request<ParamsDictionary>, res: 
  *       - in: path
  *         name: email
  *         required: true
+ *         schema:
+ *           type: string
+ *           format: email
  *     responses:
  *       200:
- *         description: The email was sent successfully.
+ *         $ref: '#/components/responses/200Null'
+ *       500:
+ *         $ref: '#/components/responses/500Internal'
  */
 registerRouter.get("/:email", async (req: Request<ParamsDictionary>, res: Response) => {
   const email = req.params.email;

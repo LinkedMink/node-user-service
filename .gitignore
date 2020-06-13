@@ -26,3 +26,5 @@ yarn-error.log*
 
 *.key
 *.key.pub
+
+swagger.json
