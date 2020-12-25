@@ -10,13 +10,5 @@
     {
         "name": "ClaimManage",
         "applications": [ "node-user-service" ]
-    },
-    {
-        "name": "NecroAutomobiliaUser",
-        "applications": [ "necro-automobilia" ]
-    },
-    {
-        "name": "NecroAutomobiliaAdmin",
-        "applications": [ "necro-automobilia" ]
     }
 ]

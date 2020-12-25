@@ -1,20 +1,17 @@
 # Node User Service
 This service authenticates users against records in a MongoDB. When authenticated, users
 are issued a JWT token with a set of claims describing operations a user can perform. 
-Endpoints also exist for CRUD operations on users.
+It's designed to be used in a microservice architecture where claims are defined by associated 
+services other than a core claims for managing users and claims.
 
 ## Microservice Collection
 This project is part of a collection of microservices for supporting a larger project.
-
-These services include:
-* [Node User Service](https://github.com/LinkedMink/node-user-service)
-* [Node Base Service](https://github.com/LinkedMink/node-base-service)
 
 ## Getting Started
 ### Install Prerequisites 
 #### Required
 The application was tested with these major versions:
-* MongoDB 3.6
+* MongoDB 4.2
 * Node.js 12
 
 #### Recommended
@@ -22,7 +19,7 @@ The application was tested with these major versions:
 * Kubernetes Provider
 
 This package doesn't target any specific platform or provider. Sample files for Kubernetes 
-deployment will be included for Azure AKS.
+deployment are included.
 
 Install the npm packages.
 
