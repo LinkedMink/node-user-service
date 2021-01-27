@@ -3,7 +3,11 @@ import { model, Schema, SchemaTypes, Types } from "mongoose";
 
 import { config, ConfigKey } from "../../infastructure/Config";
 import { validateEmail } from "../../infastructure/Validators";
-import { ITrackedEntity, trackedEntityPreValidateFunc, trackedEntitySchemaDefinition } from "./TrackedEntity";
+import {
+  ITrackedEntity,
+  trackedEntityPreValidateFunc,
+  trackedEntitySchemaDefinition,
+} from "./TrackedEntity";
 
 const userClaimSchemaDefinition = {
   name: {
@@ -62,11 +66,12 @@ userSchema.pre("validate", trackedEntityPreValidateFunc);
 
 // TODO investigate why this works, might save before password set?
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-userSchema.post("validate", async function(this: IUser) {
+userSchema.post("validate", async function (this: IUser) {
   if (this.isNew || this.modifiedPaths().includes("password")) {
     this.password = await bcrypt.hash(
       this.password,
-      config.getNumber(ConfigKey.UserPassHashCostFactor));
+      config.getNumber(ConfigKey.UserPassHashCostFactor)
+    );
   }
 
   if (this.modifiedPaths().includes("email")) {

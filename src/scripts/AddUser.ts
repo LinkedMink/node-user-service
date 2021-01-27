@@ -29,9 +29,12 @@ const userData: IUserModel = {
 
 const saveUser = (toSave: IUser): void => {
   const user = new User(toSave);
-  user.save()
-    .then(() => { process.exit(0); })
-    .catch((error) => {
+  user
+    .save()
+    .then(() => {
+      process.exit(0);
+    })
+    .catch(error => {
       logger.error(error.stack);
       process.exit(1);
     });
@@ -39,5 +42,8 @@ const saveUser = (toSave: IUser): void => {
 
 const converter = new UserConverter();
 const userModel = converter.convertToBackend(
-  userData, undefined, PROGRAM_DESCRIPTOR);
+  userData,
+  undefined,
+  PROGRAM_DESCRIPTOR
+);
 saveUser(userModel);

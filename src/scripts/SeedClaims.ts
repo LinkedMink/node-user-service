@@ -25,14 +25,15 @@ let hasProcessed = 0;
 
 const saveClaim = (toSave: IClaim): void => {
   const user = new Claim(toSave);
-  user.save()
+  user
+    .save()
     .then(() => {
       hasProcessed++;
       if (hasProcessed >= claims.length) {
         process.exit(0);
       }
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error(error.stack);
       hasProcessed++;
       if (hasProcessed >= claims.length) {
@@ -43,6 +44,10 @@ const saveClaim = (toSave: IClaim): void => {
 
 const converter = new ClaimConverter();
 claims.forEach(claim => {
-  const entity = converter.convertToBackend(claim, undefined, PROGRAM_DESCRIPTOR);
+  const entity = converter.convertToBackend(
+    claim,
+    undefined,
+    PROGRAM_DESCRIPTOR
+  );
   saveClaim(entity);
 });

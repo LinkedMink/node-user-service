@@ -7,7 +7,7 @@
  *       properties:
  *         token:
  *           type: string
- *           example: 
+ *           example:
  *     BearerTokenResponse:
  *       properties:
  *         status:
@@ -18,4 +18,3 @@
 export interface IBearerToken {
   token: string;
 }
-  

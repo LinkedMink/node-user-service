@@ -8,13 +8,15 @@ const emailOptions = {
   message: {
     from: config.getString(ConfigKey.SystemEmailAddress),
   },
-  transport: {
+  transport: ({
     jsonTransport: true,
-  } as unknown as Mail,
+  } as unknown) as Mail,
   send: false,
 };
 
-const transportConfig = config.getJsonOrString<TransportOptions>(ConfigKey.NodeMailerTransport);
+const transportConfig = config.getJsonOrString<TransportOptions>(
+  ConfigKey.NodeMailerTransport
+);
 let transporter: Mail;
 if (transportConfig) {
   transporter = nodemailer.createTransport(transportConfig);
@@ -24,7 +26,10 @@ if (transportConfig) {
 
 const email = new Email(emailOptions);
 
-export const sendVerifyEmail = (toEmail: string, verifyCode: string): Promise<void> => {
+export const sendVerifyEmail = (
+  toEmail: string,
+  verifyCode: string
+): Promise<void> => {
   return email.send({
     template: "verifyEmail",
     message: {
@@ -39,7 +44,10 @@ export const sendVerifyEmail = (toEmail: string, verifyCode: string): Promise<vo
   });
 };
 
-export const sendPasswordReset = (toEmail: string, resetCode: string): Promise<void> => {
+export const sendPasswordReset = (
+  toEmail: string,
+  resetCode: string
+): Promise<void> => {
   return email.send({
     template: "passwordReset",
     message: {

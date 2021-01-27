@@ -1,27 +1,32 @@
 import { Types } from "mongoose";
 import { ISetting } from "../database/Setting";
 import { ISettingModel } from "../ISettingModel";
-import { IModelConverter, mapTrackedEntity, setUserModifier } from "./IModelConverter";
+import {
+  IModelConverter,
+  mapTrackedEntity,
+  setUserModifier,
+} from "./IModelConverter";
 
-export class SettingConverter implements IModelConverter<ISettingModel, ISetting> {
+export class SettingConverter
+  implements IModelConverter<ISettingModel, ISetting> {
   public convertToFrontend = (model: ISetting): ISettingModel => {
     let returnModel: ISettingModel = {
       userId: model.userId.toHexString(),
       name: model.name,
-      applications: model.applications.map((e) => e),
+      applications: model.applications.map(e => e),
       data: model.data,
     };
 
     returnModel = mapTrackedEntity(model, returnModel);
 
     return returnModel;
-  }
+  };
 
   public convertToBackend = (
     model: ISettingModel,
     existing?: ISetting | undefined,
-    modifier?: string): ISetting => {
-
+    modifier?: string
+  ): ISetting => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tempReturnModel: any = {};
     if (existing) {
@@ -34,7 +39,7 @@ export class SettingConverter implements IModelConverter<ISettingModel, ISetting
     }
 
     const applicationsArray = new Types.Array<string>();
-    model.applications.forEach((e) => {
+    model.applications.forEach(e => {
       applicationsArray.push(e);
     });
 
@@ -44,7 +49,7 @@ export class SettingConverter implements IModelConverter<ISettingModel, ISetting
     returnModel.data = model.data;
 
     return returnModel;
-  }
+  };
 }
 
 export const settingConverter = new SettingConverter();

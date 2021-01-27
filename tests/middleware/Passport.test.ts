@@ -1,8 +1,9 @@
 import passport from "passport";
+import path from "path";
 
 import { addJwtStrategy } from "../../src/middleware/Passport";
 
-describe("passport.ts", () => {
+describe(path.basename(__filename, ".test.ts"), () => {
   test("addJwtStrategy should use passport JwtStrategy", () => {
     // Arrange
     const passportSpy = jest.spyOn(passport, "use");

@@ -8,13 +8,13 @@ export class AccountConverter implements IModelConverter<IAccountModel, IUser> {
       id: model.id,
       email: model.email,
     };
-  }
+  };
 
   public convertToBackend = (
     model: IAccountModel,
     existing?: IUser | undefined,
-    modifier?: string): IUser => {
-
+    modifier?: string
+  ): IUser => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tempReturnModel: any = {};
     if (existing) {
@@ -35,7 +35,7 @@ export class AccountConverter implements IModelConverter<IAccountModel, IUser> {
     }
 
     return returnModel;
-  }
+  };
 }
 
 export const accountConverter = new AccountConverter();

@@ -53,16 +53,19 @@ export interface IResponseData {
 
 export const getResponseObject = (
   status: ResponseStatus = ResponseStatus.Success,
-  data: object[] | object | string | null = null): IResponseData => {
+  data: object[] | object | string | null = null
+): IResponseData => {
   return { status, data };
 };
 
 export const getResponseSuccess = (
-  data: object[] | object | string | null = null): IResponseData => {
+  data: object[] | object | string | null = null
+): IResponseData => {
   return { status: ResponseStatus.Success, data };
 };
 
 export const getResponseFailed = (
-  data: object[] | object | string | null = null): IResponseData => {
+  data: object[] | object | string | null = null
+): IResponseData => {
   return { status: ResponseStatus.Failed, data };
 };

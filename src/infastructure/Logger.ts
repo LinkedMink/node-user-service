@@ -1,5 +1,5 @@
 import winston, { LoggerOptions } from "winston";
-import TransportStream from 'winston-transport'
+import TransportStream from "winston-transport";
 
 import { config, ConfigKey } from "./Config";
 
@@ -7,7 +7,7 @@ import { config, ConfigKey } from "./Config";
  * Expose the logger constructor, so that output can be customized
  */
 export class Logger {
-  static GLOBAL_LABEL = "AppGlobalLogger"
+  static GLOBAL_LABEL = "AppGlobalLogger";
 
   static get options(): LoggerOptions {
     return Logger.optionsValue;
@@ -15,7 +15,7 @@ export class Logger {
 
   /**
    * Change the options before constructing a logger. A logger will use the options
-   * set at the time the first get() is called for a specific label 
+   * set at the time the first get() is called for a specific label
    */
   static set options(options: LoggerOptions) {
     Logger.optionsValue = options;
@@ -32,24 +32,28 @@ export class Logger {
     }
 
     return winston.loggers.get(label);
-  };
+  }
 
   private static optionsValue: LoggerOptions;
 }
 
-const transports: TransportStream[] = []
+const transports: TransportStream[] = [];
 
 if (!config.isEnvironmentUnitTest) {
-  transports.push(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
+  transports.push(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 if (!config.isEnvironmentContainerized) {
-  transports.push(new winston.transports.File({ 
-    filename: config.getString(ConfigKey.LogFile),
-    format: winston.format.json() 
-  }));
+  transports.push(
+    new winston.transports.File({
+      filename: config.getString(ConfigKey.LogFile),
+      format: winston.format.json(),
+    })
+  );
 }
 
 const options = {
@@ -58,7 +62,7 @@ const options = {
   transports,
 } as LoggerOptions;
 
-Logger.options = options
+Logger.options = options;
 
 process.on("unhandledRejection", (reason, p) => {
   const logger = Logger.get();

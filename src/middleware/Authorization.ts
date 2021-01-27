@@ -1,4 +1,9 @@
-import { NextFunction, ParamsDictionary, Request, Response } from "express-serve-static-core";
+import {
+  NextFunction,
+  ParamsDictionary,
+  Request,
+  Response,
+} from "express-serve-static-core";
 import passport from "passport";
 
 import { getResponseFailed } from "../models/IResponseData";
@@ -19,7 +24,11 @@ export enum AuthorizationClaim {
   ClaimManage = "ClaimManage",
 }
 
-export const authorizeUserOwned = (req: Request<ParamsDictionary>, res: Response, next: NextFunction): void => {
+export const authorizeUserOwned = (
+  req: Request<ParamsDictionary>,
+  res: Response,
+  next: NextFunction
+): void => {
   const jwt = req.user as IJwtPayload;
   const model = req.body as IUserEntityModel;
 
@@ -34,48 +43,57 @@ export const authorizeUserOwned = (req: Request<ParamsDictionary>, res: Response
 };
 
 export const authorizeJwtClaim = (claimNames?: string[]) => {
-  return (req: Request<ParamsDictionary>, res: Response, next: NextFunction): void => {
+  return (
+    req: Request<ParamsDictionary>,
+    res: Response,
+    next: NextFunction
+  ): void => {
+    passport.authenticate(
+      JWT_STRATEGY,
+      { session: false },
+      (error: unknown, payload: IJwtPayload, info: unknown) => {
+        let errorMessage;
+        if (isString(error)) {
+          errorMessage = error;
+        } else if (isError(info)) {
+          errorMessage = info.message;
+        } else if (!payload) {
+          errorMessage = GENERIC_AUTH_ERROR;
+        }
 
-    passport.authenticate(JWT_STRATEGY, { session: false }, (error: unknown, payload: IJwtPayload, info: unknown) => {
-      let errorMessage;
-      if (isString(error)) {
-        errorMessage = error;
-      } else if (isError(info)) {
-        errorMessage = info.message;
-      } else if (!payload) {
-        errorMessage = GENERIC_AUTH_ERROR;
-      }
+        if (errorMessage) {
+          res.status(401);
+          res.send(getResponseFailed(errorMessage));
+          return;
+        }
 
-      if (errorMessage)  {
-        res.status(401);
-        res.send(getResponseFailed(errorMessage));
-        return;
-      }
+        if (!claimNames) {
+          return next();
+        }
 
-      if (!claimNames) {
+        let missingClaims = claimNames.slice();
+        if (payload.claims) {
+          missingClaims = missingClaims.filter(claimName => {
+            const foundClaim = payload.claims.find(
+              claim => claim === claimName
+            );
+            if (foundClaim) {
+              return false;
+            } else {
+              return true;
+            }
+          });
+        }
+
+        if (missingClaims.length > 0) {
+          const message = getClaimMissingError(missingClaims);
+          res.status(401);
+          res.send(getResponseFailed(message));
+          return;
+        }
+
         return next();
       }
-
-      let missingClaims = claimNames.slice();
-      if (payload.claims) {
-        missingClaims = missingClaims.filter((claimName) => {
-          const foundClaim = payload.claims.find(claim => claim === claimName);
-          if (foundClaim) {
-            return false;
-          } else {
-            return true;
-          }
-        });
-      }
-
-      if (missingClaims.length > 0) {
-        const message = getClaimMissingError(missingClaims);
-        res.status(401);
-        res.send(getResponseFailed(message));
-        return;
-      }
-
-      return next();
-    })(req, res, next);
+    )(req, res, next);
   };
 };

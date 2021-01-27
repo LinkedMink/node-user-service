@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
+import path from "path";
 
 import { connectSingletonDatabase } from "../../src/infastructure/Database";
 
-describe("database.ts", () => {
+describe(path.basename(__filename, ".test.ts"), () => {
   let connectFunction = mongoose.connect;
 
   beforeEach(() => {
@@ -27,10 +28,10 @@ describe("database.ts", () => {
   test("connectSingletonDatabase should catch connection errors", () => {
     // Arrange
     // Typescript restriction requires never return type on process.exit
-    const exitSpy = jest.spyOn(process, "exit")
-      .mockImplementation(() => { throw new Error(); });
-    mongoose.connect = jest.fn()
-      .mockRejectedValue(new Error());
+    const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
+      throw new Error();
+    });
+    mongoose.connect = jest.fn().mockRejectedValue(new Error());
 
     // Act
     connectSingletonDatabase().then(() => {

@@ -41,7 +41,7 @@ import { User } from "../models/database/User";
  *                 $ref: '#/components/schemas/UserModelResponse'
  *       400:
  *         $ref: '#/components/responses/400BadRequest'
- * 
+ *
  * @swagger
  * /User/{id}:
  *   get:
@@ -60,7 +60,7 @@ import { User } from "../models/database/User";
  *               $ref: '#/components/schemas/UserModelResponse'
  *       404:
  *         $ref: '#/components/responses/404NotFound'
- * 
+ *
  * @swagger
  * /User:
  *   post:
@@ -83,7 +83,7 @@ import { User } from "../models/database/User";
  *               $ref: '#/components/schemas/UserModelResponse'
  *       400:
  *         $ref: '#/components/responses/400BadRequest'
- * 
+ *
  * @swagger
  * /User/{id}:
  *   put:
@@ -112,7 +112,7 @@ import { User } from "../models/database/User";
  *         $ref: '#/components/responses/404NotFound'
  *       500:
  *         $ref: '#/components/responses/500Internal'
- * 
+ *
  * @swagger
  * /User/{id}:
  *   delete:
@@ -129,6 +129,7 @@ import { User } from "../models/database/User";
  *         $ref: '#/components/responses/404NotFound'
  */
 export const userRouter = createCrudRouter(
-    User,
-    userConverter,
-    AuthorizationClaim.UserManage);
+  User,
+  userConverter,
+  AuthorizationClaim.UserManage
+);

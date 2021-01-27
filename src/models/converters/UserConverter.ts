@@ -1,32 +1,36 @@
 import { Types } from "mongoose";
 import { IUser, IUserClaim } from "../database/User";
 import { IUserModel } from "../IUserModel";
-import { IModelConverter, mapTrackedEntity, setUserModifier } from "./IModelConverter";
+import {
+  IModelConverter,
+  mapTrackedEntity,
+  setUserModifier,
+} from "./IModelConverter";
 
 export class UserConverter implements IModelConverter<IUserModel, IUser> {
   public convertToFrontend = (model: IUser): IUserModel => {
     const claimArray: string[] = [];
-    model.claims.forEach((claim) => claimArray.push(claim.name));
+    model.claims.forEach(claim => claimArray.push(claim.name));
 
     let returnModel: IUserModel = {
       email: model.email,
       isEmailVerified: model.isEmailVerified,
       isLocked: model.isLocked,
       isLockedDate: model.isLockedDate,
-      authenticationDates: model.authenticationDates.map((e) => e),
+      authenticationDates: model.authenticationDates.map(e => e),
       claims: claimArray,
     };
 
     returnModel = mapTrackedEntity(model, returnModel);
 
     return returnModel;
-  }
+  };
 
   public convertToBackend = (
     model: IUserModel,
     existing?: IUser | undefined,
-    modifier?: string): IUser => {
-
+    modifier?: string
+  ): IUser => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tempReturnModel: any = {};
     if (existing) {
@@ -43,13 +47,13 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     }
 
     const claimArray = new Types.Array<IUserClaim>();
-    model.claims.forEach((claim) => {
+    model.claims.forEach(claim => {
       claimArray.push({ name: claim } as IUserClaim);
     });
 
     const dateArray = new Types.Array<Date>();
     if (model.authenticationDates) {
-      model.authenticationDates.forEach((date) => {
+      model.authenticationDates.forEach(date => {
         dateArray.push(date);
       });
     }
@@ -60,7 +64,7 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     returnModel.claims = claimArray;
 
     return returnModel;
-  }
+  };
 }
 
 export const userConverter = new UserConverter();

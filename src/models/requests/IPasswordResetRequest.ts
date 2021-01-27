@@ -1,5 +1,8 @@
 import { config, ConfigKey } from "../../infastructure/Config";
-import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
+import {
+  ObjectAttribute,
+  ObjectDescriptor,
+} from "../../infastructure/ObjectDescriptor";
 
 /**
  * @swagger
@@ -27,14 +30,16 @@ export interface IPasswordResetRequest {
   password: string;
 }
 
-export const passwordResetRequestDescriptor = new ObjectDescriptor<IPasswordResetRequest>({
-  email: [ObjectAttribute.Required],
-  resetToken: [ObjectAttribute.Required],
-  password: [
-    ObjectAttribute.Required,
-    {
-      value: ObjectAttribute.Length,
-      params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
-    },
-  ],
-});
+export const passwordResetRequestDescriptor = new ObjectDescriptor<IPasswordResetRequest>(
+  {
+    email: [ObjectAttribute.Required],
+    resetToken: [ObjectAttribute.Required],
+    password: [
+      ObjectAttribute.Required,
+      {
+        value: ObjectAttribute.Length,
+        params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
+      },
+    ],
+  }
+);

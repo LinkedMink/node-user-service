@@ -41,7 +41,7 @@ import { Claim } from "../models/database/Claim";
  *                 $ref: '#/components/schemas/ClaimModelResponse'
  *       400:
  *         $ref: '#/components/responses/400BadRequest'
- * 
+ *
  * @swagger
  * /Claim/{id}:
  *   get:
@@ -60,7 +60,7 @@ import { Claim } from "../models/database/Claim";
  *               $ref: '#/components/schemas/ClaimModelResponse'
  *       404:
  *         $ref: '#/components/responses/404NotFound'
- * 
+ *
  * @swagger
  * /Claim:
  *   post:
@@ -83,7 +83,7 @@ import { Claim } from "../models/database/Claim";
  *               $ref: '#/components/schemas/ClaimModelResponse'
  *       400:
  *         $ref: '#/components/responses/400BadRequest'
- * 
+ *
  * @swagger
  * /Claim/{id}:
  *   put:
@@ -112,7 +112,7 @@ import { Claim } from "../models/database/Claim";
  *         $ref: '#/components/responses/404NotFound'
  *       500:
  *         $ref: '#/components/responses/500Internal'
- * 
+ *
  * @swagger
  * /Claim/{id}:
  *   delete:
@@ -129,6 +129,7 @@ import { Claim } from "../models/database/Claim";
  *         $ref: '#/components/responses/404NotFound'
  */
 export const claimRouter = createCrudRouter(
-    Claim,
-    claimConverter,
-    AuthorizationClaim.ClaimManage);
+  Claim,
+  claimConverter,
+  AuthorizationClaim.ClaimManage
+);

@@ -29,7 +29,7 @@ mongoose.connection.on("reconnectFailed", () => {
   process.exit(1);
 });
 
-mongoose.connection.on("error", (error) => {
+mongoose.connection.on("error", error => {
   logger.error(`MongoDB Error: ${error}`);
   // TODO handle error
 });
@@ -38,9 +38,9 @@ export const connectSingletonDatabase = (): Promise<typeof mongoose> => {
   return mongoose
     .connect(connectionString, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error(error);
       logger.warn(`MongoDB initial connect failed: ${connectionString}`);
       process.exit(1);

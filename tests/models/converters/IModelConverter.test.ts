@@ -1,8 +1,12 @@
-import { mapTrackedEntity, setUserModifier } from "../../../src/models/converters/IModelConverter";
+import path from "path";
+import {
+  mapTrackedEntity,
+  setUserModifier,
+} from "../../../src/models/converters/IModelConverter";
 import { ITrackedEntity } from "../../../src/models/database/TrackedEntity";
 import { ITrackedEntityModel } from "../../../src/models/ITrackedEntityModel";
 
-describe("modelConverter.ts", () => {
+describe(path.basename(__filename, ".test.ts"), () => {
   test("mapTrackedEntity should return tracking info", () => {
     // Arrrange
     const mockModel: ITrackedEntityModel = {};

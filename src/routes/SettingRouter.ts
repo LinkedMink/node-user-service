@@ -1,5 +1,11 @@
-import { createCrudRouter, filterByUserId } from "../infastructure/CreateCrudRouter";
-import { AuthorizationClaim, authorizeUserOwned } from "../middleware/Authorization";
+import {
+  createCrudRouter,
+  filterByUserId,
+} from "../infastructure/CreateCrudRouter";
+import {
+  AuthorizationClaim,
+  authorizeUserOwned,
+} from "../middleware/Authorization";
 import { settingConverter } from "../models/converters/SettingConverter";
 import { Setting } from "../models/database/Setting";
 
@@ -41,7 +47,7 @@ import { Setting } from "../models/database/Setting";
  *                 $ref: '#/components/schemas/SettingsModelResponse'
  *       400:
  *         $ref: '#/components/responses/400BadRequest'
- * 
+ *
  * @swagger
  * /Settings/{id}:
  *   get:
@@ -60,7 +66,7 @@ import { Setting } from "../models/database/Setting";
  *               $ref: '#/components/schemas/SettingsModelResponse'
  *       404:
  *         $ref: '#/components/responses/404NotFound'
- * 
+ *
  * @swagger
  * /Settings:
  *   post:
@@ -83,7 +89,7 @@ import { Setting } from "../models/database/Setting";
  *               $ref: '#/components/schemas/SettingsModelResponse'
  *       400:
  *         $ref: '#/components/responses/400BadRequest'
- * 
+ *
  * @swagger
  * /Settings/{id}:
  *   put:
@@ -112,7 +118,7 @@ import { Setting } from "../models/database/Setting";
  *         $ref: '#/components/responses/404NotFound'
  *       500:
  *         $ref: '#/components/responses/500Internal'
- * 
+ *
  * @swagger
  * /Settings/{id}:
  *   delete:
@@ -129,9 +135,10 @@ import { Setting } from "../models/database/Setting";
  *         $ref: '#/components/responses/404NotFound'
  */
 export const settingRouter = createCrudRouter(
-    Setting,
-    settingConverter,
-    AuthorizationClaim.UserSettings,
-    AuthorizationClaim.UserSettings,
-    authorizeUserOwned,
-    filterByUserId);
+  Setting,
+  settingConverter,
+  AuthorizationClaim.UserSettings,
+  AuthorizationClaim.UserSettings,
+  authorizeUserOwned,
+  filterByUserId
+);

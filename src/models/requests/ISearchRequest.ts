@@ -1,4 +1,7 @@
-import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
+import {
+  ObjectAttribute,
+  ObjectDescriptor,
+} from "../../infastructure/ObjectDescriptor";
 import { FilterQuery } from "mongoose";
 
 export enum SortOrder {
@@ -29,16 +32,22 @@ export interface ISearchRequest<T> {
   query?: FilterQuery<T>;
 }
 
-export const searchRequestDescriptor = new ObjectDescriptor<ISearchRequest<Document>>(
+export const searchRequestDescriptor = new ObjectDescriptor<
+  ISearchRequest<Document>
+>(
   {
-    pageSize: [{
-      value: ObjectAttribute.Range,
-      params: { min: 1, max: 100 },
-    }],
-    pageNumber: [{
-      value: ObjectAttribute.Range,
-      params: { min: 0 },
-    }],
+    pageSize: [
+      {
+        value: ObjectAttribute.Range,
+        params: { min: 1, max: 100 },
+      },
+    ],
+    pageNumber: [
+      {
+        value: ObjectAttribute.Range,
+        params: { min: 0 },
+      },
+    ],
   },
   true,
   (toSanitize: ISearchRequest<Document>) => {
@@ -49,11 +58,11 @@ export const searchRequestDescriptor = new ObjectDescriptor<ISearchRequest<Docum
       toSanitize.pageNumber = Number(toSanitize.pageNumber);
     }
     if (toSanitize.sort) {
-      toSanitize.sort = JSON.parse(toSanitize.sort as unknown as string);
+      toSanitize.sort = JSON.parse((toSanitize.sort as unknown) as string);
     }
     if (toSanitize.query) {
-      toSanitize.query = JSON.parse(toSanitize.query as unknown as string);
+      toSanitize.query = JSON.parse((toSanitize.query as unknown) as string);
     }
     return toSanitize;
-  },
+  }
 );

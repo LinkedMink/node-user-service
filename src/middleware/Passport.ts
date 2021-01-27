@@ -1,8 +1,16 @@
 import bcrypt from "bcrypt";
 import { Request } from "express-serve-static-core";
 import { PassportStatic } from "passport";
-import { ExtractJwt, Strategy as JwtStrategy, StrategyOptions as JwtStrategyOptions, VerifiedCallback } from "passport-jwt";
-import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport-local";
+import {
+  ExtractJwt,
+  Strategy as JwtStrategy,
+  StrategyOptions as JwtStrategyOptions,
+  VerifiedCallback,
+} from "passport-jwt";
+import {
+  IStrategyOptionsWithRequest,
+  Strategy as LocalStrategy,
+} from "passport-local";
 
 import { config, ConfigKey } from "../infastructure/Config";
 import { User } from "../models/database/User";
@@ -10,7 +18,9 @@ import { User } from "../models/database/User";
 const errors = {
   GENERIC: "The username or password was incorrect.",
   NOT_VERIFIED: "The user's email address has not been verified",
-  IS_LOCKED: `The user has been locked out for ${config.getString(ConfigKey.UserLockoutMinutes)} minutes`,
+  IS_LOCKED: `The user has been locked out for ${config.getString(
+    ConfigKey.UserLockoutMinutes
+  )} minutes`,
 };
 
 export interface IJwtPayload {
@@ -25,7 +35,8 @@ export interface IJwtPayload {
 
 export const addLocalStrategy = (passport: PassportStatic): void => {
   const maxLoginAttempts = config.getNumber(ConfigKey.UserPassMaxAttempts);
-  const lockoutMilliseonds = config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
+  const lockoutMilliseonds =
+    config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
 
   const options: IStrategyOptionsWithRequest = {
     usernameField: "email",
@@ -36,53 +47,59 @@ export const addLocalStrategy = (passport: PassportStatic): void => {
 
   // TODO investigate why this works, is async function really a middleware function?
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  passport.use(new LocalStrategy(options, async (request, email, password, done) => {
-    try {
-      const user = await User.findOne({email}).exec();
-      if (!user) {
-        return done(errors.GENERIC);
-      }
+  passport.use(
+    new LocalStrategy(options, async (request, email, password, done) => {
+      try {
+        const user = await User.findOne({ email }).exec();
+        if (!user) {
+          return done(errors.GENERIC);
+        }
 
-      if (!user.isEmailVerified) {
-        return done(errors.NOT_VERIFIED);
-      }
+        if (!user.isEmailVerified) {
+          return done(errors.NOT_VERIFIED);
+        }
 
-      if (user.isLocked) {
-        if (user.isLockedDate && Date.now() - user.isLockedDate.getTime() > lockoutMilliseonds) {
-          user.isLocked = false;
-          user.isLockedDate = undefined;
+        if (user.isLocked) {
+          if (
+            user.isLockedDate &&
+            Date.now() - user.isLockedDate.getTime() > lockoutMilliseonds
+          ) {
+            user.isLocked = false;
+            user.isLockedDate = undefined;
+            user.authenticationAttempts = undefined;
+          } else {
+            return done(errors.IS_LOCKED);
+          }
+        }
+
+        const passwordsMatch = await bcrypt.compare(password, user.password);
+
+        if (passwordsMatch) {
           user.authenticationAttempts = undefined;
-        } else {
-          return done(errors.IS_LOCKED);
-        }
-      }
-
-      const passwordsMatch = await bcrypt.compare(password, user.password);
-
-      if (passwordsMatch) {
-        user.authenticationAttempts = undefined;
-        user.authenticationDates.push(new Date());
-        await user.save();
-
-        return done(null, user);
-      } else {
-        user.authenticationAttempts = user.authenticationAttempts
-          ? user.authenticationAttempts + 1 : 1;
-
-        if (user.authenticationAttempts > maxLoginAttempts) {
-          user.isLocked = true;
-          user.isLockedDate = new Date();
+          user.authenticationDates.push(new Date());
           await user.save();
-          return done(errors.IS_LOCKED);
-        }
 
-        await user.save();
-        return done(errors.GENERIC);
+          return done(null, user);
+        } else {
+          user.authenticationAttempts = user.authenticationAttempts
+            ? user.authenticationAttempts + 1
+            : 1;
+
+          if (user.authenticationAttempts > maxLoginAttempts) {
+            user.isLocked = true;
+            user.isLockedDate = new Date();
+            await user.save();
+            return done(errors.IS_LOCKED);
+          }
+
+          await user.save();
+          return done(errors.GENERIC);
+        }
+      } catch (error) {
+        done(error);
       }
-    } catch (error) {
-      done(error);
-    }
-  }));
+    })
+  );
 };
 
 export const addJwtStrategy = (passport: PassportStatic): void => {
@@ -95,12 +112,17 @@ export const addJwtStrategy = (passport: PassportStatic): void => {
     passReqToCallback: true,
   };
 
-  passport.use(new JwtStrategy(options, (req: Request, jwtPayload: IJwtPayload, done: VerifiedCallback) => {
-    if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
-      return done("JWT Expired");
-    }
+  passport.use(
+    new JwtStrategy(
+      options,
+      (req: Request, jwtPayload: IJwtPayload, done: VerifiedCallback) => {
+        if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
+          return done("JWT Expired");
+        }
 
-    req.user = jwtPayload;
-    return done(null, jwtPayload);
-  }));
+        req.user = jwtPayload;
+        return done(null, jwtPayload);
+      }
+    )
+  );
 };

@@ -1,5 +1,8 @@
 import { config, ConfigKey } from "../../infastructure/Config";
-import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
+import {
+  ObjectAttribute,
+  ObjectDescriptor,
+} from "../../infastructure/ObjectDescriptor";
 
 /**
  * @swagger
@@ -23,13 +26,15 @@ export interface IRegisterRequest {
   password: string;
 }
 
-export const registerRequestDescriptor = new ObjectDescriptor<IRegisterRequest>({
-  email: [ObjectAttribute.Required],
-  password: [
-    ObjectAttribute.Required,
-    {
-      value: ObjectAttribute.Length,
-      params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
-    },
-  ],
-});
+export const registerRequestDescriptor = new ObjectDescriptor<IRegisterRequest>(
+  {
+    email: [ObjectAttribute.Required],
+    password: [
+      ObjectAttribute.Required,
+      {
+        value: ObjectAttribute.Length,
+        params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
+      },
+    ],
+  }
+);

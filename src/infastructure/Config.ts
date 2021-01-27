@@ -3,7 +3,7 @@ import fs from "fs";
 
 export enum Environment {
   Local = "local",
-  UnitTest = "unitTest",
+  UnitTest = "test",
   Development = "development",
   Production = "production",
 }
@@ -92,8 +92,10 @@ export class EnvironmentalConfig {
   }
 
   public get isEnvironmentContainerized(): boolean {
-    return process.env.IS_CONTAINER_ENV !== undefined && 
-      process.env.IS_CONTAINER_ENV.trim().toLowerCase() === 'true';
+    return (
+      process.env.IS_CONTAINER_ENV !== undefined &&
+      process.env.IS_CONTAINER_ENV.trim().toLowerCase() === "true"
+    );
   }
 
   public get packageJson(): IPackageJson {
@@ -102,17 +104,17 @@ export class EnvironmentalConfig {
 
   public getString = (key: ConfigKey): string => {
     return this.getConfigValue(key);
-  }
+  };
 
   public getNumber = (key: ConfigKey): number => {
     const value = this.getConfigValue(key);
     return Number(value);
-  }
+  };
 
   public getBool = (key: ConfigKey): boolean => {
     const value = this.getConfigValue(key);
     return value.trim().toLowerCase() === "true";
-  }
+  };
 
   public getJsonOrString = <T>(key: ConfigKey): string | T => {
     const json = this.jsonObjects.get(key);
@@ -126,7 +128,7 @@ export class EnvironmentalConfig {
     }
 
     return value;
-  }
+  };
 
   public getJson = <T>(key: ConfigKey): T => {
     const json = this.jsonObjects.get(key);
@@ -138,7 +140,7 @@ export class EnvironmentalConfig {
     const parsed = JSON.parse(value) as T;
     this.jsonObjects.set(key, parsed);
     return parsed;
-  }
+  };
 
   public getFileBuffer = (key: ConfigKey): Buffer => {
     const buffer = this.fileBuffers.get(key);
@@ -154,7 +156,7 @@ export class EnvironmentalConfig {
     const data = fs.readFileSync(filePath);
     this.fileBuffers.set(key, data);
     return data;
-  }
+  };
 
   private getConfigValue = (key: ConfigKey): string => {
     let configValue = process.env[key];
@@ -168,7 +170,7 @@ export class EnvironmentalConfig {
     }
 
     throw new Error(`Environmental variable must be defined: ${key}`);
-  }
+  };
 }
 
 export const config = new EnvironmentalConfig();

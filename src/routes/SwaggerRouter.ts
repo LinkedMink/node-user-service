@@ -2,7 +2,10 @@ import { Router } from "express";
 import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 
 import { config } from "../infastructure/Config";
-import { generateSwaggerSpec, loadPreGeneratedSwaggerSpec } from "../infastructure/Swagger";
+import {
+  generateSwaggerSpec,
+  loadPreGeneratedSwaggerSpec,
+} from "../infastructure/Swagger";
 
 export const swaggerRouter = Router();
 
@@ -13,7 +16,13 @@ const swaggerUiOptions: SwaggerUiOptions = {
 swaggerRouter.use("/", swaggerUi.serve);
 
 if (config.isEnvironmentLocal) {
-  swaggerRouter.get("/", swaggerUi.setup(generateSwaggerSpec(), swaggerUiOptions));
+  swaggerRouter.get(
+    "/",
+    swaggerUi.setup(generateSwaggerSpec(), swaggerUiOptions)
+  );
 } else {
-  swaggerRouter.get("/", swaggerUi.setup(loadPreGeneratedSwaggerSpec(), swaggerUiOptions));
+  swaggerRouter.get(
+    "/",
+    swaggerUi.setup(loadPreGeneratedSwaggerSpec(), swaggerUiOptions)
+  );
 }
