@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from "express";
 import { ParamsDictionary, Request, Response } from "express-serve-static-core";
-import { Document, DocumentQuery, Model, FilterQuery } from "mongoose";
+import { Document, Model, FilterQuery, Query, UpdateQuery } from "mongoose";
 
 import { authorizeJwtClaim } from "../middleware/Authorization";
 import { IJwtPayload } from "../middleware/Passport";
@@ -147,9 +147,9 @@ export const filterByUserId: GetFilterFunction<Document> = (
  */
 export const createCrudRouter = <
   TFrontend extends object,
-  TBackend extends Document
+  TBackend extends Document<TBackend>
 >(
-  model: Model<TBackend, {}>,
+  model: Model<TBackend>,
   modelConverter: IModelConverter<TFrontend, TBackend>,
   requiredClaimRead?: string,
   requiredClaimWrite?: string,
@@ -164,7 +164,7 @@ export const createCrudRouter = <
     async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
       const reqData = req.query as ISearchRequest<TBackend>;
 
-      let query: DocumentQuery<TBackend[], TBackend, {}>;
+      let query: Query<TBackend[], TBackend>;
       if (reqData.query) {
         try {
           if (getFilterFunc) {
@@ -225,7 +225,7 @@ export const createCrudRouter = <
     async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
       const entityId = req.params.entityId;
 
-      let query: DocumentQuery<TBackend | null, TBackend, {}>;
+      let query: Query<TBackend | null, TBackend>;
       if (getFilterFunc) {
         const conditions = Object.assign(
           { id: entityId },
@@ -261,9 +261,6 @@ export const createCrudRouter = <
       await saveModel.save(error => {
         if (error) {
           let message = error.message;
-          if (error.errors) {
-            message = error.errors;
-          }
 
           res.status(400);
           return res.send(getResponseFailed(message));
@@ -295,27 +292,32 @@ export const createCrudRouter = <
       );
 
       return new Promise((resolve, reject) => {
-        updateModel.validate(error => {
+        updateModel.validate((error: unknown) => {
           if (error) {
             res.status(400);
-            res.send(getResponseFailed(error));
+            res.send(getResponseFailed(error as string));
             resolve();
           }
 
           model
-            .findByIdAndUpdate(entityId, updateModel, updateError => {
-              if (!updateError) {
-                const response = getResponseSuccess(
-                  modelConverter.convertToFrontend(updateModel)
-                );
-                res.send(response);
-                resolve();
-              } else {
-                res.status(500);
-                res.send(getResponseFailed(updateError.message));
-                resolve();
+            .findByIdAndUpdate(
+              entityId,
+              (updateModel as unknown) as UpdateQuery<TBackend>,
+              null,
+              (updateError: unknown) => {
+                if (!updateError) {
+                  const response = getResponseSuccess(
+                    modelConverter.convertToFrontend(updateModel)
+                  );
+                  res.send(response);
+                  resolve();
+                } else {
+                  res.status(500);
+                  res.send(getResponseFailed((updateError as Error).message));
+                  resolve();
+                }
               }
-            })
+            )
             .exec();
         });
       });
@@ -326,7 +328,7 @@ export const createCrudRouter = <
     async (req: Request<ParamsDictionary>, res: Response): Promise<void> => {
       const entityId = req.params.entityId;
 
-      let query: DocumentQuery<TBackend | null, TBackend, {}>;
+      let query: Query<TBackend | null, TBackend>;
       if (getFilterFunc) {
         const conditions = Object.assign(
           { id: entityId },

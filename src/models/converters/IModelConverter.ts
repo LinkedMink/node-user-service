@@ -29,7 +29,7 @@ export const mapTrackedEntity = <TFrontend extends ITrackedEntityModel>(
 
 export interface IModelConverter<
   TFrontend extends object,
-  TBackend extends Document
+  TBackend extends object
 > {
   convertToFrontend(model: TBackend): TFrontend;
   convertToBackend(

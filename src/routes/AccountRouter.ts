@@ -110,7 +110,7 @@ accountRouter.put(
           resolve();
         }
 
-        User.findByIdAndUpdate(userId, user, updateError => {
+        User.findByIdAndUpdate(userId, user, null, (updateError: unknown) => {
           if (!updateError) {
             const newRecord = accountConverter.convertToFrontend(user);
 
@@ -127,7 +127,7 @@ accountRouter.put(
             }
           } else {
             res.status(500);
-            res.send(getResponseFailed(updateError.message));
+            res.send(getResponseFailed((updateError as Error).message));
             resolve();
           }
         }).exec();

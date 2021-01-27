@@ -1,11 +1,12 @@
 import fs from "fs";
 
-import { Logger } from "../infastructure/Logger";
+import { initLogger, Logger } from "../infastructure/Logger";
 import {
   generateSwaggerSpec,
   SWAGGER_SPEC_FILE,
 } from "../infastructure/Swagger";
 
+initLogger();
 const logger = Logger.get();
 
 logger.info("Generate Swagger Doc - Start");

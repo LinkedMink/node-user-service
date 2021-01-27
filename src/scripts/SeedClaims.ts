@@ -1,13 +1,14 @@
 import fs from "fs";
 
 import { connectSingletonDatabase } from "../infastructure/Database";
-import { Logger } from "../infastructure/Logger";
+import { initLogger, Logger } from "../infastructure/Logger";
 import { ClaimConverter } from "../models/converters/ClaimConverter";
 import { Claim, IClaim } from "../models/database/Claim";
 import { IClaimModel } from "../models/IClaimModel";
 
 const PROGRAM_DESCRIPTOR = "node-user-service seedClaims.ts";
 
+initLogger();
 const logger = Logger.get();
 
 const loadJson = (filePath: string): IClaimModel[] => {

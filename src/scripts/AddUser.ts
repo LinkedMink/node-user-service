@@ -1,11 +1,12 @@
 import { connectSingletonDatabase } from "../infastructure/Database";
-import { Logger } from "../infastructure/Logger";
+import { initLogger, Logger } from "../infastructure/Logger";
 import { UserConverter } from "../models/converters/UserConverter";
 import { IUser, User } from "../models/database/User";
 import { IUserModel } from "../models/IUserModel";
 
 const PROGRAM_DESCRIPTOR = "node-user-service addUser.ts";
 
+initLogger();
 const logger = Logger.get();
 
 connectSingletonDatabase();

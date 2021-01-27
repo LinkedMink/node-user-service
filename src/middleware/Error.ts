@@ -1,11 +1,10 @@
+import { ErrorRequestHandler, NextFunction } from "express";
+import { ParamsDictionary, Request, Response } from "express-serve-static-core";
+import path from "path";
 import { Logger } from "../infastructure/Logger";
 import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 import { CORS_ERROR } from "./Cors";
-import { ErrorRequestHandler, NextFunction } from "express";
-import { ParamsDictionary, Request, Response } from "express-serve-static-core";
 import { isError } from "../infastructure/Core";
-
-const logger = Logger.get("Error");
 
 export class UserInputError extends Error {
   private inputErrorValue: boolean;
@@ -30,12 +29,10 @@ export const errorMiddleware: ErrorRequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  if (isError(error)) {
-    logger.error(error.message);
-    if (error.stack) {
-      logger.error(error.stack);
-    }
+  const logger = Logger.get(path.basename(__filename));
+  logger.error(error as Record<string, string>);
 
+  if (isError(error)) {
     if (UserInputError.isThisType(error)) {
       res.status(400);
       return res.send(getResponseObject(ResponseStatus.Failed, error.message));
@@ -43,8 +40,6 @@ export const errorMiddleware: ErrorRequestHandler = (
       res.status(401);
       return res.send(getResponseObject(ResponseStatus.Failed, error.message));
     }
-  } else if (typeof error === "string" || error instanceof String) {
-    logger.error(error);
   }
 
   res.status(500);

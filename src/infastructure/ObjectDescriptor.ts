@@ -4,6 +4,7 @@ import {
   Request,
   Response,
 } from "express-serve-static-core";
+import { ParsedQs } from "qs";
 
 import { getResponseObject, ResponseStatus } from "../models/IResponseData";
 import { isString } from "./Core";
@@ -140,7 +141,9 @@ export const objectDescriptorBodyVerify = <TVerify>(
       if (isInBody) {
         req.body = descriptor.sanitize(modelCheck as TVerify);
       } else {
-        req.query = descriptor.sanitize(modelCheck as TVerify);
+        req.query = (descriptor.sanitize(
+          modelCheck as TVerify
+        ) as unknown) as ParsedQs;
       }
     }
 

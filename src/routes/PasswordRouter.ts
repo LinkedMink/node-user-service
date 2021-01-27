@@ -159,9 +159,6 @@ passwordRouter.put(
     await user.save(error => {
       if (error) {
         let message = error.message;
-        if (error.errors) {
-          message = error.errors;
-        }
 
         res.status(400);
         return res.send(getResponseObject(ResponseStatus.Failed, message));
