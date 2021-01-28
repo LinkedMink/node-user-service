@@ -2,6 +2,7 @@
 
 IMAGE_NAME="node-user-service"
 ARCHITECTURES="linux/amd64,linux/arm/v7"
+DOCKER_ARGS=""
 
 if [ -z "$DOCKER_SCOPE" ]; then
   DOCKER_SCOPE="linkedmink/" 
@@ -15,8 +16,12 @@ if [ -z "$KUBERNETES_NAMESPACE" ]; then
   KUBERNETES_NAMESPACE="necro-automobilia" 
 fi
 
-npm run build
-npm run postBuild
+if [ "$2" = "prod" ]; then
+  npm run build:prod
+  DOCKER_ARGS="--build-arg ENVIRONMENT=production"
+else
+  npm run build
+fi
 
 if [ "$1" = "deploy" ]; then
   kubectl set image \

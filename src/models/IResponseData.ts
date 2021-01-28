@@ -19,8 +19,7 @@ export enum ResponseStatus {
  *             Success = 0,
  *             Failed = 1,
  *             RequestValidation = 10,
- *             DataValidation = 11,
- *           }'
+ *             DataValidation = 11}'
  *     ErrorResponse:
  *       properties:
  *         status:

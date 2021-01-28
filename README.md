@@ -109,5 +109,9 @@ The project contains a sample deployment.yaml file for deploying to a Kubernetes
 file as necessary. Then apply the changes to your cluster.
 
 ```sh
+kubectl create secret generic jwt-private-key \
+  --namespace necro-automobilia \
+  --from-file=../../keys/jwtRS256.key
+
 kubectl apply -f ./deployment.yaml
 ```
