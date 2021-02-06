@@ -14,6 +14,7 @@
  *           example: node-user-service
  *         version:
  *           type: string
+ *           nullable: true
  *           example: 0.9.7
  *     PingMarkResponse:
  *       properties:
@@ -24,6 +25,6 @@
  */
 export interface IPingMark {
   mark: number;
-  application: string;
-  version: string | null;
+  application?: string;
+  version?: string;
 }

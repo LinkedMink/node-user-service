@@ -1,6 +1,6 @@
 import { createCrudRouter } from "../infastructure/CreateCrudRouter";
 import { AuthorizationClaim } from "../middleware/Authorization";
-import { claimConverter } from "../models/converters/ClaimConverter";
+import { claimMapper } from "../models/mappers/ClaimMapper";
 import { Claim } from "../models/database/Claim";
 
 /**
@@ -128,8 +128,4 @@ import { Claim } from "../models/database/Claim";
  *       404:
  *         $ref: '#/components/responses/404NotFound'
  */
-export const claimRouter = createCrudRouter(
-  Claim,
-  claimConverter,
-  AuthorizationClaim.ClaimManage
-);
+export const claimRouter = createCrudRouter(Claim, claimMapper, AuthorizationClaim.ClaimManage);

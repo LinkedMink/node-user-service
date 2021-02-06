@@ -1,7 +1,4 @@
-import {
-  ObjectAttribute,
-  ObjectDescriptor,
-} from "../../infastructure/ObjectDescriptor";
+import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
 
 /**
  * @swagger
@@ -25,9 +22,7 @@ export interface IAuthenticateRequest {
   password: string;
 }
 
-export const registerRequestDescriptor = new ObjectDescriptor<IAuthenticateRequest>(
-  {
-    email: [ObjectAttribute.Required],
-    password: [ObjectAttribute.Required],
-  }
-);
+export const registerRequestDescriptor = new ObjectDescriptor<IAuthenticateRequest>({
+  email: [ObjectAttribute.Required],
+  password: [ObjectAttribute.Required],
+});

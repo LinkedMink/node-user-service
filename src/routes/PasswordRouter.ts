@@ -1,170 +1,163 @@
 import cryptoRandomString from "crypto-random-string";
-import { Router } from "express";
-import { ParamsDictionary, Request, Response } from "express-serve-static-core";
+import { Router, Request, Response } from "express";
 
-import { config, ConfigKey } from "../infastructure/Config";
-import { sendPasswordReset } from "../infastructure/Email";
+import { config } from "../infastructure/Config";
+import { ConfigKey } from "../infastructure/ConfigKey";
+import { EmailSender } from "../infastructure/Email";
 import { objectDescriptorBodyVerify } from "../infastructure/ObjectDescriptor";
 import { User } from "../models/database/User";
-import { getResponseObject, ResponseStatus } from "../models/IResponseData";
+import { response } from "../models/responses/IResponseData";
 import {
   IPasswordResetRequest,
   passwordResetRequestDescriptor,
 } from "../models/requests/IPasswordResetRequest";
+import { Logger } from "../infastructure/Logger";
+import { basename } from "path";
 
-const tempKeyLength = 30;
-const tempKeyValidMilliseonds =
-  config.getNumber(ConfigKey.UserTemporaryKeyMinutes) * 60 * 1000;
+export const getPasswordRouter = (): Router => {
+  const logger = Logger.get(basename(__filename));
 
-export const passwordRouter = Router();
+  const tempKeyLength = 30;
+  const tempKeyValidMilliseonds = config.getNumber(ConfigKey.UserTemporaryKeyMinutes) * 60 * 1000;
 
-/**
- * @swagger
- * /password/{email}:
- *   get:
- *     description: Send a request to retrieve a temporary reset link
- *     tags: [Password]
- *     parameters:
- *       - in: path
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *           format: email
- *     responses:
- *       200:
- *         $ref: '#/components/responses/200Null'
- *       400:
- *         $ref: '#/components/responses/400BadRequest'
- *       404:
- *         $ref: '#/components/responses/404NotFound'
- *       500:
- *         $ref: '#/components/responses/500Internal'
- */
-passwordRouter.get(
-  "/:email",
-  async (req: Request<ParamsDictionary>, res: Response) => {
-    const email = req.params.email;
-    const user = await User.findOne({ email }).exec();
-    if (!user) {
-      res.status(404);
-      return res.send(getResponseObject(ResponseStatus.Failed));
-    }
+  const passwordRouter = Router();
 
-    if (!user.isEmailVerified) {
-      res.status(400);
-      return res.send(
-        getResponseObject(
-          ResponseStatus.Failed,
-          "The email has not been verified."
-        )
-      );
-    }
-
-    const resetCode = cryptoRandomString({
-      length: tempKeyLength,
-      type: "url-safe",
-    });
-    user.temporaryKey = resetCode;
-    user.temporaryKeyDate = new Date();
-    await user.save(error => {
-      if (error) {
-        res.status(500);
-        return res.send(
-          getResponseObject(ResponseStatus.Failed, "An error occurred")
-        );
+  /**
+   * @swagger
+   * /password/{email}:
+   *   get:
+   *     description: Send a request to retrieve a temporary reset link
+   *     tags: [Password]
+   *     parameters:
+   *       - in: path
+   *         name: email
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: email
+   *     responses:
+   *       200:
+   *         $ref: '#/components/responses/200Null'
+   *       400:
+   *         $ref: '#/components/responses/400BadRequest'
+   *       404:
+   *         $ref: '#/components/responses/404NotFound'
+   *       500:
+   *         $ref: '#/components/responses/500Internal'
+   */
+  passwordRouter.get("/:email", [
+    async (req: Request, res: Response) => {
+      const email = req.params.email;
+      const user = await User.findOne({ email }).exec();
+      if (!user) {
+        res.status(404);
+        return res.send(response.failed());
       }
 
-      sendPasswordReset(user.email, resetCode)
-        .then(() => res.send(getResponseObject()))
-        .catch(() => {
-          res.status(500);
-          return res.send(
-            getResponseObject(ResponseStatus.Failed, "An error occurred")
-          );
-        });
-    });
-  }
-);
-
-/**
- * @swagger
- * /password:
- *   put:
- *     description: Use the temporary reset key to change a user's password
- *     tags: [Password]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/IPasswordResetRequest'
- *     responses:
- *       200:
- *         $ref: '#/components/responses/200Null'
- *       400:
- *         $ref: '#/components/responses/400BadRequest'
- *       404:
- *         $ref: '#/components/responses/404NotFound'
- */
-passwordRouter.put(
-  "/",
-  objectDescriptorBodyVerify(passwordResetRequestDescriptor),
-  async (req: Request<ParamsDictionary>, res: Response) => {
-    const requestData = req.body as IPasswordResetRequest;
-
-    const user = await User.findOne({ email: requestData.email }).exec();
-    if (!user) {
-      res.status(404);
-      return res.send(getResponseObject(ResponseStatus.Failed));
-    }
-
-    if (!user.temporaryKey || !user.temporaryKeyDate) {
-      res.status(400);
-      return res.send(
-        getResponseObject(
-          ResponseStatus.Failed,
-          "No reset token has been issued."
-        )
-      );
-    }
-
-    if (
-      Date.now() - user.temporaryKeyDate.getTime() >
-      tempKeyValidMilliseonds
-    ) {
-      res.status(400);
-      res.send(
-        getResponseObject(
-          ResponseStatus.Failed,
-          "The reset token is no longer valid."
-        )
-      );
-    }
-
-    if (user.temporaryKey !== requestData.resetToken) {
-      res.status(400);
-      return res.send(
-        getResponseObject(
-          ResponseStatus.Failed,
-          "The reset token is not valid."
-        )
-      );
-    }
-
-    user.temporaryKey = undefined;
-    user.temporaryKeyDate = undefined;
-    user.password = requestData.password;
-
-    await user.save(error => {
-      if (error) {
-        let message = error.message;
-
+      if (!user.isEmailVerified) {
         res.status(400);
-        return res.send(getResponseObject(ResponseStatus.Failed, message));
+        return res.send(response.failed("The email has not been verified."));
       }
 
-      return res.send(getResponseObject());
-    });
-  }
-);
+      const resetCode = cryptoRandomString({
+        length: tempKeyLength,
+        type: "url-safe",
+      });
+      user.temporaryKey = resetCode;
+      user.temporaryKeyDate = new Date();
+
+      await new Promise((resolve, reject) => {
+        user.save(error => {
+          if (error) {
+            logger.error({ message: error });
+            res.status(500);
+            res.send(response.failed("An error occurred"));
+            return resolve(undefined);
+          }
+
+          void EmailSender.get()
+            .sendPasswordReset(user.email, resetCode)
+            .then(isSuccess => {
+              if (isSuccess) {
+                res.send(response.success());
+                return resolve(undefined);
+              }
+
+              res.status(500);
+              res.send(response.failed("An error occurred"));
+              resolve(undefined);
+            });
+        });
+      });
+    },
+  ]);
+
+  /**
+   * @swagger
+   * /password:
+   *   put:
+   *     description: Use the temporary reset key to change a user's password
+   *     tags: [Password]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/IPasswordResetRequest'
+   *     responses:
+   *       200:
+   *         $ref: '#/components/responses/200Null'
+   *       400:
+   *         $ref: '#/components/responses/400BadRequest'
+   *       404:
+   *         $ref: '#/components/responses/404NotFound'
+   */
+  passwordRouter.put(
+    "/",
+    objectDescriptorBodyVerify(passwordResetRequestDescriptor),
+    async (req: Request, res: Response) => {
+      const requestData = req.body as IPasswordResetRequest;
+
+      const user = await User.findOne({ email: requestData.email }).exec();
+      if (!user) {
+        res.status(404);
+        return res.send(response.failed());
+      }
+
+      if (!user.temporaryKey || !user.temporaryKeyDate) {
+        res.status(400);
+        return res.send(response.failed("No reset token has been issued."));
+      }
+
+      if (Date.now() - user.temporaryKeyDate.getTime() > tempKeyValidMilliseonds) {
+        res.status(400);
+        res.send(response.failed("The reset token is no longer valid."));
+      }
+
+      if (user.temporaryKey !== requestData.resetToken) {
+        res.status(400);
+        return res.send(response.failed("The reset token is not valid."));
+      }
+
+      user.temporaryKey = undefined;
+      user.temporaryKeyDate = undefined;
+      user.password = requestData.password;
+
+      await new Promise((resolve, reject) => {
+        user.save(error => {
+          if (error) {
+            logger.error({ message: error });
+            res.status(500);
+            res.send(response.failed(error.message));
+            return resolve(undefined);
+          }
+
+          res.send(response.success());
+          resolve(undefined);
+        });
+      });
+    }
+  );
+
+  return passwordRouter;
+};

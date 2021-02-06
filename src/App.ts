@@ -1,38 +1,38 @@
+#!/usr/bin/env node
+
 import bodyParser from "body-parser";
 import express from "express";
 import passport from "passport";
 
-import { config, ConfigKey } from "./infastructure/Config";
+import { config } from "./infastructure/Config";
+import { ConfigKey } from "./infastructure/ConfigKey";
 import { connectSingletonDatabase } from "./infastructure/Database";
-import { getRequestLoggerHandler, initLogger } from "./infastructure/Logger";
+import { initializeLogger, Logger } from "./infastructure/Logger";
 import { corsMiddleware } from "./middleware/Cors";
 import { errorMiddleware } from "./middleware/Error";
+import { logRequestMiddleware } from "./middleware/LogRequest";
 import { addJwtStrategy, addLocalStrategy } from "./middleware/Passport";
 import { accountRouter } from "./routes/AccountRouter";
 import { authenticateRouter } from "./routes/AuthenticateRouter";
 import { claimRouter } from "./routes/ClaimRouter";
-import { passwordRouter } from "./routes/PasswordRouter";
+import { getPasswordRouter } from "./routes/PasswordRouter";
 import { pingRouter } from "./routes/PingRouter";
 import { registerRouter } from "./routes/RegisterRouter";
 import { settingRouter } from "./routes/SettingRouter";
-import { swaggerRouter } from "./routes/SwaggerRouter";
+import { getSwaggerRouter } from "./routes/SwaggerRouter";
 import { userRouter } from "./routes/UserRouter";
 
-initLogger();
-connectSingletonDatabase();
+initializeLogger();
+void connectSingletonDatabase();
 
 const app = express();
 
-app.use(getRequestLoggerHandler());
+app.use(logRequestMiddleware());
 app.use(bodyParser.json());
 
 addJwtStrategy(passport);
 addLocalStrategy(passport);
 app.use(passport.initialize());
-
-if (config.getBool(ConfigKey.IsSwaggerEnabled)) {
-  app.use("/docs", swaggerRouter);
-}
 
 app.use(corsMiddleware);
 app.use(errorMiddleware);
@@ -45,8 +45,19 @@ app.use("/users", userRouter);
 app.use("/settings", settingRouter);
 
 if (config.getBool(ConfigKey.UserRegistrationIsEnabled)) {
-  app.use("/password", passwordRouter);
+  app.use("/password", getPasswordRouter);
   app.use("/register", registerRouter);
 }
 
-export const server = app.listen(config.getString(ConfigKey.ListenPort));
+void getSwaggerRouter()
+  .then(router => {
+    app.use("/docs", router);
+    Logger.get().info("Swagger Doc Loaded: /docs");
+  })
+  .catch(error => {
+    Logger.get().info("Swagger Disabled");
+    Logger.get().verbose(error);
+  });
+
+const listenPort = config.getNumber(ConfigKey.ListenPort);
+export const server = app.listen(listenPort);

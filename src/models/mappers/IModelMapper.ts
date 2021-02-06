@@ -1,11 +1,11 @@
 import { Document } from "mongoose";
 import { ITrackedEntity } from "../database/TrackedEntity";
-import { ITrackedEntityModel } from "../ITrackedEntityModel";
+import { ITrackedEntityModel } from "../responses/ITrackedEntityModel";
 
 export const setUserModifier = <TEntity extends ITrackedEntity>(
-  entity: ITrackedEntity,
+  entity: Partial<ITrackedEntity>,
   modifier: string
-): TEntity => {
+): Partial<TEntity> => {
   if (!entity.id || !entity.createdBy) {
     entity.createdBy = modifier;
   }
@@ -27,14 +27,7 @@ export const mapTrackedEntity = <TFrontend extends ITrackedEntityModel>(
   return toMap;
 };
 
-export interface IModelConverter<
-  TFrontend extends object,
-  TBackend extends object
-> {
+export interface IModelMapper<TFrontend, TBackend extends Document<unknown>> {
   convertToFrontend(model: TBackend): TFrontend;
-  convertToBackend(
-    model: TFrontend,
-    existing?: TBackend,
-    modifier?: string
-  ): TBackend;
+  convertToBackend(model: TFrontend, existing?: TBackend, modifier?: string): TBackend;
 }

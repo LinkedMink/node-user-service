@@ -1,14 +1,11 @@
-import { Types } from "mongoose";
-import { ISetting } from "../database/Setting";
-import { ISettingModel } from "../ISettingModel";
-import {
-  IModelConverter,
-  mapTrackedEntity,
-  setUserModifier,
-} from "./IModelConverter";
+import { Model, Types } from "mongoose";
+import { ISetting, Setting } from "../database/Setting";
+import { ISettingModel } from "../responses/ISettingModel";
+import { IModelMapper, mapTrackedEntity, setUserModifier } from "./IModelMapper";
 
-export class SettingConverter
-  implements IModelConverter<ISettingModel, ISetting> {
+export class SettingMapper implements IModelMapper<ISettingModel, ISetting> {
+  constructor(private readonly dbModel: Model<ISetting>) {}
+
   public convertToFrontend = (model: ISetting): ISettingModel => {
     let returnModel: ISettingModel = {
       userId: model.userId.toHexString(),
@@ -27,15 +24,10 @@ export class SettingConverter
     existing?: ISetting | undefined,
     modifier?: string
   ): ISetting => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let tempReturnModel: any = {};
-    if (existing) {
-      tempReturnModel = existing;
-    }
+    let returnModel: Partial<ISetting> = existing ?? {};
 
-    const returnModel: ISetting = tempReturnModel;
     if (modifier) {
-      tempReturnModel = setUserModifier(returnModel, modifier);
+      returnModel = setUserModifier(returnModel, modifier);
     }
 
     const applicationsArray = new Types.Array<string>();
@@ -48,8 +40,8 @@ export class SettingConverter
     returnModel.applications = applicationsArray;
     returnModel.data = model.data;
 
-    return returnModel;
+    return new this.dbModel(returnModel);
   };
 }
 
-export const settingConverter = new SettingConverter();
+export const settingMapper = new SettingMapper(Setting);

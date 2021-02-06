@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import path from "path";
 
-import { config, ConfigKey } from "./Config";
+import { config } from "./Config";
+import { ConfigKey } from "./ConfigKey";
 import { Logger } from "./Logger";
 
 export const connectSingletonDatabase = (): Promise<typeof mongoose> => {
@@ -39,6 +40,8 @@ export const connectSingletonDatabase = (): Promise<typeof mongoose> => {
   return mongoose
     .connect(connectionString, {
       useNewUrlParser: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
       useUnifiedTopology: true,
     })
     .catch(error => {

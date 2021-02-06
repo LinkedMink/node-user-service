@@ -1,21 +1,18 @@
-import { Router } from "express";
-import { ParamsDictionary, Request, Response } from "express-serve-static-core";
+import { Router, Request, Response } from "express";
 
 import {
   getEmailVerificationCode,
   getUserAndCheckVerified,
   sendEmailWithCode,
 } from "../handlers/Verification";
-import { config, ConfigKey } from "../infastructure/Config";
+import { config } from "../infastructure/Config";
+import { ConfigKey } from "../infastructure/ConfigKey";
 import { objectDescriptorBodyVerify } from "../infastructure/ObjectDescriptor";
-import { userConverter } from "../models/converters/UserConverter";
+import { userMapper } from "../models/mappers/UserMapper";
 import { IUser, User } from "../models/database/User";
-import { getResponseObject, ResponseStatus } from "../models/IResponseData";
-import { IUserModel } from "../models/IUserModel";
-import {
-  IRegisterRequest,
-  registerRequestDescriptor,
-} from "../models/requests/IRegisterRequest";
+import { response } from "../models/responses/IResponseData";
+import { IUserModel } from "../models/responses/IUserModel";
+import { IRegisterRequest, registerRequestDescriptor } from "../models/requests/IRegisterRequest";
 
 const DEFAULT_CLAIMS = config.getString(ConfigKey.UserDefaultClaims).split(",");
 
@@ -46,13 +43,11 @@ export const registerRouter = Router();
 registerRouter.post(
   "/",
   objectDescriptorBodyVerify(registerRequestDescriptor),
-  async (req: Request<ParamsDictionary>, res: Response) => {
+  async (req: Request, res: Response) => {
     const requestData = req.body as IRegisterRequest;
 
     const userData = requestData as IUserModel;
-    (userData.isEmailVerified = false),
-      (userData.isLocked = false),
-      (userData.claims = []);
+    (userData.isEmailVerified = false), (userData.isLocked = false), (userData.claims = []);
     DEFAULT_CLAIMS.forEach(rawClaim => {
       const claim = rawClaim.trim();
       if (claim.length > 0) {
@@ -60,7 +55,7 @@ registerRouter.post(
       }
     });
 
-    const user: IUser = userConverter.convertToBackend(
+    const user: IUser = userMapper.convertToBackend(
       userData,
       undefined,
       `Register(${userData.email})`
@@ -68,21 +63,22 @@ registerRouter.post(
     user.temporaryKey = getEmailVerificationCode();
     const saveModel = new User(user);
 
-    await saveModel.save(error => {
-      if (error) {
-        let message = error.message;
+    await new Promise((resolve, reject) => {
+      saveModel.save(error => {
+        if (error) {
+          res.status(400);
+          res.send(response.failed(error.message));
+          return resolve(undefined);
+        }
 
-        res.status(400);
-        return res.send(getResponseObject(ResponseStatus.Failed, message));
-      }
-
-      const newRecord = userConverter.convertToFrontend(saveModel);
-      sendEmailWithCode(
-        res,
-        newRecord.email,
-        user.temporaryKey as string,
-        newRecord
-      );
+        const newRecord = userMapper.convertToFrontend(saveModel);
+        void sendEmailWithCode(
+          res,
+          newRecord.email,
+          user.temporaryKey as string,
+          newRecord
+        ).then(() => resolve(undefined));
+      });
     });
   }
 );
@@ -111,9 +107,8 @@ registerRouter.post(
  *       500:
  *         $ref: '#/components/responses/500Internal'
  */
-registerRouter.get(
-  "/:email/:code",
-  async (req: Request<ParamsDictionary>, res: Response) => {
+registerRouter.get("/:email/:code", [
+  async (req: Request, res: Response) => {
     const email = req.params.email;
     const code = req.params.code;
     const user = await getUserAndCheckVerified(res, email);
@@ -123,30 +118,27 @@ registerRouter.get(
 
     if (!user.temporaryKey || user.temporaryKey !== code) {
       res.status(500);
-      return res.send(
-        getResponseObject(
-          ResponseStatus.Failed,
-          "The verification code is invalid"
-        )
-      );
+      return res.send(response.failed("The verification code is invalid"));
     }
 
     user.isEmailVerified = true;
     user.temporaryKey = undefined;
     user.temporaryKeyDate = undefined;
 
-    await user.save(error => {
-      if (error) {
-        res.status(500);
-        return res.send(
-          getResponseObject(ResponseStatus.Failed, "An error occurred")
-        );
-      }
+    await new Promise((resolve, reject) => {
+      user.save(error => {
+        if (error) {
+          res.status(500);
+          res.send(response.failed("An error occurred"));
+          return resolve(undefined);
+        }
 
-      return res.send(getResponseObject());
+        res.send(response.success());
+        return resolve(undefined);
+      });
     });
-  }
-);
+  },
+]);
 
 /**
  * @swagger
@@ -167,9 +159,8 @@ registerRouter.get(
  *       500:
  *         $ref: '#/components/responses/500Internal'
  */
-registerRouter.get(
-  "/:email",
-  async (req: Request<ParamsDictionary>, res: Response) => {
+registerRouter.get("/:email", [
+  async (req: Request, res: Response) => {
     const email = req.params.email;
     const user = await getUserAndCheckVerified(res, email);
     if (!user) {
@@ -178,18 +169,20 @@ registerRouter.get(
 
     if (!user.temporaryKey) {
       user.temporaryKey = getEmailVerificationCode();
-      await user.save(error => {
-        if (error) {
-          res.status(500);
-          return res.send(
-            getResponseObject(ResponseStatus.Failed, "An error occurred")
-          );
-        }
 
-        sendEmailWithCode(res, email, user.temporaryKey as string);
+      await new Promise((resolve, reject) => {
+        user.save(error => {
+          if (error) {
+            res.status(500);
+            res.send(response.failed("An error occurred"));
+            return resolve(undefined);
+          }
+
+          void sendEmailWithCode(res, email, user.temporaryKey as string).then(() =>
+            resolve(undefined)
+          );
+        });
       });
-    } else {
-      sendEmailWithCode(res, email, user.temporaryKey);
     }
-  }
-);
+  },
+]);

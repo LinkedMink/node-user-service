@@ -12,7 +12,7 @@ This project is part of a collection of microservices for supporting a larger pr
 #### Required
 The application was tested with these major versions:
 * MongoDB 4.2
-* Node.js 12
+* Node.js 14
 
 #### Recommended
 * Docker
@@ -25,7 +25,6 @@ Install the npm packages.
 
 ```sh
 cd node-user-service
-npm install -g cross-env
 npm install
 ```
 

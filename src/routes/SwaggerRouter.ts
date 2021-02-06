@@ -1,28 +1,18 @@
 import { Router } from "express";
-import swaggerUi, { SwaggerUiOptions } from "swagger-ui-express";
 
-import { config } from "../infastructure/Config";
-import {
-  generateSwaggerSpec,
-  loadPreGeneratedSwaggerSpec,
-} from "../infastructure/Swagger";
+export const getSwaggerRouter = async (): Promise<Router> => {
+  const swaggerUi = await import("swagger-ui-express");
+  const swaggerModule = await import("../infastructure/Swagger");
+  const swaggerDoc = await swaggerModule.getRuntimeSwaggerDoc();
 
-export const swaggerRouter = Router();
+  const swaggerRouter = Router();
+  swaggerRouter.use("/", swaggerUi.serve);
+  swaggerRouter.get(
+    "/",
+    swaggerUi.setup(swaggerDoc, {
+      isExplorer: true,
+    })
+  );
 
-const swaggerUiOptions: SwaggerUiOptions = {
-  isExplorer: true,
+  return swaggerRouter;
 };
-
-swaggerRouter.use("/", swaggerUi.serve);
-
-if (config.isEnvironmentLocal) {
-  swaggerRouter.get(
-    "/",
-    swaggerUi.setup(generateSwaggerSpec(), swaggerUiOptions)
-  );
-} else {
-  swaggerRouter.get(
-    "/",
-    swaggerUi.setup(loadPreGeneratedSwaggerSpec(), swaggerUiOptions)
-  );
-}

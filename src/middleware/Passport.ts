@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Request } from "express-serve-static-core";
+import { Request } from "express";
 import { PassportStatic } from "passport";
 import {
   ExtractJwt,
@@ -7,12 +7,10 @@ import {
   StrategyOptions as JwtStrategyOptions,
   VerifiedCallback,
 } from "passport-jwt";
-import {
-  IStrategyOptionsWithRequest,
-  Strategy as LocalStrategy,
-} from "passport-local";
+import { IStrategyOptionsWithRequest, Strategy as LocalStrategy } from "passport-local";
 
-import { config, ConfigKey } from "../infastructure/Config";
+import { config } from "../infastructure/Config";
+import { ConfigKey } from "../infastructure/ConfigKey";
 import { User } from "../models/database/User";
 
 const errors = {
@@ -35,8 +33,7 @@ export interface IJwtPayload {
 
 export const addLocalStrategy = (passport: PassportStatic): void => {
   const maxLoginAttempts = config.getNumber(ConfigKey.UserPassMaxAttempts);
-  const lockoutMilliseonds =
-    config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
+  const lockoutMilliseonds = config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
 
   const options: IStrategyOptionsWithRequest = {
     usernameField: "email",
@@ -46,8 +43,8 @@ export const addLocalStrategy = (passport: PassportStatic): void => {
   };
 
   // TODO investigate why this works, is async function really a middleware function?
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   passport.use(
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     new LocalStrategy(options, async (request, email, password, done) => {
       try {
         const user = await User.findOne({ email }).exec();
@@ -60,10 +57,7 @@ export const addLocalStrategy = (passport: PassportStatic): void => {
         }
 
         if (user.isLocked) {
-          if (
-            user.isLockedDate &&
-            Date.now() - user.isLockedDate.getTime() > lockoutMilliseonds
-          ) {
+          if (user.isLockedDate && Date.now() - user.isLockedDate.getTime() > lockoutMilliseonds) {
             user.isLocked = false;
             user.isLockedDate = undefined;
             user.authenticationAttempts = undefined;
@@ -113,16 +107,13 @@ export const addJwtStrategy = (passport: PassportStatic): void => {
   };
 
   passport.use(
-    new JwtStrategy(
-      options,
-      (req: Request, jwtPayload: IJwtPayload, done: VerifiedCallback) => {
-        if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
-          return done("JWT Expired");
-        }
-
-        req.user = jwtPayload;
-        return done(null, jwtPayload);
+    new JwtStrategy(options, (req: Request, jwtPayload: IJwtPayload, done: VerifiedCallback) => {
+      if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
+        return done("JWT Expired");
       }
-    )
+
+      req.user = jwtPayload;
+      return done(null, jwtPayload);
+    })
   );
 };

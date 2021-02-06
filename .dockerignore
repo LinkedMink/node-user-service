@@ -17,5 +17,4 @@ Dockerfile
 jest.config.js
 README.md
 tsconfig*.json
-*.key
-*.key.pub
+*.key*

@@ -1,0 +1,5 @@
+Users:
+- email: 'my-email@sample.com'
+  password: 'my-pa$$-key'
+  claims:
+  - 'UserSettings'

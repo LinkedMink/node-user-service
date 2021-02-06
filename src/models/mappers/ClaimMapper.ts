@@ -1,13 +1,11 @@
-import { Types } from "mongoose";
-import { IClaim } from "../database/Claim";
-import { IClaimModel } from "../IClaimModel";
-import {
-  IModelConverter,
-  mapTrackedEntity,
-  setUserModifier,
-} from "./IModelConverter";
+import { Model, Types } from "mongoose";
+import { Claim, IClaim } from "../database/Claim";
+import { IClaimModel } from "../responses/IClaimModel";
+import { IModelMapper, mapTrackedEntity, setUserModifier } from "./IModelMapper";
 
-export class ClaimConverter implements IModelConverter<IClaimModel, IClaim> {
+export class ClaimMapper implements IModelMapper<IClaimModel, IClaim> {
+  constructor(private readonly dbModel: Model<IClaim>) {}
+
   public convertToFrontend = (model: IClaim): IClaimModel => {
     let returnModel: IClaimModel = {
       name: model.name,
@@ -24,15 +22,10 @@ export class ClaimConverter implements IModelConverter<IClaimModel, IClaim> {
     existing?: IClaim | undefined,
     modifier?: string
   ): IClaim => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let tempReturnModel: any = {};
-    if (existing) {
-      tempReturnModel = existing;
-    }
+    let returnModel: Partial<IClaim> = existing ?? {};
 
-    const returnModel: IClaim = tempReturnModel;
     if (modifier) {
-      tempReturnModel = setUserModifier(returnModel, modifier);
+      returnModel = setUserModifier(returnModel, modifier);
     }
 
     const applicationsArray = new Types.Array<string>();
@@ -43,8 +36,8 @@ export class ClaimConverter implements IModelConverter<IClaimModel, IClaim> {
     returnModel.name = model.name;
     returnModel.applications = applicationsArray;
 
-    return returnModel;
+    return new this.dbModel(returnModel);
   };
 }
 
-export const claimConverter = new ClaimConverter();
+export const claimMapper = new ClaimMapper(Claim);

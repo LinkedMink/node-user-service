@@ -1,6 +1,6 @@
 import { createCrudRouter } from "../infastructure/CreateCrudRouter";
 import { AuthorizationClaim } from "../middleware/Authorization";
-import { userConverter } from "../models/converters/UserConverter";
+import { userMapper } from "../models/mappers/UserMapper";
 import { User } from "../models/database/User";
 
 /**
@@ -128,8 +128,4 @@ import { User } from "../models/database/User";
  *       404:
  *         $ref: '#/components/responses/404NotFound'
  */
-export const userRouter = createCrudRouter(
-  User,
-  userConverter,
-  AuthorizationClaim.UserManage
-);
+export const userRouter = createCrudRouter(User, userMapper, AuthorizationClaim.UserManage);

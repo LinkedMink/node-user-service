@@ -1,12 +1,13 @@
 import fs from "fs";
-import swaggerJsDoc from "swagger-jsdoc";
 
 import { config } from "../infastructure/Config";
 
-export const SWAGGER_SPEC_FILE = "swagger.json";
+export const DEFAULT_SWAGGER_DOC_FILE = "swagger.json";
 
-export const generateSwaggerSpec = (): object => {
-  const swaggerJsDocOptions: swaggerJsDoc.Options = {
+export const generateSwaggerDoc = async (): Promise<Record<string, unknown>> => {
+  const swaggerJsDoc = await import("swagger-jsdoc");
+
+  return swaggerJsDoc.default({
     definition: {
       openapi: "3.0.3",
       info: {
@@ -16,13 +17,16 @@ export const generateSwaggerSpec = (): object => {
       },
     },
     apis: ["./docs/**/*.yaml", "./src/models/**/*.ts", "./src/routes/**/*.ts"],
-  };
-
-  return swaggerJsDoc(swaggerJsDocOptions);
+  }) as Record<string, unknown>;
 };
 
-export const loadPreGeneratedSwaggerSpec = (): object => {
-  const data = fs.readFileSync(SWAGGER_SPEC_FILE, "utf8");
-  const swaggerSpec = JSON.parse(data);
+export const loadSwaggerDocFile = async (
+  filename = DEFAULT_SWAGGER_DOC_FILE
+): Promise<Record<string, unknown>> => {
+  const data = await fs.promises.readFile(filename, "utf8");
+  const swaggerSpec = JSON.parse(data) as Record<string, unknown>;
   return swaggerSpec;
 };
+
+export const getRuntimeSwaggerDoc = async (): Promise<Record<string, unknown>> =>
+  config.isEnvironmentLocal ? Promise.resolve(generateSwaggerDoc()) : await loadSwaggerDocFile();

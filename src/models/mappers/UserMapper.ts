@@ -1,13 +1,11 @@
-import { Types } from "mongoose";
-import { IUser, IUserClaim } from "../database/User";
-import { IUserModel } from "../IUserModel";
-import {
-  IModelConverter,
-  mapTrackedEntity,
-  setUserModifier,
-} from "./IModelConverter";
+import { Model, Types } from "mongoose";
+import { IUser, IUserClaim, User } from "../database/User";
+import { IUserModel } from "../responses/IUserModel";
+import { IModelMapper, mapTrackedEntity, setUserModifier } from "./IModelMapper";
 
-export class UserConverter implements IModelConverter<IUserModel, IUser> {
+export class UserMapper implements IModelMapper<IUserModel, IUser> {
+  constructor(private readonly dbModel: Model<IUser>) {}
+
   public convertToFrontend = (model: IUser): IUserModel => {
     const claimArray: string[] = [];
     model.claims.forEach(claim => claimArray.push(claim.name));
@@ -31,15 +29,10 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     existing?: IUser | undefined,
     modifier?: string
   ): IUser => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let tempReturnModel: any = {};
-    if (existing) {
-      tempReturnModel = existing;
-    }
+    let returnModel: Partial<IUser> = existing ?? {};
 
-    const returnModel: IUser = tempReturnModel;
     if (modifier) {
-      tempReturnModel = setUserModifier(returnModel, modifier);
+      returnModel = setUserModifier(returnModel, modifier);
     }
 
     if (model.password) {
@@ -63,8 +56,8 @@ export class UserConverter implements IModelConverter<IUserModel, IUser> {
     returnModel.isLocked = model.isLocked;
     returnModel.claims = claimArray;
 
-    return returnModel;
+    return new this.dbModel(returnModel);
   };
 }
 
-export const userConverter = new UserConverter();
+export const userMapper = new UserMapper(User);

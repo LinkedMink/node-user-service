@@ -1,0 +1,10 @@
+Claims:
+- name: "UserSettings"
+  applications:
+  - "node-user-service"
+- name: "UserManage"
+  applications:
+  - "node-user-service"
+- name: "ClaimManage"
+  applications:
+  - "node-user-service"

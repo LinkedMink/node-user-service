@@ -1,10 +1,9 @@
-import { ErrorRequestHandler, NextFunction } from "express";
-import { ParamsDictionary, Request, Response } from "express-serve-static-core";
+import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
 import path from "path";
 import { Logger } from "../infastructure/Logger";
-import { getResponseObject, ResponseStatus } from "../models/IResponseData";
+import { response, ResponseStatus } from "../models/responses/IResponseData";
 import { CORS_ERROR } from "./Cors";
-import { isError } from "../infastructure/Core";
+import { isError } from "../infastructure/TypeCheck";
 
 export class UserInputError extends Error {
   private inputErrorValue: boolean;
@@ -25,7 +24,7 @@ export class UserInputError extends Error {
 
 export const errorMiddleware: ErrorRequestHandler = (
   error: unknown,
-  req: Request<ParamsDictionary>,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -35,13 +34,13 @@ export const errorMiddleware: ErrorRequestHandler = (
   if (isError(error)) {
     if (UserInputError.isThisType(error)) {
       res.status(400);
-      return res.send(getResponseObject(ResponseStatus.Failed, error.message));
+      return res.send(response.get(ResponseStatus.Failed, error.message));
     } else if (error.message === CORS_ERROR) {
       res.status(401);
-      return res.send(getResponseObject(ResponseStatus.Failed, error.message));
+      return res.send(response.get(ResponseStatus.Failed, error.message));
     }
   }
 
   res.status(500);
-  return res.send(getResponseObject(ResponseStatus.Failed));
+  return res.send(response.get(ResponseStatus.Failed));
 };

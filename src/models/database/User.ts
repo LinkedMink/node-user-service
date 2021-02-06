@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import { model, Schema, SchemaTypes, Types } from "mongoose";
 
-import { config, ConfigKey } from "../../infastructure/Config";
+import { config } from "../../infastructure/Config";
+import { ConfigKey } from "../../infastructure/ConfigKey";
 import { validateEmail } from "../../infastructure/Validators";
 import {
   ITrackedEntity,

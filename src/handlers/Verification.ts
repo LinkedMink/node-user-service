@@ -1,9 +1,11 @@
 import cryptoRandomString from "crypto-random-string";
-import { Response } from "express-serve-static-core";
+import { Response } from "express";
 
-import { sendVerifyEmail } from "../infastructure/Email";
+import { EmailSender } from "../infastructure/Email";
 import { IUser, User } from "../models/database/User";
-import { getResponseObject, ResponseStatus } from "../models/IResponseData";
+import { IAccountModel } from "../models/requests/IAccountModel";
+import { response } from "../models/responses/IResponseData";
+import { IUserModel } from "../models/responses/IUserModel";
 
 const VERIFICATION_KEY_LENGTH = 30;
 
@@ -14,15 +16,13 @@ export const getUserAndCheckVerified = async (
   const user = await User.findOne({ email }).exec();
   if (!user) {
     res.status(404);
-    res.send(getResponseObject(ResponseStatus.Failed));
+    res.send(response.failed());
     return null;
   }
 
   if (user.isEmailVerified) {
     res.status(400);
-    res.send(
-      getResponseObject(ResponseStatus.Failed, "Email already verified")
-    );
+    res.send(response.failed("Email already verified"));
     return null;
   }
 
@@ -33,15 +33,18 @@ export const sendEmailWithCode = (
   res: Response,
   email: string,
   code: string,
-  data: object | null = null
+  data: IUserModel | IAccountModel | null = null
 ): Promise<void> => {
-  return sendVerifyEmail(email, code)
-    .then(() => {
-      res.send(getResponseObject(ResponseStatus.Success, data));
-    })
-    .catch(() => {
+  return EmailSender.get()
+    .sendVerifyEmail(email, code)
+    .then(isSuccess => {
+      if (isSuccess) {
+        res.send(response.success(data));
+        return;
+      }
+
       res.status(500);
-      res.send(getResponseObject(ResponseStatus.Failed, "An error occurred"));
+      res.send(response.failed("An error occurred"));
     });
 };
 

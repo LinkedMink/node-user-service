@@ -1,8 +1,6 @@
-import { config, ConfigKey } from "../../infastructure/Config";
-import {
-  ObjectAttribute,
-  ObjectDescriptor,
-} from "../../infastructure/ObjectDescriptor";
+import { config } from "../../infastructure/Config";
+import { ConfigKey } from "../../infastructure/ConfigKey";
+import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
 
 /**
  * @swagger

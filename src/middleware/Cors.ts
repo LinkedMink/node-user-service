@@ -1,15 +1,13 @@
 import cors from "cors";
 
-import { config, ConfigKey } from "../infastructure/Config";
-import { isString } from "../infastructure/Core";
+import { config } from "../infastructure/Config";
+import { ConfigKey } from "../infastructure/ConfigKey";
+import { isString } from "../infastructure/TypeCheck";
 
 export const CORS_ERROR = "Not allowed by CORS";
 
 type ReportOriginFunction = (err: Error | null, allow?: boolean) => void;
-type OriginFunction = (
-  requestOrigin: string | undefined,
-  callback: ReportOriginFunction
-) => void;
+type OriginFunction = (requestOrigin: string | undefined, callback: ReportOriginFunction) => void;
 
 interface ICorsOptions {
   origin: string | OriginFunction;
@@ -22,10 +20,7 @@ let origin: string | OriginFunction;
 if (isString(originsData)) {
   origin = originsData;
 } else {
-  origin = (
-    origin: string | undefined,
-    callback: ReportOriginFunction
-  ): void => {
+  origin = (origin: string | undefined, callback: ReportOriginFunction): void => {
     if (origin !== undefined && originsData.includes(origin)) {
       callback(null, true);
     } else {

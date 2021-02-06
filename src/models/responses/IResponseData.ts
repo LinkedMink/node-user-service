@@ -45,26 +45,18 @@ export enum ResponseStatus {
  *             type: object
  *           description: A generic array
  */
-export interface IResponseData {
+export interface IResponseData<T = null> {
   status: ResponseStatus;
-  data: object[] | object | string | null;
+  data: T;
 }
 
-export const getResponseObject = (
-  status: ResponseStatus = ResponseStatus.Success,
-  data: object[] | object | string | null = null
-): IResponseData => {
-  return { status, data };
-};
-
-export const getResponseSuccess = (
-  data: object[] | object | string | null = null
-): IResponseData => {
-  return { status: ResponseStatus.Success, data };
-};
-
-export const getResponseFailed = (
-  data: object[] | object | string | null = null
-): IResponseData => {
-  return { status: ResponseStatus.Failed, data };
+export const response = {
+  get: <T>(
+    status: ResponseStatus = ResponseStatus.Success,
+    data: T | null = null
+  ): IResponseData<T> => ({ status, data } as IResponseData<T>),
+  success: <T>(data: T | null = null): IResponseData<T> =>
+    ({ status: ResponseStatus.Success, data } as IResponseData<T>),
+  failed: <T>(data: T | null = null): IResponseData<T> =>
+    ({ status: ResponseStatus.Failed, data } as IResponseData<T>),
 };

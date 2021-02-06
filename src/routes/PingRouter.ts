@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { ParamsDictionary, Request, Response } from "express-serve-static-core";
+import { Request, Response } from "express";
 
 import { config } from "../infastructure/Config";
-import { getResponseObject } from "../models/IResponseData";
+import { response } from "../models/responses/IResponseData";
 import { IPingMark } from "../models/responses/IPingMark";
 
 export const pingRouter = Router();
@@ -21,14 +21,20 @@ export const pingRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/PingMarkResponse'
  */
-pingRouter.get("/", (req: Request<ParamsDictionary>, res: Response) => {
-  const pingResponse = getResponseObject();
-
-  pingResponse.data = {
-    mark: Date.now(),
-    application: config.packageJson.name,
-    version: config.packageJson.version,
-  } as IPingMark;
-
-  res.send(pingResponse);
+pingRouter.get("/", (req: Request, res: Response) => {
+  if (config.isEnvironmentProd) {
+    res.send(
+      response.success<IPingMark>({
+        mark: Date.now(),
+      })
+    );
+  } else {
+    res.send(
+      response.success<IPingMark>({
+        mark: Date.now(),
+        application: config.packageJson.name,
+        version: config.packageJson.version,
+      })
+    );
+  }
 });
