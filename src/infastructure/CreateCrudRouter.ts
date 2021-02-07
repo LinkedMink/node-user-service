@@ -5,8 +5,7 @@ import { authorizeJwtClaim } from "../middleware/Authorization";
 import { IJwtPayload } from "../middleware/Passport";
 import { IModelMapper } from "../models/mappers/IModelMapper";
 import { response } from "../models/responses/IResponseData";
-import { IListRequest, searchRequestDescriptor } from "../models/requests/IListRequest";
-import { objectDescriptorBodyVerify } from "./ObjectDescriptor";
+import { IListRequest } from "../models/requests/IListRequest";
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
@@ -139,7 +138,6 @@ export const createCrudRouter = <TFrontend, TBackend extends Document<unknown>>(
   const router = Router();
 
   const getEntityListHandlers: RequestHandler[] = [
-    objectDescriptorBodyVerify(searchRequestDescriptor, false),
     async (req: Request, res: Response): Promise<void> => {
       const reqData = req.query as IListRequest<TBackend>;
 

@@ -33,7 +33,7 @@ export const connectSingletonDatabase = (): Promise<typeof mongoose> => {
   });
 
   mongoose.connection.on("error", error => {
-    logger.error(error);
+    logger.error({ message: error as Error });
     // TODO handle error
   });
 
@@ -45,7 +45,7 @@ export const connectSingletonDatabase = (): Promise<typeof mongoose> => {
       useUnifiedTopology: true,
     })
     .catch(error => {
-      logger.error(error);
+      logger.error({ message: error as Error });
       logger.warn(`MongoDB initial connect failed: ${connectionString}`);
       process.exit(1);
     });

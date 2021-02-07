@@ -1,13 +1,13 @@
 import { Router, Request, Response } from "express";
 
 import { getEmailVerificationCode, sendEmailWithCode } from "../handlers/Verification";
-import { objectDescriptorBodyVerify } from "../infastructure/ObjectDescriptor";
-import { authorizeJwtClaim } from "../middleware/Authorization";
+import { authenticateJwt } from "../middleware/Authorization";
 import { IJwtPayload } from "../middleware/Passport";
 import { accountMapper } from "../models/mappers/AccountMapper";
 import { User } from "../models/database/User";
 import { response } from "../models/responses/IResponseData";
-import { accountRequestDescriptor, IAccountModel } from "../models/requests/IAccountModel";
+import { IAccountModel } from "../models/requests/IAccountModel";
+import { isMongooseValidationError } from "../infastructure/TypeCheck";
 
 export const accountRouter = Router();
 
@@ -26,10 +26,10 @@ export const accountRouter = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/AccountModelResponse'
- *       500:
- *         $ref: '#/components/responses/500Internal'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
  */
-accountRouter.get("/", authorizeJwtClaim(), async (req: Request, res: Response) => {
+accountRouter.get("/", authenticateJwt, async (req: Request, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
   const entity = await User.findById(userId).exec();
 
@@ -37,8 +37,8 @@ accountRouter.get("/", authorizeJwtClaim(), async (req: Request, res: Response) 
     const model = accountMapper.convertToFrontend(entity);
     return res.send(response.success(model));
   } else {
-    res.status(500);
-    return res.send(response.failed("An error occurred"));
+    res.status(404);
+    return res.send(response.failed());
   }
 });
 
@@ -64,59 +64,46 @@ accountRouter.get("/", authorizeJwtClaim(), async (req: Request, res: Response) 
  *             schema:
  *               $ref: '#/components/schemas/AccountModelResponse'
  *       400:
- *         $ref: '#/components/responses/400BadRequest'
- *       500:
- *         $ref: '#/components/responses/500Internal'
+ *         $ref: '#/components/responses/400ModelValidation'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
  */
-accountRouter.put(
-  "/",
-  authorizeJwtClaim(),
-  objectDescriptorBodyVerify(accountRequestDescriptor),
-  async (req: Request, res: Response) => {
-    const userId = (req.user as IJwtPayload).sub;
-    const account = req.body as IAccountModel;
+accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
+  const userId = (req.user as IJwtPayload).sub;
+  const account = req.body as IAccountModel;
 
-    const toUpdate = await User.findById(userId).exec();
-    if (toUpdate === null) {
-      res.status(500);
-      return res.send(response.failed("An error occurred"));
-    }
+  const toUpdate = await User.findById(userId).exec();
+  if (toUpdate === null) {
+    res.status(404);
+    return res.send(response.failed());
+  }
 
-    const user = accountMapper.convertToBackend(account, toUpdate, `User(${userId})`);
-    if (account.email) {
-      user.temporaryKey = getEmailVerificationCode();
-    }
+  const user = accountMapper.convertToBackend(account, toUpdate, `User(${userId})`);
+  if (account.email) {
+    user.temporaryKey = getEmailVerificationCode();
+  }
 
-    return new Promise((resolve, reject) => {
-      user.validate(error => {
-        if (error) {
-          res.status(400);
-          res.send(response.failed(error));
+  return new Promise((resolve, reject) => {
+    user.save((error, newUser) => {
+      if (isMongooseValidationError(error)) {
+        res.status(400);
+        res.send(response.failed(error.errors));
+        return resolve();
+      } else if (error) {
+        res.status(500);
+        res.send(response.failed());
+        return resolve();
+      }
+
+      void sendEmailWithCode(res, newUser.email, newUser.temporaryKey as string, newUser).then(
+        () => {
+          res.send(response.success(accountMapper.convertToFrontend(newUser)));
           resolve();
         }
-
-        void User.findByIdAndUpdate(userId, user, null, (updateError: unknown) => {
-          if (!updateError) {
-            const newRecord = accountMapper.convertToFrontend(user);
-
-            if (account.email) {
-              void sendEmailWithCode(res, user.email, user.temporaryKey as string, newRecord).then(
-                resolve
-              );
-            } else {
-              res.send(response.success(newRecord));
-              resolve();
-            }
-          } else {
-            res.status(500);
-            res.send(response.failed((updateError as Error).message));
-            resolve();
-          }
-        }).exec();
-      });
+      );
     });
-  }
-);
+  });
+});
 
 /**
  * @swagger
@@ -129,17 +116,17 @@ accountRouter.put(
  *     responses:
  *       200:
  *         $ref: '#/components/responses/200Null'
- *       500:
- *         $ref: '#/components/responses/500Internal'
+ *       404:
+ *         $ref: '#/components/responses/404NotFound'
  */
-accountRouter.delete("/", authorizeJwtClaim(), async (req: Request, res: Response) => {
+accountRouter.delete("/", authenticateJwt, async (req: Request, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
   const deleted = await User.findByIdAndDelete(userId).exec();
 
   if (deleted) {
     return res.send(response.success());
   } else {
-    res.status(500);
-    return res.send(response.failed("An error occurred"));
+    res.status(404);
+    return res.send(response.failed());
   }
 });

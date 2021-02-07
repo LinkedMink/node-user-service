@@ -4,13 +4,9 @@ import { Router, Request, Response } from "express";
 import { config } from "../infastructure/Config";
 import { ConfigKey } from "../infastructure/ConfigKey";
 import { EmailSender } from "../infastructure/Email";
-import { objectDescriptorBodyVerify } from "../infastructure/ObjectDescriptor";
 import { User } from "../models/database/User";
 import { response } from "../models/responses/IResponseData";
-import {
-  IPasswordResetRequest,
-  passwordResetRequestDescriptor,
-} from "../models/requests/IPasswordResetRequest";
+import { IPasswordResetRequest } from "../models/requests/IPasswordResetRequest";
 import { Logger } from "../infastructure/Logger";
 import { basename } from "path";
 
@@ -42,8 +38,6 @@ export const getPasswordRouter = (): Router => {
    *         $ref: '#/components/responses/400BadRequest'
    *       404:
    *         $ref: '#/components/responses/404NotFound'
-   *       500:
-   *         $ref: '#/components/responses/500Internal'
    */
   passwordRouter.get("/:email", [
     async (req: Request, res: Response) => {
@@ -112,9 +106,7 @@ export const getPasswordRouter = (): Router => {
    *       404:
    *         $ref: '#/components/responses/404NotFound'
    */
-  passwordRouter.put(
-    "/",
-    objectDescriptorBodyVerify(passwordResetRequestDescriptor),
+  passwordRouter.put("/", [
     async (req: Request, res: Response) => {
       const requestData = req.body as IPasswordResetRequest;
 
@@ -148,7 +140,7 @@ export const getPasswordRouter = (): Router => {
           if (error) {
             logger.error({ message: error });
             res.status(500);
-            res.send(response.failed(error.message));
+            res.send(response.failed("An error occurred"));
             return resolve(undefined);
           }
 
@@ -156,8 +148,8 @@ export const getPasswordRouter = (): Router => {
           resolve(undefined);
         });
       });
-    }
-  );
+    },
+  ]);
 
   return passwordRouter;
 };

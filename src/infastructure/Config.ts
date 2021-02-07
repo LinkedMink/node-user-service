@@ -13,6 +13,11 @@ export interface IPackageJson {
   name: string;
   version: string;
   description: string;
+  license: string;
+  repository: {
+    type: string;
+    url: string;
+  };
   [property: string]: unknown;
 }
 

@@ -13,6 +13,9 @@ import { config } from "../infastructure/Config";
 import { ConfigKey } from "../infastructure/ConfigKey";
 import { User } from "../models/database/User";
 
+export const PASSPORT_JWT_STRATEGY = "jwt";
+export const PASSPORT_LOCAL_STRATEGY = "local";
+
 const errors = {
   GENERIC: "The username or password was incorrect.",
   NOT_VERIFIED: "The user's email address has not been verified",
@@ -31,6 +34,11 @@ export interface IJwtPayload {
   sub: string;
 }
 
+export interface IUserSession extends Omit<IJwtPayload, "claims"> {
+  claims: Set<string>;
+  record?: Record<string, unknown>;
+}
+
 export const addLocalStrategy = (passport: PassportStatic): void => {
   const maxLoginAttempts = config.getNumber(ConfigKey.UserPassMaxAttempts);
   const lockoutMilliseonds = config.getNumber(ConfigKey.UserLockoutMinutes) * 60 * 1000;
@@ -42,8 +50,8 @@ export const addLocalStrategy = (passport: PassportStatic): void => {
     passReqToCallback: true,
   };
 
-  // TODO investigate why this works, is async function really a middleware function?
   passport.use(
+    PASSPORT_LOCAL_STRATEGY,
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     new LocalStrategy(options, async (request, email, password, done) => {
       try {
@@ -107,13 +115,19 @@ export const addJwtStrategy = (passport: PassportStatic): void => {
   };
 
   passport.use(
+    PASSPORT_JWT_STRATEGY,
     new JwtStrategy(options, (req: Request, jwtPayload: IJwtPayload, done: VerifiedCallback) => {
       if (jwtPayload.exp && Date.now() / 1000 > jwtPayload.exp) {
         return done("JWT Expired");
       }
 
-      req.user = jwtPayload;
-      return done(null, jwtPayload);
+      const userSession: IUserSession = {
+        ...jwtPayload,
+        claims: new Set(jwtPayload.claims),
+      };
+
+      req.user = userSession;
+      return done(null, userSession);
     })
   );
 };

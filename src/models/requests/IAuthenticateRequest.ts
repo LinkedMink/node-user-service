@@ -1,5 +1,3 @@
-import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
-
 /**
  * @swagger
  * components:
@@ -21,8 +19,3 @@ export interface IAuthenticateRequest {
   email: string;
   password: string;
 }
-
-export const registerRequestDescriptor = new ObjectDescriptor<IAuthenticateRequest>({
-  email: [ObjectAttribute.Required],
-  password: [ObjectAttribute.Required],
-});

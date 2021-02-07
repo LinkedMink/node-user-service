@@ -7,12 +7,12 @@ import {
 } from "../handlers/Verification";
 import { config } from "../infastructure/Config";
 import { ConfigKey } from "../infastructure/ConfigKey";
-import { objectDescriptorBodyVerify } from "../infastructure/ObjectDescriptor";
 import { userMapper } from "../models/mappers/UserMapper";
 import { IUser, User } from "../models/database/User";
 import { response } from "../models/responses/IResponseData";
 import { IUserModel } from "../models/responses/IUserModel";
-import { IRegisterRequest, registerRequestDescriptor } from "../models/requests/IRegisterRequest";
+import { IRegisterRequest } from "../models/requests/IRegisterRequest";
+import { isMongooseValidationError } from "../infastructure/TypeCheck";
 
 const DEFAULT_CLAIMS = config.getString(ConfigKey.UserDefaultClaims).split(",");
 
@@ -37,12 +37,10 @@ export const registerRouter = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UserModelResponse'
- *       500:
- *         $ref: '#/components/responses/500Internal'
+ *       400:
+ *         $ref: '#/components/responses/400ModelValidation'
  */
-registerRouter.post(
-  "/",
-  objectDescriptorBodyVerify(registerRequestDescriptor),
+registerRouter.post("/", [
   async (req: Request, res: Response) => {
     const requestData = req.body as IRegisterRequest;
 
@@ -65,9 +63,9 @@ registerRouter.post(
 
     await new Promise((resolve, reject) => {
       saveModel.save(error => {
-        if (error) {
+        if (isMongooseValidationError(error)) {
           res.status(400);
-          res.send(response.failed(error.message));
+          res.send(response.failed(error.errors));
           return resolve(undefined);
         }
 
@@ -80,8 +78,8 @@ registerRouter.post(
         ).then(() => resolve(undefined));
       });
     });
-  }
-);
+  },
+]);
 
 /**
  * @swagger
@@ -104,8 +102,8 @@ registerRouter.post(
  *     responses:
  *       200:
  *         $ref: '#/components/responses/200Null'
- *       500:
- *         $ref: '#/components/responses/500Internal'
+ *       400:
+ *         $ref: '#/components/responses/400BadRequest'
  */
 registerRouter.get("/:email/:code", [
   async (req: Request, res: Response) => {
@@ -117,7 +115,7 @@ registerRouter.get("/:email/:code", [
     }
 
     if (!user.temporaryKey || user.temporaryKey !== code) {
-      res.status(500);
+      res.status(400);
       return res.send(response.failed("The verification code is invalid"));
     }
 
@@ -156,8 +154,6 @@ registerRouter.get("/:email/:code", [
  *     responses:
  *       200:
  *         $ref: '#/components/responses/200Null'
- *       500:
- *         $ref: '#/components/responses/500Internal'
  */
 registerRouter.get("/:email", [
   async (req: Request, res: Response) => {

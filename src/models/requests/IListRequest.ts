@@ -1,5 +1,4 @@
-import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
-import { Document, FilterQuery } from "mongoose";
+import { FilterQuery } from "mongoose";
 
 export enum SortOrder {
   Descending = "dsc",
@@ -30,11 +29,13 @@ export enum SortOrder {
  *     listSort:
  *     - in: query
  *       name: sort
+ *       required: false
  *       schema:
  *         type: string
  *     listQuery:
  *     - in: query
  *       name: query
+ *       required: false
  *       schema:
  *         type: string
  *   schemas:
@@ -65,41 +66,3 @@ export interface IListRequest<T> {
   sort?: Record<string, SortOrder>;
   query?: FilterQuery<T>;
 }
-
-export const searchRequestDescriptor = new ObjectDescriptor<IListRequest<Document<unknown>>>(
-  {
-    pageSize: [
-      {
-        value: ObjectAttribute.Range,
-        params: { min: 1, max: 100 },
-      },
-    ],
-    pageNumber: [
-      {
-        value: ObjectAttribute.Range,
-        params: { min: 0 },
-      },
-    ],
-  },
-  true,
-  (toSanitize: IListRequest<Document<unknown>>) => {
-    if (toSanitize.pageSize) {
-      toSanitize.pageSize = Number(toSanitize.pageSize);
-    }
-    if (toSanitize.pageSize) {
-      toSanitize.pageNumber = Number(toSanitize.pageNumber);
-    }
-    if (toSanitize.sort) {
-      toSanitize.sort = JSON.parse((toSanitize.sort as unknown) as string) as Record<
-        string,
-        SortOrder
-      >;
-    }
-    if (toSanitize.query) {
-      toSanitize.query = JSON.parse(
-        (toSanitize.query as unknown) as string
-      ) as FilterQuery<unknown>;
-    }
-    return toSanitize;
-  }
-);

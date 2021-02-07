@@ -1,7 +1,3 @@
-import { config } from "../../infastructure/Config";
-import { ConfigKey } from "../../infastructure/ConfigKey";
-import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDescriptor";
-
 /**
  * @swagger
  * components:
@@ -15,6 +11,7 @@ import { ObjectAttribute, ObjectDescriptor } from "../../infastructure/ObjectDes
  *         password:
  *           type: string
  *           format: password
+ *           minLength: 8
  *     AccountModelResponse:
  *       properties:
  *         status:
@@ -27,12 +24,3 @@ export interface IAccountModel {
   email?: string;
   password?: string;
 }
-
-export const accountRequestDescriptor = new ObjectDescriptor<IAccountModel>({
-  password: [
-    {
-      value: ObjectAttribute.Length,
-      params: { min: config.getNumber(ConfigKey.UserPassMinLength) },
-    },
-  ],
-});
