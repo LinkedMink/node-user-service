@@ -22,13 +22,19 @@ export const generateOpenApiDoc = async (): Promise<OpenApiDocument> => {
         license: config.packageJson.license
           ? {
               name: config.packageJson.license,
-              url: `${config.packageJson.repository.url}/blob/master/LICENSE`,
+              url: config.packageJson.repository.url
+                ? `${config.packageJson.repository.url}/blob/master/LICENSE`
+                : undefined,
             }
           : undefined,
         version: config.packageJson.version,
       },
     },
-    apis: ["./docs/**/*.yaml", "./src/models/**/*.ts", "./src/routes/**/*.ts"],
+    apis: [
+      "./docs/*.{yml,yaml}",
+      "./src/models/{requests,responses}/*.{yml,yaml,ts}",
+      "./src/routes/*.{yml,yaml,ts}",
+    ],
   }) as OpenApiDocument;
 };
 

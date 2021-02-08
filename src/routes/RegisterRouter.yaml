@@ -1,0 +1,55 @@
+paths:
+  /register:
+    post:
+      description: Register a new user
+      tags: [Register]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IRegisterRequest'
+      responses:
+        200:
+          description: The newly created user record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+  /register/{email}/{code}:
+    get:
+      description: Verify the email address of the specified user
+      tags: [Register]
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+        - in: path
+          name: code
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+  /register/{email}:
+    get:
+      description: Send the verification email again
+      tags: [Register]
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'

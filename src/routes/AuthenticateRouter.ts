@@ -11,28 +11,6 @@ import { PASSPORT_LOCAL_STRATEGY } from "../middleware/Passport";
 
 export const authenticateRouter = Router();
 
-/**
- * @swagger
- * /authenticate:
- *   post:
- *     description: Authenticate the user credentials and retrieve a token for subsequent request
- *     tags: [Authenticate]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/IAuthenticateRequest'
- *     responses:
- *       200:
- *         description: The authentication token for the specified user
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/BearerTokenResponse'
- *       400:
- *         $ref: '#/components/responses/400BadRequest'
- */
 authenticateRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
   const authHandler = passport.authenticate(
     PASSPORT_LOCAL_STRATEGY,

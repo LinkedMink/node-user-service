@@ -4,7 +4,7 @@ import {
   getEmailVerificationCode,
   getUserAndCheckVerified,
   sendEmailWithCode,
-} from "../handlers/Verification";
+} from "../controllers/Verification";
 import { config } from "../infastructure/Config";
 import { ConfigKey } from "../infastructure/ConfigKey";
 import { userMapper } from "../models/mappers/UserMapper";
@@ -18,28 +18,6 @@ const DEFAULT_CLAIMS = config.getString(ConfigKey.UserDefaultClaims).split(",");
 
 export const registerRouter = Router();
 
-/**
- * @swagger
- * /register:
- *   post:
- *     description: Register a new user
- *     tags: [Register]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/IRegisterRequest'
- *     responses:
- *       200:
- *         description: The newly created user record
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserModelResponse'
- *       400:
- *         $ref: '#/components/responses/400ModelValidation'
- */
 registerRouter.post("/", [
   async (req: Request, res: Response) => {
     const requestData = req.body as IRegisterRequest;
@@ -81,42 +59,19 @@ registerRouter.post("/", [
   },
 ]);
 
-/**
- * @swagger
- * /register/{email}/{code}:
- *   get:
- *     description: Verify the email address of the specified user
- *     tags: [Register]
- *     parameters:
- *       - in: path
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *           format: email
- *       - in: path
- *         name: code
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         $ref: '#/components/responses/200Null'
- *       400:
- *         $ref: '#/components/responses/400BadRequest'
- */
 registerRouter.get("/:email/:code", [
   async (req: Request, res: Response) => {
     const email = req.params.email;
     const code = req.params.code;
     const user = await getUserAndCheckVerified(res, email);
     if (!user) {
-      return res;
+      res.status(400);
+      return res.send(response.failed());
     }
 
     if (!user.temporaryKey || user.temporaryKey !== code) {
       res.status(400);
-      return res.send(response.failed("The verification code is invalid"));
+      return res.send(response.failed());
     }
 
     user.isEmailVerified = true;
@@ -138,23 +93,6 @@ registerRouter.get("/:email/:code", [
   },
 ]);
 
-/**
- * @swagger
- * /register/{email}:
- *   get:
- *     description: Send the verification email again
- *     tags: [Register]
- *     parameters:
- *       - in: path
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *           format: email
- *     responses:
- *       200:
- *         $ref: '#/components/responses/200Null'
- */
 registerRouter.get("/:email", [
   async (req: Request, res: Response) => {
     const email = req.params.email;

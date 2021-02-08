@@ -81,13 +81,13 @@ export const initializeLogger = (format = getDefaultFormat()): void => {
   } as LoggerOptions;
 
   Logger.options = options;
-  Logger.get().verbose("Logger Initialized");
 
+  const logger = Logger.get("unhandledRejection");
   process.on("unhandledRejection", (error, p) => {
-    const logger = Logger.get("unhandledRejection");
-
     if (error) {
-      logger.error(error);
+      logger.error({ message: error });
     }
   });
+
+  Logger.get().verbose("Logger Initialized");
 };

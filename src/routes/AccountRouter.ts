@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 
-import { getEmailVerificationCode, sendEmailWithCode } from "../handlers/Verification";
+import { getEmailVerificationCode, sendEmailWithCode } from "../controllers/Verification";
 import { authenticateJwt } from "../middleware/Authorization";
 import { IJwtPayload } from "../middleware/Passport";
 import { accountMapper } from "../models/mappers/AccountMapper";
@@ -42,39 +42,13 @@ accountRouter.get("/", authenticateJwt, async (req: Request, res: Response) => {
   }
 });
 
-/**
- * @swagger
- * /account:
- *   put:
- *     description: Update a user's account
- *     tags: [Account]
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/IAccountModel'
- *     responses:
- *       200:
- *         description: The newly created user record
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AccountModelResponse'
- *       400:
- *         $ref: '#/components/responses/400ModelValidation'
- *       404:
- *         $ref: '#/components/responses/404NotFound'
- */
 accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
   const account = req.body as IAccountModel;
 
   const toUpdate = await User.findById(userId).exec();
   if (toUpdate === null) {
-    res.status(404);
+    res.status(500);
     return res.send(response.failed());
   }
 
@@ -105,20 +79,6 @@ accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
   });
 });
 
-/**
- * @swagger
- * /account:
- *   delete:
- *     description: Delete a user's account
- *     tags: [Account]
- *     security:
- *       - BearerAuth: []
- *     responses:
- *       200:
- *         $ref: '#/components/responses/200Null'
- *       404:
- *         $ref: '#/components/responses/404NotFound'
- */
 accountRouter.delete("/", authenticateJwt, async (req: Request, res: Response) => {
   const userId = (req.user as IJwtPayload).sub;
   const deleted = await User.findByIdAndDelete(userId).exec();
@@ -126,7 +86,7 @@ accountRouter.delete("/", authenticateJwt, async (req: Request, res: Response) =
   if (deleted) {
     return res.send(response.success());
   } else {
-    res.status(404);
+    res.status(500);
     return res.send(response.failed());
   }
 });

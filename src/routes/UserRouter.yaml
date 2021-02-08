@@ -1,0 +1,96 @@
+paths:
+  /users:
+    get:
+      description: Get the details of a list of User
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/listPageSize'
+        - $ref: '#/components/parameters/listPageNumber'
+        - $ref: '#/components/parameters/listSort'
+        - $ref: '#/components/parameters/listQuery'
+      responses:
+        200:
+          description: The retrieved User list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserModelResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+    post:
+      description: Save a new User
+      tags: [User]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IUserModel'
+      responses:
+        200:
+          description: The added User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+  /users/{id}:
+    get:
+      description: Get the details of a specific User
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          description: The retrieved User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModelResponse'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    put:
+      description: Update an existing User
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IUserModel'
+      responses:
+        200:
+          description: The updated User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    delete:
+      description: Delete a specific User
+      tags: [User]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'
+        404:
+          $ref: '#/components/responses/404NotFound'

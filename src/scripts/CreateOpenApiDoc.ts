@@ -11,7 +11,11 @@ const logger = Logger.get();
 const main = async () => {
   logger.info("Generate OpenAPI Doc - Start");
 
-  const swaggerDoc = generateOpenApiDoc();
+  const swaggerDoc = await generateOpenApiDoc();
+  if (!swaggerDoc) {
+    logger.info("Failed to generate OpenAPI Doc");
+    process.exit(1);
+  }
 
   const docData = JSON.stringify(swaggerDoc, undefined, 2);
   await fs.promises.writeFile(DEFAULT_OPENAPI_DOC_FILE, docData);

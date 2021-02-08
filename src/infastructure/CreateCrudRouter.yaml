@@ -1,0 +1,96 @@
+paths:
+  /[ObjectTypeRoute]:
+    get:
+      description: Get the details of a list of [ObjectType]
+      tags: [[ObjectType]]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/listPageSize'
+        - $ref: '#/components/parameters/listPageNumber'
+        - $ref: '#/components/parameters/listSort'
+        - $ref: '#/components/parameters/listQuery'
+      responses:
+        200:
+          description: The retrieved [ObjectType] list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/[ObjectType]ModelResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+    post:
+      description: Save a new [ObjectType]
+      tags: [[ObjectType]]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/I[ObjectType]Model'
+      responses:
+        200:
+          description: The added [ObjectType]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/[ObjectType]ModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+  /[ObjectTypeRoute]/{id}:
+    get:
+      description: Get the details of a specific [ObjectType]
+      tags: [[ObjectType]]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          description: The retrieved [ObjectType]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/[ObjectType]ModelResponse'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    put:
+      description: Update an existing [ObjectType]
+      tags: [[ObjectType]]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/I[ObjectType]Model'
+      responses:
+        200:
+          description: The updated [ObjectType]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/[ObjectType]ModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    delete:
+      description: Delete a specific [ObjectType]
+      tags: [[ObjectType]]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'
+        404:
+          $ref: '#/components/responses/404NotFound'

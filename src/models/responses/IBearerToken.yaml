@@ -1,0 +1,15 @@
+components:
+  schemas:
+    IBearerToken:
+      type: object
+      properties:
+        token:
+          type: string
+          example:
+    BearerTokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/IResponseData'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/IBearerToken'

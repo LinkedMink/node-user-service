@@ -39,9 +39,9 @@ app.use(passport.initialize());
 
 void getValidator().then(validator => {
   app.use(validator.match());
+  app.use("/", pingRouter);
   app.use("/account", accountRouter);
   app.use("/authenticate", authenticateRouter);
-  app.use("/ping", pingRouter);
   app.use("/claims", claimRouter);
   app.use("/users", userRouter);
   app.use("/settings", settingRouter);

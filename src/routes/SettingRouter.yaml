@@ -1,0 +1,96 @@
+paths:
+  /settings:
+    get:
+      description: Get the details of a list of Setting
+      tags: [Setting]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/listPageSize'
+        - $ref: '#/components/parameters/listPageNumber'
+        - $ref: '#/components/parameters/listSort'
+        - $ref: '#/components/parameters/listQuery'
+      responses:
+        200:
+          description: The retrieved Setting list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SettingModelResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+    post:
+      description: Save a new Setting
+      tags: [Setting]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ISettingModel'
+      responses:
+        200:
+          description: The added Setting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+  /settings/{id}:
+    get:
+      description: Get the details of a specific Setting
+      tags: [Setting]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          description: The retrieved Setting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingModelResponse'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    put:
+      description: Update an existing Setting
+      tags: [Setting]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ISettingModel'
+      responses:
+        200:
+          description: The updated Setting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    delete:
+      description: Delete a specific Setting
+      tags: [Setting]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'
+        404:
+          $ref: '#/components/responses/404NotFound'
