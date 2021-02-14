@@ -2,7 +2,7 @@ import { RequestHandler, Router } from "express";
 import { Document, Model, FilterQuery } from "mongoose";
 
 import { authenticateJwt, authorizeJwtClaim } from "../middleware/Authorization";
-import { IUserSession } from "../middleware/Passport";
+import { IUserSession } from "../middleware/PassportJwt";
 import { IModelMapper } from "../models/mappers/IModelMapper";
 import { CrudController } from "../controllers/CrudController";
 

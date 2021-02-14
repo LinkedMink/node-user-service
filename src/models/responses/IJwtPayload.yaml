@@ -1,0 +1,23 @@
+components:
+  schemas:
+    IJwtPayload:
+      type: object
+      properties:
+        aud:
+          type: string
+        exp:
+          type: number
+        iat:
+          type: number
+        iss:
+          type: string
+        sub:
+          type: string
+        claims:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+        publicKey:
+          type: string

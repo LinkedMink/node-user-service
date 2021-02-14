@@ -1,11 +1,12 @@
 import { SchemaTypes, Types } from "mongoose";
 
 import { ITrackedEntity, trackedEntitySchemaDefinition } from "./TrackedEntity";
+import { User } from "./User";
 
 export const userEntitySchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
   userId: {
     type: SchemaTypes.ObjectId,
-    ref: "User",
+    ref: User.modelName,
     index: true,
     required: true,
   },

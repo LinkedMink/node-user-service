@@ -1,9 +1,6 @@
-import bcrypt from "bcrypt";
 import { model, Schema, SchemaTypes, Types } from "mongoose";
 
-import { config } from "../../infastructure/Config";
-import { ConfigKey } from "../../infastructure/ConfigKey";
-import { validateEmail } from "../../infastructure/Validators";
+import { identitySchema, IIdentity } from "./Identity";
 import {
   ITrackedEntity,
   trackedEntityPreValidateFunc,
@@ -24,23 +21,14 @@ export interface IUserClaim extends Types.Subdocument {
 }
 
 const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
-  email: {
+  username: {
     type: SchemaTypes.String,
     index: true,
     unique: true,
     dropDups: true,
     required: true,
-    validate: [validateEmail, "Must be a valid email"],
   },
-  password: {
-    type: SchemaTypes.String,
-    required: true,
-    minlength: config.getNumber(ConfigKey.UserPassMinLength),
-  },
-  isEmailVerified: {
-    type: SchemaTypes.Boolean,
-    required: true,
-  },
+  identities: [identitySchema],
   isLocked: {
     type: SchemaTypes.Boolean,
     required: true,
@@ -51,12 +39,6 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
   authenticationAttempts: {
     type: SchemaTypes.Number,
   },
-  temporaryKey: {
-    type: SchemaTypes.String,
-  },
-  temporaryKeyDate: {
-    type: SchemaTypes.Date,
-  },
   authenticationDates: [SchemaTypes.Date],
   // TODO validate claims exist, include ID to reference
   claims: [userClaimSchema],
@@ -65,20 +47,7 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
 const userSchema = new Schema(userSchemaDefinition);
 userSchema.pre("validate", trackedEntityPreValidateFunc);
 
-// TODO investigate why this works, might save before password set?
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-userSchema.post("validate", async function (this: IUser) {
-  if (this.isNew || this.modifiedPaths().includes("password")) {
-    this.password = await bcrypt.hash(
-      this.password,
-      config.getNumber(ConfigKey.UserPassHashCostFactor)
-    );
-  }
-
-  if (this.modifiedPaths().includes("email")) {
-    this.isEmailVerified = false;
-  }
-
+userSchema.post("validate", function (this: IUser) {
   if (!this.isLocked && this.modifiedPaths().includes("isLocked")) {
     this.authenticationAttempts = undefined;
     this.isLockedDate = undefined;
@@ -86,14 +55,11 @@ userSchema.post("validate", async function (this: IUser) {
 });
 
 export interface IUser extends ITrackedEntity {
-  email: string;
-  password: string;
-  isEmailVerified: boolean;
+  username: string;
+  identities: Types.DocumentArray<IIdentity>;
   isLocked: boolean;
   isLockedDate?: Date;
   authenticationAttempts?: number;
-  temporaryKey?: string;
-  temporaryKeyDate?: Date;
   authenticationDates: Types.Array<Date>;
   claims: Types.Array<IUserClaim>;
 }

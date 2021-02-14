@@ -2,6 +2,7 @@ import cryptoRandomString from "crypto-random-string";
 import { Response } from "express";
 
 import { EmailSender } from "../infastructure/Email";
+import { IdentityType, IEmailPasswordIdentity } from "../models/database/Identity";
 import { IUser, User } from "../models/database/User";
 import { IAccountModel } from "../models/requests/IAccountModel";
 import { response } from "../models/responses/IResponseData";
@@ -20,7 +21,10 @@ export const getUserAndCheckVerified = async (
     return null;
   }
 
-  if (user.isEmailVerified) {
+  const identity = user.identities.find(
+    i => i.type === IdentityType.EmailPassword
+  ) as IEmailPasswordIdentity;
+  if (identity.isEmailVerified) {
     res.status(400);
     res.send(response.failed("Email already verified"));
     return null;

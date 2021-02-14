@@ -5,7 +5,7 @@ components:
       properties:
         token:
           type: string
-          example:
+          description: An encoded JWT token with the properties [IJwtPayload](#model-IJwtPayload) when decoded
     BearerTokenResponse:
       allOf:
       - $ref: '#/components/schemas/IResponseData'

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from "fs";
-import yaml from "js-yaml";
+import yaml from "yaml";
 
 import { connectSingletonDatabase } from "../infastructure/Database";
 import { initializeLogger, Logger } from "../infastructure/Logger";
@@ -21,11 +21,11 @@ const saveUser = (user: IUser) =>
     new User(user).save((error, doc) => {
       if (error) {
         logger.error({ message: error });
-        logger.warn(`Failed to Save: ${user.email}`);
+        logger.warn(`Failed to Save: ${user.username}`);
         resolve(null);
       }
 
-      logger.info(`Saved: ${user.email}`);
+      logger.info(`Saved: ${user.username}`);
       resolve(doc);
     });
   });
@@ -39,10 +39,10 @@ const main = async () => {
   logger.info(`Reading File: ${yamlFile}`);
 
   const connect = connectSingletonDatabase();
-  const read = fs.promises.readFile(yamlFile).then(d => yaml.load(d.toString()));
+  const read = fs.promises.readFile(yamlFile).then(d => yaml.parse(d.toString()) as IUserYaml);
 
   const waited = await Promise.all([connect, read]);
-  const yamlData = waited[1] as IUserYaml;
+  const yamlData = waited[1];
   logger.info("Read Valid File");
 
   const saveModels = yamlData.Users.map(u => {

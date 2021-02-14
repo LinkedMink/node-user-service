@@ -10,6 +10,7 @@ export enum ConfigKey {
   JwtIssuer = "JWT_ISSUER",
   JwtSecretKeyFile = "JWT_SECRET_KEY_FILE",
   JwtSigningAlgorithm = "JWT_SIGNING_ALGORITHM",
+  ChallengeExpiresInMinutes = "CHALLENGE_EXPIRES_IN_MINUTES",
 
   MongoDbConnectionString = "MONGO_DB_CONNECTION_STRING",
   RedisMode = "REDIS_MODE",
@@ -39,10 +40,11 @@ export const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
 
   [ConfigKey.JwtExpirationDays, String(30)],
   [ConfigKey.JwtSigningAlgorithm, "RS256"],
+  [ConfigKey.ChallengeExpiresInMinutes, String(2)],
 
   [ConfigKey.RedisMode, "Single"],
   [ConfigKey.RedisHosts, JSON.stringify({ host: "localhost", port: 6379 })],
-  [ConfigKey.RedisKeyPrefix, "rss"],
+  [ConfigKey.RedisKeyPrefix, "nus"],
 
   [ConfigKey.UserRegistrationIsEnabled, "true"],
   [ConfigKey.UserDefaultClaims, ""],

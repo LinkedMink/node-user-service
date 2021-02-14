@@ -1,4 +1,5 @@
 import { Model, Types } from "mongoose";
+import { IdentityType, IEmailPasswordIdentity } from "../database/Identity";
 import { IUser, IUserClaim, User } from "../database/User";
 import { IUserModel } from "../responses/IUserModel";
 import { IModelMapper, mapTrackedEntity, setUserModifier } from "./IModelMapper";
@@ -10,9 +11,12 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
     const claimArray: string[] = [];
     model.claims.forEach(claim => claimArray.push(claim.name));
 
+    const identity = model.identities.find(
+      i => i.type === IdentityType.EmailPassword
+    ) as IEmailPasswordIdentity;
     let returnModel: IUserModel = {
-      email: model.email,
-      isEmailVerified: model.isEmailVerified,
+      email: identity.email,
+      isEmailVerified: identity.isEmailVerified,
       isLocked: model.isLocked,
       isLockedDate: model.isLockedDate,
       authenticationDates: model.authenticationDates.map(e => e),
@@ -35,8 +39,11 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
       returnModel = setUserModifier(returnModel, modifier);
     }
 
+    const identity = returnModel?.identities?.find(
+      i => i.type === IdentityType.EmailPassword
+    ) as IEmailPasswordIdentity;
     if (model.password) {
-      returnModel.password = model.password;
+      identity.password = model.password;
     }
 
     const claimArray = new Types.Array<IUserClaim>();
@@ -51,8 +58,9 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
       });
     }
 
-    returnModel.email = model.email;
-    returnModel.isEmailVerified = model.isEmailVerified;
+    returnModel.username = model.email;
+    identity.email = model.email;
+    identity.isEmailVerified = model.isEmailVerified;
     returnModel.isLocked = model.isLocked;
     returnModel.claims = claimArray;
 

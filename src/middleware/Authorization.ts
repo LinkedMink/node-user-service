@@ -3,7 +3,7 @@ import passport from "passport";
 
 import { response } from "../models/responses/IResponseData";
 import { IUserEntityModel } from "../models/responses/IUserEntityModel";
-import { IJwtPayload, IUserSession, PASSPORT_JWT_STRATEGY } from "./Passport";
+import { IUserSession, PASSPORT_JWT_STRATEGY } from "./PassportJwt";
 import { isError, isString } from "../infastructure/TypeCheck";
 
 const GENERIC_AUTH_ERROR = "Not Authorized";
@@ -22,7 +22,7 @@ export const authenticateJwt = (req: Request, res: Response, next: NextFunction)
   const authenticateHandler = passport.authenticate(
     PASSPORT_JWT_STRATEGY,
     { session: false },
-    (error: unknown, payload: IJwtPayload, info: unknown) => {
+    (error: unknown, payload: IUserSession, info: unknown) => {
       let errorMessage;
       if (isString(error)) {
         errorMessage = error;
@@ -46,7 +46,7 @@ export const authenticateJwt = (req: Request, res: Response, next: NextFunction)
 };
 
 export const authorizeUserOwned = (req: Request, res: Response, next: NextFunction): void => {
-  const jwt = req.user as IJwtPayload;
+  const jwt = req.user as IUserSession;
   const model = req.body as IUserEntityModel;
 
   if (model.userId !== jwt.sub) {

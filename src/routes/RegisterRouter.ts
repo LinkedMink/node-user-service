@@ -13,6 +13,7 @@ import { response } from "../models/responses/IResponseData";
 import { IUserModel } from "../models/responses/IUserModel";
 import { IRegisterRequest } from "../models/requests/IRegisterRequest";
 import { isMongooseValidationError } from "../infastructure/TypeCheck";
+import { IdentityType, IEmailPasswordIdentity } from "../models/database/Identity";
 
 const DEFAULT_CLAIMS = config.getString(ConfigKey.UserDefaultClaims).split(",");
 
@@ -36,7 +37,10 @@ registerRouter.post("/", [
       undefined,
       `Register(${userData.email})`
     );
-    user.temporaryKey = getEmailVerificationCode();
+    const identity = user.identities.find(
+      i => i.type === IdentityType.EmailPassword
+    ) as IEmailPasswordIdentity;
+    identity.temporaryKey = getEmailVerificationCode();
     const saveModel = new User(user);
 
     await new Promise((resolve, reject) => {
@@ -51,7 +55,7 @@ registerRouter.post("/", [
         void sendEmailWithCode(
           res,
           newRecord.email,
-          user.temporaryKey as string,
+          identity.temporaryKey as string,
           newRecord
         ).then(() => resolve(undefined));
       });
@@ -69,14 +73,17 @@ registerRouter.get("/:email/:code", [
       return res.send(response.failed());
     }
 
-    if (!user.temporaryKey || user.temporaryKey !== code) {
+    const identity = user.identities.find(
+      i => i.type === IdentityType.EmailPassword
+    ) as IEmailPasswordIdentity;
+    if (!identity.temporaryKey || identity.temporaryKey !== code) {
       res.status(400);
       return res.send(response.failed());
     }
 
-    user.isEmailVerified = true;
-    user.temporaryKey = undefined;
-    user.temporaryKeyDate = undefined;
+    identity.isEmailVerified = true;
+    identity.temporaryKey = undefined;
+    identity.temporaryKeyDate = undefined;
 
     await new Promise((resolve, reject) => {
       user.save(error => {
@@ -101,8 +108,11 @@ registerRouter.get("/:email", [
       return res;
     }
 
-    if (!user.temporaryKey) {
-      user.temporaryKey = getEmailVerificationCode();
+    const identity = user.identities.find(
+      i => i.type === IdentityType.EmailPassword
+    ) as IEmailPasswordIdentity;
+    if (!identity.temporaryKey) {
+      identity.temporaryKey = getEmailVerificationCode();
 
       await new Promise((resolve, reject) => {
         user.save(error => {
@@ -112,7 +122,7 @@ registerRouter.get("/:email", [
             return resolve(undefined);
           }
 
-          void sendEmailWithCode(res, email, user.temporaryKey as string).then(() =>
+          void sendEmailWithCode(res, email, identity.temporaryKey as string).then(() =>
             resolve(undefined)
           );
         });

@@ -2,12 +2,13 @@ import { Router, Request, Response } from "express";
 
 import { getEmailVerificationCode, sendEmailWithCode } from "../controllers/Verification";
 import { authenticateJwt } from "../middleware/Authorization";
-import { IJwtPayload } from "../middleware/Passport";
+import { IUserSession } from "../middleware/PassportJwt";
 import { accountMapper } from "../models/mappers/AccountMapper";
 import { User } from "../models/database/User";
 import { response } from "../models/responses/IResponseData";
 import { IAccountModel } from "../models/requests/IAccountModel";
 import { isMongooseValidationError } from "../infastructure/TypeCheck";
+import { IdentityType, IEmailPasswordIdentity } from "../models/database/Identity";
 
 export const accountRouter = Router();
 
@@ -30,7 +31,7 @@ export const accountRouter = Router();
  *         $ref: '#/components/responses/404NotFound'
  */
 accountRouter.get("/", authenticateJwt, async (req: Request, res: Response) => {
-  const userId = (req.user as IJwtPayload).sub;
+  const userId = (req.user as IUserSession).sub;
   const entity = await User.findById(userId).exec();
 
   if (entity) {
@@ -43,7 +44,7 @@ accountRouter.get("/", authenticateJwt, async (req: Request, res: Response) => {
 });
 
 accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
-  const userId = (req.user as IJwtPayload).sub;
+  const userId = (req.user as IUserSession).sub;
   const account = req.body as IAccountModel;
 
   const toUpdate = await User.findById(userId).exec();
@@ -53,8 +54,11 @@ accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
   }
 
   const user = accountMapper.convertToBackend(account, toUpdate, `User(${userId})`);
+  const identity = user.identities.find(
+    i => i.type === IdentityType.EmailPassword
+  ) as IEmailPasswordIdentity;
   if (account.email) {
-    user.temporaryKey = getEmailVerificationCode();
+    identity.temporaryKey = getEmailVerificationCode();
   }
 
   return new Promise((resolve, reject) => {
@@ -69,7 +73,7 @@ accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
         return resolve();
       }
 
-      void sendEmailWithCode(res, newUser.email, newUser.temporaryKey as string, newUser).then(
+      void sendEmailWithCode(res, identity.email, identity.temporaryKey as string, newUser).then(
         () => {
           res.send(response.success(accountMapper.convertToFrontend(newUser)));
           resolve();
@@ -80,7 +84,7 @@ accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
 });
 
 accountRouter.delete("/", authenticateJwt, async (req: Request, res: Response) => {
-  const userId = (req.user as IJwtPayload).sub;
+  const userId = (req.user as IUserSession).sub;
   const deleted = await User.findByIdAndDelete(userId).exec();
 
   if (deleted) {

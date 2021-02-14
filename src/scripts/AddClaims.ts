@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from "fs";
-import yaml from "js-yaml";
+import yaml from "yaml";
 
 import { connectSingletonDatabase } from "../infastructure/Database";
 import { initializeLogger, Logger } from "../infastructure/Logger";
@@ -39,10 +39,10 @@ const main = async () => {
   logger.info(`Reading File: ${yamlFile}`);
 
   const connect = connectSingletonDatabase();
-  const read = fs.promises.readFile(yamlFile).then(d => yaml.load(d.toString()));
+  const read = fs.promises.readFile(yamlFile).then(d => yaml.parse(d.toString()) as IClaimYaml);
 
   const waited = await Promise.all([connect, read]);
-  const yamlData = waited[1] as IClaimYaml;
+  const yamlData = waited[1];
   logger.info("Read Valid File");
 
   const saveModels = yamlData.Claims.map(c => claimMapper.convertToBackend(c));

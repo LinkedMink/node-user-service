@@ -11,7 +11,9 @@ import { initializeLogger, Logger } from "./infastructure/Logger";
 import { corsMiddleware } from "./middleware/Cors";
 import { getErrorMiddleware } from "./middleware/Error";
 import { logRequestMiddleware } from "./middleware/LogRequest";
-import { addJwtStrategy, addLocalStrategy } from "./middleware/Passport";
+import { addJwtStrategy } from "./middleware/PassportJwt";
+import { addLocalStrategy } from "./middleware/PassportLocal";
+import { addMutualStrategy } from "./middleware/PassportMutual";
 import { accountRouter } from "./routes/AccountRouter";
 import { authenticateRouter } from "./routes/AuthenticateRouter";
 import { claimRouter } from "./routes/ClaimRouter";
@@ -35,6 +37,7 @@ app.use(corsMiddleware);
 
 addJwtStrategy(passport);
 addLocalStrategy(passport);
+addMutualStrategy(passport);
 app.use(passport.initialize());
 
 void getValidator().then(validator => {

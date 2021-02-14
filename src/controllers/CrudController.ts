@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Document, Model, Query } from "mongoose";
 
-import { IUserSession } from "../middleware/Passport";
+import { IUserSession } from "../middleware/PassportJwt";
 import { IModelMapper } from "../models/mappers/IModelMapper";
 import { response } from "../models/responses/IResponseData";
 import { IListRequest } from "../models/requests/IListRequest";

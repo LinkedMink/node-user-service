@@ -1,0 +1,28 @@
+components:
+  schemas:
+    IAuthenticateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+    IKeyAuthenticateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        response:
+          type: string
+          format: password
+      required:
+        - username
+    AuthenticateRequest:
+      oneOf:
+      - $ref: '#/components/schemas/IAuthenticateRequest'
+      - $ref: '#/components/schemas/IKeyAuthenticateRequest'

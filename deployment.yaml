@@ -49,6 +49,10 @@ spec:
           value: '["https://[Your Host]"]'
         - name: MONGO_DB_CONNECTION_STRING
           value: "mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database.collection][?options]]"
+        - name: REDIS_MODE
+          value: "Sentinal"
+        - name: REDIS_HOSTS
+          value: '[{ "host": "my-redis-sentinal.local", "port": 26379 }]'
         - name: JWT_SECRET_KEY_FILE
           value: "jwtRS256.key"
         - name: JWT_AUDIENCE

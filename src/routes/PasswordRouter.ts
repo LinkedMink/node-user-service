@@ -9,6 +9,7 @@ import { response } from "../models/responses/IResponseData";
 import { IPasswordResetRequest } from "../models/requests/IPasswordResetRequest";
 import { Logger } from "../infastructure/Logger";
 import { basename } from "path";
+import { IdentityType, IEmailPasswordIdentity } from "../models/database/Identity";
 
 export const getPasswordRouter = (): Router => {
   const logger = Logger.get(basename(__filename));
@@ -31,8 +32,12 @@ export const getPasswordRouter = (): Router => {
         length: tempKeyLength,
         type: "url-safe",
       });
-      user.temporaryKey = resetCode;
-      user.temporaryKeyDate = new Date();
+
+      const identity = user.identities.find(
+        i => i.type === IdentityType.EmailPassword
+      ) as IEmailPasswordIdentity;
+      identity.temporaryKey = resetCode;
+      identity.temporaryKeyDate = new Date();
 
       await new Promise<void>((resolve, reject) => {
         user.save(error => {
@@ -44,7 +49,7 @@ export const getPasswordRouter = (): Router => {
           }
 
           void EmailSender.get()
-            .sendPasswordReset(user.email, resetCode)
+            .sendPasswordReset(identity.email, resetCode)
             .then(isSuccess => {
               if (isSuccess) {
                 res.send(response.success());
@@ -70,24 +75,27 @@ export const getPasswordRouter = (): Router => {
         return res.send(response.failed());
       }
 
-      if (!user.temporaryKey || !user.temporaryKeyDate) {
+      const identity = user.identities.find(
+        i => i.type === IdentityType.EmailPassword
+      ) as IEmailPasswordIdentity;
+      if (!identity.temporaryKey || !identity.temporaryKeyDate) {
         res.status(400);
         return res.send(response.failed());
       }
 
-      if (Date.now() - user.temporaryKeyDate.getTime() > tempKeyValidMilliseonds) {
+      if (Date.now() - identity.temporaryKeyDate.getTime() > tempKeyValidMilliseonds) {
         res.status(400);
         res.send(response.failed("The reset token is no longer valid."));
       }
 
-      if (user.temporaryKey !== requestData.resetToken) {
+      if (identity.temporaryKey !== requestData.resetToken) {
         res.status(400);
         return res.send(response.failed());
       }
 
-      user.temporaryKey = undefined;
-      user.temporaryKeyDate = undefined;
-      user.password = requestData.password;
+      identity.temporaryKey = undefined;
+      identity.temporaryKeyDate = undefined;
+      identity.password = requestData.password;
 
       await new Promise<void>((resolve, reject) => {
         user.save(error => {
