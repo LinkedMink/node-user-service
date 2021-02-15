@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { HookNextFunction, Schema, SchemaTypes, Types } from "mongoose";
+import { HookNextFunction, model, Schema, SchemaTypes, Types } from "mongoose";
 import { config } from "../../infastructure/Config";
 import { ConfigKey } from "../../infastructure/ConfigKey";
 import { validateEmail } from "../../infastructure/Validators";
@@ -10,7 +10,7 @@ export enum IdentityType {
   PublicKey = "PublicKey",
 }
 
-const options = { discriminatorKey: "type" };
+const options = { discriminatorKey: "type", _id: false };
 const identitySchemaDefinition = {
   type: {
     type: SchemaTypes.String,
@@ -25,8 +25,9 @@ export interface IIdentity extends Types.Subdocument {
   type: IdentityType;
 }
 
+export const Identity = model<IIdentity>("Identity", identitySchema);
+
 const emailPasswordSchemaDefinition = {
-  ...identitySchemaDefinition,
   email: {
     type: SchemaTypes.String,
     index: true,
@@ -55,6 +56,7 @@ const emailPasswordSchemaDefinition = {
   },
 };
 
+
 export const emailPasswordSchema = new Schema(emailPasswordSchemaDefinition, options);
 
 // TODO investigate why this works, might save before password set?
@@ -72,6 +74,11 @@ emailPasswordSchema.post("validate", async function (this: IEmailPasswordIdentit
   }
 });
 
+export const EmailPasswordIdentity = Identity.discriminator<IEmailPasswordIdentity>(
+  IdentityType.EmailPassword,
+  new Schema(emailPasswordSchemaDefinition, options)
+)
+
 export interface IEmailPasswordIdentity extends IIdentity {
   email: string;
   password: string;
@@ -81,7 +88,6 @@ export interface IEmailPasswordIdentity extends IIdentity {
 }
 
 export const publicKeySchemaDefinition = {
-  ...identitySchemaDefinition,
   publicKey: {
     type: SchemaTypes.Buffer,
     required: true,
@@ -106,3 +112,8 @@ publicKeySchema.pre("validate", function (this: IPublicKeyIdentity, next: HookNe
 
   next();
 });
+
+export const PublicKeyIdentity = Identity.discriminator<IPublicKeyIdentity>(
+  IdentityType.PublicKey,
+  new Schema(publicKeySchema, options)
+)

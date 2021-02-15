@@ -16,13 +16,13 @@ import { addLocalStrategy } from "./middleware/PassportLocal";
 import { addMutualStrategy } from "./middleware/PassportMutual";
 import { accountRouter } from "./routes/AccountRouter";
 import { authenticateRouter } from "./routes/AuthenticateRouter";
-import { claimRouter } from "./routes/ClaimRouter";
+import { getClaimRouter } from "./routes/ClaimRouter";
 import { getPasswordRouter } from "./routes/PasswordRouter";
 import { getOpenApiRouter } from "./routes/OpenApiRouter";
 import { pingRouter } from "./routes/PingRouter";
 import { registerRouter } from "./routes/RegisterRouter";
-import { settingRouter } from "./routes/SettingRouter";
-import { userRouter } from "./routes/UserRouter";
+import { getSettingRouter } from "./routes/SettingRouter";
+import { getUserRouter } from "./routes/UserRouter";
 import { getValidator } from "./middleware/Validator";
 
 initializeLogger();
@@ -45,12 +45,12 @@ void getValidator().then(validator => {
   app.use("/", pingRouter);
   app.use("/account", accountRouter);
   app.use("/authenticate", authenticateRouter);
-  app.use("/claims", claimRouter);
-  app.use("/users", userRouter);
-  app.use("/settings", settingRouter);
+  app.use("/claims", getClaimRouter());
+  app.use("/users", getUserRouter());
+  app.use("/settings", getSettingRouter());
 
   if (config.getBool(ConfigKey.UserRegistrationIsEnabled)) {
-    app.use("/password", getPasswordRouter);
+    app.use("/password", getPasswordRouter());
     app.use("/register", registerRouter);
   }
 

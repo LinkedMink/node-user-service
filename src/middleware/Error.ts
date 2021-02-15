@@ -6,6 +6,7 @@ import { CORS_ERROR } from "./Cors";
 import { isError, isOpenApiValidationError } from "../infastructure/TypeCheck";
 
 export const getErrorMiddleware = (): ErrorRequestHandler => {
+  const OPENAPI_NOT_FOUND = /Path=\S+ with method=[a-zA-Z]+ not found from OpenAPI document/
   const GENERIC_ERROR =
     "An unexpected error has occurred. Please try again later or contact the administrator if the problem persist.";
   const logger = Logger.get(path.basename(__filename));
@@ -26,6 +27,8 @@ export const getErrorMiddleware = (): ErrorRequestHandler => {
       } else if (error.message === CORS_ERROR) {
         res.status(403);
         return res.send(response.failed(error.message));
+      } else if (OPENAPI_NOT_FOUND.test(error.message)) {
+        return res.status(404).send(response.failed('Not Found'))
       }
     }
 

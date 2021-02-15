@@ -1,5 +1,5 @@
 import { Model, Types } from "mongoose";
-import { IdentityType, IEmailPasswordIdentity } from "../database/Identity";
+import { EmailPasswordIdentity, IdentityType, IEmailPasswordIdentity } from "../database/Identity";
 import { IUser, IUserClaim, User } from "../database/User";
 import { IUserModel } from "../responses/IUserModel";
 import { IModelMapper, mapTrackedEntity, setUserModifier } from "./IModelMapper";
@@ -15,8 +15,8 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
       i => i.type === IdentityType.EmailPassword
     ) as IEmailPasswordIdentity;
     let returnModel: IUserModel = {
-      email: identity.email,
-      isEmailVerified: identity.isEmailVerified,
+      email: identity?.email,
+      isEmailVerified: identity?.isEmailVerified,
       isLocked: model.isLocked,
       isLockedDate: model.isLockedDate,
       authenticationDates: model.authenticationDates.map(e => e),
@@ -39,11 +39,25 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
       returnModel = setUserModifier(returnModel, modifier);
     }
 
-    const identity = returnModel?.identities?.find(
+    const identity = returnModel.identities?.find(
       i => i.type === IdentityType.EmailPassword
     ) as IEmailPasswordIdentity;
-    if (model.password) {
-      identity.password = model.password;
+    if (!identity) {
+      const idRecord = { 
+        type: IdentityType.EmailPassword,
+        email: model.email,
+        password: model.password,
+        isEmailVerified: model.isEmailVerified,
+      } as IEmailPasswordIdentity;
+      returnModel.identities
+        ? returnModel.identities.push(idRecord)
+        : returnModel.identities = new Types.DocumentArray([idRecord]);
+    } else {
+      identity.email = model.email;
+      identity.isEmailVerified = model.isEmailVerified;
+      if (model.password) {
+        identity.password = model.password;
+      }
     }
 
     const claimArray = new Types.Array<IUserClaim>();
@@ -59,8 +73,7 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
     }
 
     returnModel.username = model.email;
-    identity.email = model.email;
-    identity.isEmailVerified = model.isEmailVerified;
+
     returnModel.isLocked = model.isLocked;
     returnModel.claims = claimArray;
 

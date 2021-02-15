@@ -1,6 +1,6 @@
 .vscode
 coverage
-docs
+./**/*.yaml
 node_modules
 src
 tests

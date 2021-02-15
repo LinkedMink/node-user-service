@@ -70,7 +70,7 @@ export class AuthController {
 
         if (authError) {
           res.setHeader("WWW-Authenticate", `Mutual realm=${this.realm}`);
-          return res.status(401).send(authError.message);
+          return res.status(401).send(response.failed(authError.message));
         }
 
         if (!user) {

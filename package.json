@@ -30,6 +30,9 @@
     "addUsers": "node -r dotenv/config ./build/scripts/AddUsers.js",
     "addClaims": "node -r dotenv/config ./build/scripts/AddClaims.js"
   },
+  "bin": {
+    "node-user-service": "./build/App.js"
+  },
   "dependencies": {
     "@linkedmink/multilevel-aging-cache": "~0.4.9",
     "@linkedmink/multilevel-aging-cache-ioredis": "~0.4.9",
