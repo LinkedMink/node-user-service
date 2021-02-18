@@ -1,8 +1,16 @@
 import { Model, Types } from "mongoose";
-import { EmailPasswordIdentity, IdentityType, IEmailPasswordIdentity } from "../database/Identity";
+import { IdentityType, IEmailPasswordIdentity, IIdentity, IPublicKeyIdentity } from "../database/Identity";
 import { IUser, IUserClaim, User } from "../database/User";
-import { IUserModel } from "../responses/IUserModel";
+import { IEmailPasswordIdentityModel, IIdentityModel, IPublicKeyIdentityModel, IUserModel } from "../responses/IUserModel";
 import { IModelMapper, mapTrackedEntity, setUserModifier } from "./IModelMapper";
+
+function isEmailPasswordId(value: IIdentityModel | IIdentity): value is IEmailPasswordIdentityModel {
+  return value.type === IdentityType.EmailPassword;
+}
+
+function isPublicKeyId(value: IIdentityModel | IIdentity): value is IPublicKeyIdentityModel {
+  return value.type === IdentityType.PublicKey;
+} 
 
 export class UserMapper implements IModelMapper<IUserModel, IUser> {
   constructor(private readonly dbModel: Model<IUser>) {}
@@ -11,12 +19,19 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
     const claimArray: string[] = [];
     model.claims.forEach(claim => claimArray.push(claim.name));
 
-    const identity = model.identities.find(
-      i => i.type === IdentityType.EmailPassword
-    ) as IEmailPasswordIdentity;
+    const identities = model.identities.map(i => {
+      if (isEmailPasswordId(i)) {
+        return { type: i.type, email: i.email, isEmailVerified: i.isEmailVerified } as IIdentityModel
+      } else if (isPublicKeyId(i)) {
+        return { type: i.type, publicKey: i.publicKey } as IIdentityModel
+      } else {
+        return { type: i.type }
+      }
+    })
+
     let returnModel: IUserModel = {
-      email: identity?.email,
-      isEmailVerified: identity?.isEmailVerified,
+      username: model.username,
+      identities,
       isLocked: model.isLocked,
       isLockedDate: model.isLockedDate,
       authenticationDates: model.authenticationDates.map(e => e),
@@ -39,26 +54,34 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
       returnModel = setUserModifier(returnModel, modifier);
     }
 
-    const identity = returnModel.identities?.find(
-      i => i.type === IdentityType.EmailPassword
-    ) as IEmailPasswordIdentity;
-    if (!identity) {
-      const idRecord = { 
-        type: IdentityType.EmailPassword,
-        email: model.email,
-        password: model.password,
-        isEmailVerified: model.isEmailVerified,
-      } as IEmailPasswordIdentity;
-      returnModel.identities
-        ? returnModel.identities.push(idRecord)
-        : returnModel.identities = new Types.DocumentArray([idRecord]);
-    } else {
-      identity.email = model.email;
-      identity.isEmailVerified = model.isEmailVerified;
-      if (model.password) {
-        identity.password = model.password;
-      }
+    if (!returnModel.identities) {
+      returnModel.identities = new Types.DocumentArray([]);
     }
+
+    model.identities.forEach(id => {
+      const identity = returnModel.identities?.find(
+        i => i.type === id.type
+      );
+
+      let idResolve = identity
+      if (!identity) {
+        idResolve = { type: id.type } as IIdentity;
+        returnModel.identities?.push(idResolve)
+      }
+
+      if (isEmailPasswordId(id)) {
+        const idTyped = idResolve as IEmailPasswordIdentity;
+        idTyped.email = id.email;
+        idTyped.isEmailVerified = id.isEmailVerified;
+        if (id.password) {
+          idTyped.password = id.password;
+        }
+      } else if (isPublicKeyId(id)) {
+        const idTyped = idResolve as IPublicKeyIdentity;
+        idTyped.publicKey = Buffer.from(id.publicKey, 'base64');
+      }
+    })
+
 
     const claimArray = new Types.Array<IUserClaim>();
     model.claims.forEach(claim => {
@@ -72,8 +95,7 @@ export class UserMapper implements IModelMapper<IUserModel, IUser> {
       });
     }
 
-    returnModel.username = model.email;
-
+    returnModel.username = model.username;
     returnModel.isLocked = model.isLocked;
     returnModel.claims = claimArray;
 

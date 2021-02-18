@@ -7,7 +7,8 @@ import { connectSingletonDatabase } from "../infastructure/Database";
 import { initializeLogger, Logger } from "../infastructure/Logger";
 import { userMapper } from "../models/mappers/UserMapper";
 import { User, IUser } from "../models/database/User";
-import { IUserModel } from "../models/responses/IUserModel";
+import { IPublicKeyIdentityModel, IUserModel } from "../models/responses/IUserModel";
+import { IdentityType } from "../models/database/Identity";
 
 interface IUserYaml {
   Users: IUserModel[];
@@ -22,7 +23,7 @@ const saveUser = (user: IUser) =>
       if (error) {
         logger.error({ message: error });
         logger.warn(`Failed to Save: ${user.username}`);
-        resolve(null);
+        return resolve(null);
       }
 
       logger.info(`Saved: ${user.username}`);
@@ -45,11 +46,19 @@ const main = async () => {
   const yamlData = waited[1];
   logger.info("Read Valid File");
 
-  const saveModels = yamlData.Users.map(u => {
-    u.isEmailVerified = true;
+  const saveModelPromises = yamlData.Users.map(async u => {
     u.isLocked = false;
+
+    const keyId = u.identities.find(i => i.type === IdentityType.PublicKey) as IPublicKeyIdentityModel;
+    // Assume the key is a file if it doesn't end with the base64 terminator
+    if (keyId && !keyId.publicKey.endsWith('=')) {
+      keyId.publicKey = (await fs.promises.readFile(keyId.publicKey)).toString('base64')
+    }
+
     return userMapper.convertToBackend(u);
   });
+  const saveModels = await Promise.all(saveModelPromises);
+
   const savedData = await Promise.all(saveModels.map(saveUser));
   const savedTotal = savedData.filter(d => d !== null).length;
   if (savedTotal === savedData.length) {

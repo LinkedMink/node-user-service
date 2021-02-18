@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+        "name": "Current TS File",
+        "type": "node",
+        "request": "launch",
+        "args": ["${relativeFile}", "Users.yaml"],
+        "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+        "sourceMaps": true,
+        "cwd": "${workspaceRoot}",
+        "protocol": "inspector",
+        "envFile": "${workspaceFolder}/.env",
+    },
+    {
       "name": "Attach",
       "port": 9229,
       "request": "attach",
@@ -47,6 +58,7 @@
       "env": {
         "NODE_ENV": "local"
       },
+      "args": ["Users.yaml"]
     }
   ]
 }

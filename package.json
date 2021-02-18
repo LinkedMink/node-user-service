@@ -31,7 +31,9 @@
     "addClaims": "node -r dotenv/config ./build/scripts/AddClaims.js"
   },
   "bin": {
-    "node-user-service": "./build/App.js"
+    "node-user-service": "./build/App.js",
+    "node-user-service-addUsers": "./build/scripts/AddUsers.js",
+    "node-user-service-addClaims": "./build/scripts/AddClaims.js"
   },
   "dependencies": {
     "@linkedmink/multilevel-aging-cache": "~0.4.9",

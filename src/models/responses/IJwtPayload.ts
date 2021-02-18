@@ -5,6 +5,6 @@ export interface IJwtPayload {
   iss: string;
   sub: string;
   claims: string[];
-  email: string;
-  publicKey: string;
+  email?: string;
+  publicKey?: string;
 }

@@ -32,6 +32,7 @@ const emailPasswordSchemaDefinition = {
     type: SchemaTypes.String,
     index: true,
     unique: true,
+    sparse: true,
     dropDups: true,
     required: true,
     validate: {

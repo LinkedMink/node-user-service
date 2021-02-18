@@ -10,7 +10,7 @@ import { ConfigKey } from "../infastructure/ConfigKey";
 import { userMapper } from "../models/mappers/UserMapper";
 import { IUser, User } from "../models/database/User";
 import { response } from "../models/responses/IResponseData";
-import { IUserModel } from "../models/responses/IUserModel";
+import { IEmailPasswordIdentityModel, IIdentityModel, IUserModel } from "../models/responses/IUserModel";
 import { IRegisterRequest } from "../models/requests/IRegisterRequest";
 import { isMongooseValidationError } from "../infastructure/TypeCheck";
 import { IdentityType, IEmailPasswordIdentity } from "../models/database/Identity";
@@ -19,12 +19,27 @@ const DEFAULT_CLAIMS = config.getString(ConfigKey.UserDefaultClaims).split(",");
 
 export const registerRouter = Router();
 
+function registerRequestToUser(request: IRegisterRequest) {
+  return {
+    username: request.email,
+    isLocked: false,
+    identities: [
+      {
+        type: IdentityType.EmailPassword,
+        email: request.email,
+        password: request.password,
+        isEmailVerified: false,
+      } as IEmailPasswordIdentityModel
+    ] as IIdentityModel[],
+    claims: []
+  } as IUserModel
+}
+
 registerRouter.post("/", [
   async (req: Request, res: Response) => {
     const requestData = req.body as IRegisterRequest;
 
-    const userData = requestData as IUserModel;
-    (userData.isEmailVerified = false), (userData.isLocked = false), (userData.claims = []);
+    const userData = registerRequestToUser(requestData);
     DEFAULT_CLAIMS.forEach(rawClaim => {
       const claim = rawClaim.trim();
       if (claim.length > 0) {
@@ -35,7 +50,7 @@ registerRouter.post("/", [
     const user: IUser = userMapper.convertToBackend(
       userData,
       undefined,
-      `Register(${userData.email})`
+      `Register(${userData.username})`
     );
     const identity = user.identities.find(
       i => i.type === IdentityType.EmailPassword
@@ -54,7 +69,7 @@ registerRouter.post("/", [
         const newRecord = userMapper.convertToFrontend(saveModel);
         void sendEmailWithCode(
           res,
-          newRecord.email,
+          newRecord.username,
           identity.temporaryKey as string,
           newRecord
         ).then(() => resolve(undefined));

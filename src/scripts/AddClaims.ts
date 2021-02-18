@@ -22,7 +22,7 @@ const saveClaim = (claim: IClaim) =>
       if (error) {
         logger.error({ message: error });
         logger.warn(`Failed to Save: ${claim.name}`);
-        resolve(null);
+        return resolve(null);
       }
 
       logger.info(`Saved: ${claim.name}`);

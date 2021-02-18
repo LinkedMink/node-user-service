@@ -1,5 +1,14 @@
 Users:
-- email: 'my-email@sample.com'
-  password: 'my-pa$$-key'
+- username: 'my-email@sample.com'
+  identities:
+  - type: 'EmailPassword'
+    email: 'my-email@sample.com'
+    password: 'my-pa$$-key'
   claims:
   - 'UserSettings'
+- username: 'service-account-id'
+  identities:
+  - type: 'PublicKey'
+    publicKey: 'service.key.pub'
+  claims:
+  - 'ServiceAction'
