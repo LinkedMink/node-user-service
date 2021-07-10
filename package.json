@@ -44,7 +44,7 @@
     "cors": "^2.8.5",
     "crypto-random-string": "^3.3.0",
     "dotenv": "^8.2.0",
-    "email-templates": "^8.0.3",
+    "email-templates": "^8.0.4",
     "express": "^4.17.1",
     "express-openapi-validate": "^0.5.1",
     "ioredis": "^4.22.0",
@@ -53,7 +53,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pug": "^2.0.4",
+    "pug": "^3.0.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {

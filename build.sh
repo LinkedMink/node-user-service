@@ -13,8 +13,11 @@ if [ -z "$DOCKER_REGISTRY" ]; then
 fi
 
 if [ -z "$KUBERNETES_NAMESPACE" ]; then
-  KUBERNETES_NAMESPACE="necro-automobilia" 
+  KUBERNETES_NAMESPACE="node-user-service" 
 fi
+
+startTime=$(date +"%s")
+echo "---------- Build Started: $startTime ----------"
 
 if [ "$2" = "prod" ]; then
   npm run build:prod
@@ -48,3 +51,7 @@ if [ "$1" = "deploy" ]; then
     "deployment/${IMAGE_NAME}" \
     --namespace="${KUBERNETES_NAMESPACE}"
 fi
+
+endTime=$(date +"%s")
+elapsed="$((endTime - startTime))"
+echo "---------- Build Finished: ${elapsed} seconds ----------"
