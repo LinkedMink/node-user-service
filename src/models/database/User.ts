@@ -1,6 +1,12 @@
 import { model, Model, Schema, SchemaTypes, Types } from "mongoose";
 
-import { emailPasswordSchema, identitySchema, IdentityType, IIdentity, publicKeySchema } from "./Identity";
+import {
+  emailPasswordSchema,
+  identitySchema,
+  IdentityType,
+  IIdentity,
+  publicKeySchema,
+} from "./Identity";
 import {
   ITrackedEntity,
   trackedEntityPreValidateFunc,
@@ -45,9 +51,9 @@ const userSchemaDefinition = Object.assign({}, trackedEntitySchemaDefinition, {
 });
 
 const userSchema = new Schema(userSchemaDefinition);
-const identities = userSchema.path('identities') as unknown as Model<IIdentity>
-identities.discriminator(IdentityType.EmailPassword, emailPasswordSchema)
-identities.discriminator(IdentityType.PublicKey, publicKeySchema)
+const identities = userSchema.path("identities") as unknown as Model<IIdentity>;
+identities.discriminator(IdentityType.EmailPassword, emailPasswordSchema);
+identities.discriminator(IdentityType.PublicKey, publicKeySchema);
 
 userSchema.pre("validate", trackedEntityPreValidateFunc);
 

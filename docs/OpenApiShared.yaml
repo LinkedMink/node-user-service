@@ -17,6 +17,17 @@ components:
       type: array
       items:
         type: object
+        properties:
+          dataPath:
+            type: string
+          keyword:
+            type: string
+          message:
+            type: string
+          params:
+            type: object
+          schemaPath:
+            type: string
   responses:
     200Null:
       description: The request was successful

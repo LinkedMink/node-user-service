@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 import { ITrackedEntity } from "../database/TrackedEntity";
 import { ITrackedEntityModel } from "../responses/ITrackedEntityModel";
 
@@ -18,7 +18,7 @@ export const mapTrackedEntity = <TFrontend extends ITrackedEntityModel>(
   entity: ITrackedEntity,
   toMap: TFrontend
 ): TFrontend => {
-  toMap.id = entity.id;
+  toMap.id = entity.id as string;
   toMap.createdBy = entity.createdBy;
   toMap.createdDate = entity.createdDate;
   toMap.modifiedBy = entity.modifiedBy;
@@ -27,7 +27,7 @@ export const mapTrackedEntity = <TFrontend extends ITrackedEntityModel>(
   return toMap;
 };
 
-export interface IModelMapper<TFrontend, TBackend extends Document<unknown>> {
+export interface IModelMapper<TFrontend, TBackend extends Document<ObjectId>> {
   convertToFrontend(model: TBackend): TFrontend;
   convertToBackend(model: TFrontend, existing?: TBackend, modifier?: string): TBackend;
 }

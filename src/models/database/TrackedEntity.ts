@@ -1,4 +1,4 @@
-import { Document, HookNextFunction, SchemaDefinition, SchemaTypes } from "mongoose";
+import { Document, HookNextFunction, ObjectId, SchemaDefinition, SchemaTypes } from "mongoose";
 
 export const trackedEntitySchemaDefinition: SchemaDefinition = {
   createdDate: {
@@ -15,8 +15,7 @@ export const trackedEntitySchemaDefinition: SchemaDefinition = {
   },
 };
 
-export interface ITrackedEntity extends Document {
-  id: string;
+export interface ITrackedEntity extends Document<ObjectId> {
   createdDate: Date;
   createdBy: string;
   modifiedDate: Date;

@@ -9,7 +9,7 @@ export class AccountMapper implements IModelMapper<IAccountModel, IUser> {
 
   public convertToFrontend = (model: IUser): IAccountModel => {
     return {
-      id: model.id,
+      id: model.id as string,
       email: model.username,
     };
   };

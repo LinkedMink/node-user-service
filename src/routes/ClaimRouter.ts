@@ -6,4 +6,4 @@ import { Router } from "express";
 
 export const getClaimRouter = (): Router => {
   return createCrudRouter(Claim, claimMapper, AuthorizationClaim.ClaimManage);
-}
+};

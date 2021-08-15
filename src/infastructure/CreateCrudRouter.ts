@@ -1,5 +1,5 @@
 import { RequestHandler, Router } from "express";
-import { Document, Model, FilterQuery } from "mongoose";
+import { Document, Model, FilterQuery, ObjectId } from "mongoose";
 
 import { authenticateJwt, authorizeJwtClaim } from "../middleware/Authorization";
 import { IUserSession } from "../middleware/PassportJwt";
@@ -8,11 +8,11 @@ import { CrudController } from "../controllers/CrudController";
 
 export type GetFilterFunction<T> = (user: IUserSession) => FilterQuery<T>;
 
-export const filterByUserId: GetFilterFunction<Document> = (user: IUserSession) => ({
+export const filterByUserId: GetFilterFunction<Document<ObjectId>> = (user: IUserSession) => ({
   userId: user.sub,
 });
 
-export const createCrudRouter = <TFrontend, TBackend extends Document<unknown>>(
+export const createCrudRouter = <TFrontend, TBackend extends Document<ObjectId>>(
   model: Model<TBackend>,
   modelConverter: IModelMapper<TFrontend, TBackend>,
   requiredClaimRead?: string,

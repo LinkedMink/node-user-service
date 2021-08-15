@@ -10,7 +10,11 @@ import { ConfigKey } from "../infastructure/ConfigKey";
 import { userMapper } from "../models/mappers/UserMapper";
 import { IUser, User } from "../models/database/User";
 import { response } from "../models/responses/IResponseData";
-import { IEmailPasswordIdentityModel, IIdentityModel, IUserModel } from "../models/responses/IUserModel";
+import {
+  IEmailPasswordIdentityModel,
+  IIdentityModel,
+  IUserModel,
+} from "../models/responses/IUserModel";
 import { IRegisterRequest } from "../models/requests/IRegisterRequest";
 import { isMongooseValidationError } from "../infastructure/TypeCheck";
 import { IdentityType, IEmailPasswordIdentity } from "../models/database/Identity";
@@ -29,10 +33,10 @@ function registerRequestToUser(request: IRegisterRequest) {
         email: request.email,
         password: request.password,
         isEmailVerified: false,
-      } as IEmailPasswordIdentityModel
+      } as IEmailPasswordIdentityModel,
     ] as IIdentityModel[],
-    claims: []
-  } as IUserModel
+    claims: [],
+  } as IUserModel;
 }
 
 registerRouter.post("/", [

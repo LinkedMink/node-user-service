@@ -19,7 +19,7 @@ const schemaDefinition = Object.assign({}, userEntitySchemaDefinition, {
   },
 });
 
-const settingSchema = new Schema(schemaDefinition);
+const settingSchema = new Schema<ISetting>(schemaDefinition);
 settingSchema.pre("validate", trackedEntityPreValidateFunc);
 
 settingSchema.index({ userId: 1, name: 1 }, { unique: true });

@@ -6,4 +6,4 @@ import { Router } from "express";
 
 export const getUserRouter = (): Router => {
   return createCrudRouter(User, userMapper, AuthorizationClaim.UserManage);
-}
+};

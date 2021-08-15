@@ -1,4 +1,3 @@
-import { ValidationError } from "express-openapi-validate";
 import { Error } from "mongoose";
 
 export type IsTypeFunc<T> = (toCheck: unknown) => toCheck is T;
@@ -18,9 +17,4 @@ export function isString(toCheck: unknown): toCheck is string {
 export function isMongooseValidationError(value: unknown): value is Error.ValidationError {
   const error = value as Error.ValidationError;
   return error.name === "ValidationError" && error.errors !== undefined;
-}
-
-export function isOpenApiValidationError(value: unknown): value is ValidationError {
-  const error = value as ValidationError;
-  return error.statusCode === 400 && error.data?.length !== undefined;
 }

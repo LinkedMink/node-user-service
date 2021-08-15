@@ -1,9 +1,7 @@
 import { Router } from "express";
-import { getRuntimeOpenApiDoc } from "../infastructure/OpenApi";
 
-export const getOpenApiRouter = async (): Promise<Router> => {
+export const getOpenApiRouter = async (openApiDoc: Record<string, unknown>): Promise<Router> => {
   const swaggerUi = await import("swagger-ui-express");
-  const openApiDoc = await getRuntimeOpenApiDoc();
 
   const getOpenApiRouter = Router();
   getOpenApiRouter.use("/", swaggerUi.serve);

@@ -1,9 +1,10 @@
-import { Logger as CacheLogger } from "@linkedmink/multilevel-aging-cache"
+import { Logger as CacheLogger } from "@linkedmink/multilevel-aging-cache";
 import { format, Logger as WinstonLogger, LoggerOptions, loggers, transports } from "winston";
 import TransportStream from "winston-transport";
 
 import { config } from "./Config";
 import { ConfigKey } from "./ConfigKey";
+import { isError, isString } from "./TypeCheck";
 
 /**
  * Expose the logger options, so that output can be customized
@@ -22,7 +23,6 @@ export class Logger {
   static set optionsFunc(options: (label: string) => LoggerOptions) {
     Logger.optionsFuncVal = options;
     CacheLogger.options = options(Logger.GlobalLabel);
-
   }
 
   /**
@@ -36,6 +36,17 @@ export class Logger {
     }
 
     return loggers.get(label);
+  }
+
+  static format(error: unknown): string {
+    if (isError(error)) {
+      return error.stack as string;
+    } else if (isString(error)) {
+      return error;
+    }
+
+    const stack = new Error().stack;
+    return `Unspecified Unhandled Error: ${stack}`;
   }
 
   private static optionsFuncVal: (label: string) => LoggerOptions;
@@ -66,7 +77,7 @@ export const initializeLogger = (): void => {
         })
       );
     }
-  
+
     if (!config.isEnvironmentContainerized) {
       outputs.push(
         new transports.File({
@@ -75,22 +86,23 @@ export const initializeLogger = (): void => {
         })
       );
     }
-  
+
     return {
       level: config.getString(ConfigKey.LogLevel),
       transports: outputs,
     } as LoggerOptions;
-  }
-
+  };
 
   Logger.optionsFunc = getLoggerOptions;
 
-  const logger = Logger.get("unhandledRejection");
-  process.on("unhandledRejection", (error, p) => {
-    if (error) {
-      logger.error({ message: error });
-    }
+  const logger = Logger.get();
+  process.on("uncaughtException", (error: unknown) => {
+    logger.error(`uncaughtException: ${Logger.format(error)}`);
   });
 
-  Logger.get().verbose("Logger Initialized");
+  process.on("unhandledRejection", (error: unknown) => {
+    logger.error(`unhandledRejection: ${Logger.format(error)}`);
+  });
+
+  logger.verbose("Logger Initialized");
 };

@@ -1,8 +1,8 @@
 paths:
   /settings:
     get:
-      description: Get the details of a list of Setting
-      tags: [Setting]
+      description: Get the details of a list of Settings
+      tags: [Settings]
       security:
         - BearerAuth: []
       parameters:
@@ -12,18 +12,18 @@ paths:
         - $ref: '#/components/parameters/listQuery'
       responses:
         200:
-          description: The retrieved Setting list
+          description: The retrieved Settings list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SettingModelResponse'
+                  $ref: '#/components/schemas/SettingsModelResponse'
         400:
           $ref: '#/components/responses/400BadRequest'
     post:
-      description: Save a new Setting
-      tags: [Setting]
+      description: Save a new Settings
+      tags: [Settings]
       security:
         - BearerAuth: []
       requestBody:
@@ -31,36 +31,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ISettingModel'
+              $ref: '#/components/schemas/ISettingsModel'
       responses:
         200:
-          description: The added Setting
+          description: The added Settings
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SettingModelResponse'
+                $ref: '#/components/schemas/SettingsModelResponse'
         400:
           $ref: '#/components/responses/400ModelValidation'
   /settings/{id}:
     get:
-      description: Get the details of a specific Setting
-      tags: [Setting]
+      description: Get the details of a specific Settings
+      tags: [Settings]
       security:
         - BearerAuth: []
       parameters:
         - $ref: '#/components/parameters/ObjectId'
       responses:
         200:
-          description: The retrieved Setting
+          description: The retrieved Settings
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SettingModelResponse'
+                $ref: '#/components/schemas/SettingsModelResponse'
         404:
           $ref: '#/components/responses/404NotFound'
     put:
-      description: Update an existing Setting
-      tags: [Setting]
+      description: Update an existing Settings
+      tags: [Settings]
       security:
         - BearerAuth: []
       parameters:
@@ -70,21 +70,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ISettingModel'
+              $ref: '#/components/schemas/ISettingsModel'
       responses:
         200:
-          description: The updated Setting
+          description: The updated Settings
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SettingModelResponse'
+                $ref: '#/components/schemas/SettingsModelResponse'
         400:
           $ref: '#/components/responses/400ModelValidation'
         404:
           $ref: '#/components/responses/404NotFound'
     delete:
-      description: Delete a specific Setting
-      tags: [Setting]
+      description: Delete a specific Settings
+      tags: [Settings]
       security:
         - BearerAuth: []
       parameters:

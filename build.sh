@@ -1,7 +1,7 @@
 #/bin/sh
 
 IMAGE_NAME="node-user-service"
-ARCHITECTURES="linux/amd64,linux/arm/v7"
+ARCHITECTURES="linux/amd64,linux/arm64"
 DOCKER_ARGS=""
 
 if [ -z "$DOCKER_SCOPE" ]; then

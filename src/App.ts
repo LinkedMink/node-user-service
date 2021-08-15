@@ -2,6 +2,7 @@
 
 import bodyParser from "body-parser";
 import express from "express";
+// import validator from "openapi-validator-middleware";
 import passport from "passport";
 
 import { config } from "./infastructure/Config";
@@ -23,25 +24,37 @@ import { pingRouter } from "./routes/PingRouter";
 import { registerRouter } from "./routes/RegisterRouter";
 import { getSettingRouter } from "./routes/SettingRouter";
 import { getUserRouter } from "./routes/UserRouter";
-import { getValidator } from "./middleware/Validator";
+import { loadOpenApiDoc } from "./infastructure/OpenApi";
+import { Server } from "http";
 
-initializeLogger();
-void connectSingletonDatabase();
+export const App = async (): Promise<Server> => {
+  initializeLogger();
+  void connectSingletonDatabase();
 
-const app = express();
+  const app = express();
 
-app.use(logRequestMiddleware());
-app.use(bodyParser.json());
+  app.use(logRequestMiddleware());
+  app.use(bodyParser.json());
 
-app.use(corsMiddleware);
+  app.use(corsMiddleware);
 
-addJwtStrategy(passport);
-addLocalStrategy(passport);
-addMutualStrategy(passport);
-app.use(passport.initialize());
+  addJwtStrategy(passport);
+  addLocalStrategy(passport);
+  addMutualStrategy(passport);
+  app.use(passport.initialize());
 
-void getValidator().then(validator => {
-  app.use(validator.match());
+  const openApiDoc = await loadOpenApiDoc();
+  // await validator.initAsync(OPENAPI_DOCUMENT_PATH);
+
+  try {
+    const openApiRouter = await getOpenApiRouter(openApiDoc);
+    app.use("/docs", openApiRouter);
+    Logger.get().info("Swagger UI Path: /docs");
+  } catch (error) {
+    Logger.get().info("Swagger Disabled");
+    Logger.get().verbose({ message: error as Error });
+  }
+
   app.use("/", pingRouter);
   app.use("/account", accountRouter);
   app.use("/authenticate", authenticateRouter);
@@ -56,16 +69,6 @@ void getValidator().then(validator => {
 
   app.use(getErrorMiddleware());
 
-  void getOpenApiRouter()
-    .then(router => {
-      app.use("/docs", router);
-      Logger.get().info("Swagger UI Path: /docs");
-    })
-    .catch(error => {
-      Logger.get().info("Swagger Disabled");
-      Logger.get().verbose({ message: error as Error });
-    });
-});
-
-const listenPort = config.getNumber(ConfigKey.ListenPort);
-export const server = app.listen(listenPort);
+  const listenPort = config.getNumber(ConfigKey.ListenPort);
+  return app.listen(listenPort);
+};

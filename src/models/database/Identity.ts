@@ -57,7 +57,6 @@ const emailPasswordSchemaDefinition = {
   },
 };
 
-
 export const emailPasswordSchema = new Schema(emailPasswordSchemaDefinition, options);
 
 // TODO investigate why this works, might save before password set?
@@ -78,7 +77,7 @@ emailPasswordSchema.post("validate", async function (this: IEmailPasswordIdentit
 export const EmailPasswordIdentity = Identity.discriminator<IEmailPasswordIdentity>(
   IdentityType.EmailPassword,
   new Schema(emailPasswordSchemaDefinition, options)
-)
+);
 
 export interface IEmailPasswordIdentity extends IIdentity {
   email: string;
@@ -117,4 +116,4 @@ publicKeySchema.pre("validate", function (this: IPublicKeyIdentity, next: HookNe
 export const PublicKeyIdentity = Identity.discriminator<IPublicKeyIdentity>(
   IdentityType.PublicKey,
   new Schema(publicKeySchema, options)
-)
+);

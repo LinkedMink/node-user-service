@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Document, Model, Query } from "mongoose";
+import { Document, EnforceDocument, Model, ObjectId, Query } from "mongoose";
 
 import { IUserSession } from "../middleware/PassportJwt";
 import { IModelMapper } from "../models/mappers/IModelMapper";
@@ -11,7 +11,7 @@ import { GetFilterFunction } from "../infastructure/CreateCrudRouter";
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
-export class CrudController<TFrontend, TBackend extends Document<unknown>> {
+export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
   private readonly logger = Logger.get(CrudController.name);
 
   constructor(
@@ -24,7 +24,10 @@ export class CrudController<TFrontend, TBackend extends Document<unknown>> {
   getListHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const reqData = req.query as IListRequest<TBackend>;
 
-    let query: Query<TBackend[], TBackend>;
+    let query: Query<
+      EnforceDocument<TBackend, Record<string, never>>[],
+      EnforceDocument<TBackend, Record<string, never>>
+    >;
     if (reqData.query) {
       try {
         if (this.getFilterFunc) {
@@ -80,7 +83,10 @@ export class CrudController<TFrontend, TBackend extends Document<unknown>> {
   getHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
 
-    let query: Query<TBackend | null, TBackend>;
+    let query: Query<
+      EnforceDocument<TBackend, Record<string, never>> | null,
+      EnforceDocument<TBackend, Record<string, never>>
+    >;
     if (this.getFilterFunc) {
       const conditions = Object.assign(
         { id: entityId },
@@ -155,7 +161,10 @@ export class CrudController<TFrontend, TBackend extends Document<unknown>> {
   deleteHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
 
-    let query: Query<TBackend | null, TBackend>;
+    let query: Query<
+      EnforceDocument<TBackend, Record<string, never>> | null,
+      EnforceDocument<TBackend, Record<string, never>>
+    >;
     if (this.getFilterFunc) {
       const conditions = Object.assign(
         { id: entityId },

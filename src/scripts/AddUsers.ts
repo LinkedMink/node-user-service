@@ -49,10 +49,12 @@ const main = async () => {
   const saveModelPromises = yamlData.Users.map(async u => {
     u.isLocked = false;
 
-    const keyId = u.identities.find(i => i.type === IdentityType.PublicKey) as IPublicKeyIdentityModel;
+    const keyId = u.identities.find(
+      i => i.type === IdentityType.PublicKey
+    ) as IPublicKeyIdentityModel;
     // Assume the key is a file if it doesn't end with the base64 terminator
-    if (keyId && !keyId.publicKey.endsWith('=')) {
-      keyId.publicKey = (await fs.promises.readFile(keyId.publicKey)).toString('base64')
+    if (keyId && !keyId.publicKey.endsWith("=")) {
+      keyId.publicKey = (await fs.promises.readFile(keyId.publicKey)).toString("base64");
     }
 
     return userMapper.convertToBackend(u);

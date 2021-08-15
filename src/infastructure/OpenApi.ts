@@ -1,19 +1,16 @@
-import { OpenApiDocument } from "express-openapi-validate";
 import fs from "fs";
 import { basename } from "path";
+import swaggerJsDoc from "swagger-jsdoc";
 
 import { config } from "./Config";
 import { Logger } from "./Logger";
 
-let runtimeDoc: OpenApiDocument;
+export const OPENAPI_DOCUMENT_PATH = "docs/OpenApi.json";
 
-export const DEFAULT_OPENAPI_DOC_FILE = "docs/OpenApi.json";
-
-export const generateOpenApiDoc = async (): Promise<OpenApiDocument> => {
-  const swaggerJsDoc = await import("swagger-jsdoc");
+export const generateOpenApiDoc = (): Record<string, unknown> => {
   Logger.get(basename(__filename)).info("Generating OpenAPI document from source");
 
-  return swaggerJsDoc.default({
+  return swaggerJsDoc({
     definition: {
       openapi: "3.0.3",
       info: {
@@ -35,24 +32,22 @@ export const generateOpenApiDoc = async (): Promise<OpenApiDocument> => {
       "./src/models/{requests,responses}/*.{yml,yaml,ts}",
       "./src/routes/*.{yml,yaml,ts}",
     ],
-  }) as OpenApiDocument;
+  }) as Record<string, unknown>;
 };
 
-export const loadOpenApiDocFile = async (
-  filename = DEFAULT_OPENAPI_DOC_FILE
-): Promise<OpenApiDocument> => {
+export const loadOpenApiDoc = async (
+  filename = OPENAPI_DOCUMENT_PATH
+): Promise<Record<string, unknown>> => {
   Logger.get(basename(__filename)).info(`Loading OpenAPI document: ${filename}`);
-  const data = await fs.promises.readFile(filename, "utf8");
-  const swaggerSpec = JSON.parse(data) as OpenApiDocument;
-  return swaggerSpec;
-};
-
-export const getRuntimeOpenApiDoc = async (): Promise<OpenApiDocument> => {
-  if (runtimeDoc) {
-    return runtimeDoc;
+  if (!config.isEnvironmentLocal) {
+    try {
+      const data = await fs.promises.readFile(filename, "utf8");
+      return JSON.parse(data) as Record<string, unknown>;
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 
-  runtimeDoc = await (config.isEnvironmentLocal ? generateOpenApiDoc() : loadOpenApiDocFile());
-
-  return runtimeDoc;
+  const doc = generateOpenApiDoc();
+  await fs.promises.writeFile(OPENAPI_DOCUMENT_PATH, JSON.stringify(doc));
+  return doc;
 };

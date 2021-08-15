@@ -67,9 +67,9 @@ export class EmailSender {
       message: {
         from: config.getString(ConfigKey.SystemEmailAddress),
       },
-      transport: ({
+      transport: {
         jsonTransport: true,
-      } as unknown) as Mail,
+      } as unknown as Mail,
       send: false,
     };
 

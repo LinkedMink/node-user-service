@@ -19,4 +19,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD [ "npm", "run", "startBuilt" ]
+CMD [ "npm", "run", "start:built" ]

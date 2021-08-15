@@ -1,2 +1,5 @@
-export * as Requests from "./models/requests/index";
-export * as Responses from "./models/responses/index";
+#!/usr/bin/env node
+
+import { App } from "./App";
+
+void App();
