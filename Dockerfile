@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:16-alpine
 
 ARG ENVIRONMENT=development
 
@@ -11,9 +11,9 @@ COPY package*.json ./
 COPY yarn.lock ./
 
 RUN apk update
-RUN apk add curl python --no-cache --virtual build-dependencies build-base gcc
+RUN apk add curl python3 --no-cache --virtual build-dependencies build-base gcc
 
-RUN yarn install --frozen-lockfile --production=true
+RUN yarn install --production=true
 
 COPY . .
 

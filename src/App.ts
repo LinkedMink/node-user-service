@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import bodyParser from "body-parser";
-import express from "express";
+import express, { RequestHandler } from "express";
 // import validator from "openapi-validator-middleware";
 import passport from "passport";
 
@@ -34,7 +33,7 @@ export const App = async (): Promise<Server> => {
   const app = express();
 
   app.use(logRequestMiddleware());
-  app.use(bodyParser.json());
+  app.use(express.json() as RequestHandler);
 
   app.use(corsMiddleware);
 
