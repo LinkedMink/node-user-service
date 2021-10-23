@@ -1,3 +1,5 @@
+import { Response } from "express";
+
 export enum ResponseStatus {
   Success = 0,
   Failed = 1,
@@ -20,3 +22,5 @@ export const response = {
   failed: <T>(data: T | null = null): IResponseData<T> =>
     ({ status: ResponseStatus.Failed, data } as IResponseData<T>),
 };
+
+export type StatusResponse<T> = Response<IResponseData<T>, Record<string, never>>
