@@ -39,7 +39,7 @@ export const getPasswordRouter = (): Router => {
       identity.temporaryKey = resetCode;
       identity.temporaryKeyDate = new Date();
 
-      await new Promise<void>((resolve, reject) => {
+      await new Promise<void>((resolve, _reject) => {
         user.save(error => {
           if (error) {
             logger.error({ message: error });
@@ -97,7 +97,7 @@ export const getPasswordRouter = (): Router => {
       identity.temporaryKeyDate = undefined;
       identity.password = requestData.password;
 
-      await new Promise<void>((resolve, reject) => {
+      await new Promise<void>((resolve, _reject) => {
         user.save(error => {
           if (error) {
             logger.error({ message: error });

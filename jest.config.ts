@@ -1,6 +1,9 @@
-module.exports = {
+import { Config } from "@jest/types";
+
+const config: Config.InitialOptions = {
   preset: "ts-jest",
   verbose: true,
+  setupFilesAfterEnv: ["./tests/setup.ts"],
   moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx", "node"],
   testMatch: ["**/tests/**/(*.test|*.spec).ts"],
   collectCoverage: true,
@@ -23,3 +26,5 @@ module.exports = {
     },
   },
 };
+
+export default config;

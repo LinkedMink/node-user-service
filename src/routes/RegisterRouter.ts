@@ -62,7 +62,7 @@ registerRouter.post("/", [
     identity.temporaryKey = getEmailVerificationCode();
     const saveModel = new User(user);
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve, _reject) => {
       saveModel.save(error => {
         if (isMongooseValidationError(error)) {
           res.status(400);
@@ -104,7 +104,7 @@ registerRouter.get("/:email/:code", [
     identity.temporaryKey = undefined;
     identity.temporaryKeyDate = undefined;
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve, _reject) => {
       user.save(error => {
         if (error) {
           res.status(500);
@@ -133,7 +133,7 @@ registerRouter.get("/:email", [
     if (!identity.temporaryKey) {
       identity.temporaryKey = getEmailVerificationCode();
 
-      await new Promise((resolve, reject) => {
+      await new Promise((resolve, _reject) => {
         user.save(error => {
           if (error) {
             res.status(500);

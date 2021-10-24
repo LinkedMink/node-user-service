@@ -18,7 +18,7 @@ initializeLogger();
 const logger = Logger.get();
 
 const saveUser = (user: IUser) =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve, _reject) => {
     new User(user).save((error, doc) => {
       if (error) {
         logger.error({ message: error });

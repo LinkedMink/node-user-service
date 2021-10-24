@@ -61,7 +61,7 @@ accountRouter.put("/", authenticateJwt, async (req: Request, res: Response) => {
     identity.temporaryKey = getEmailVerificationCode();
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     user.save((error, newUser) => {
       if (isMongooseValidationError(error)) {
         res.status(400);

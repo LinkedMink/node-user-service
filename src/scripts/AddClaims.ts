@@ -17,7 +17,7 @@ initializeLogger();
 const logger = Logger.get();
 
 const saveClaim = (claim: IClaim) =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve, _reject) => {
     new Claim(claim).save((error, doc) => {
       if (error) {
         logger.error({ message: error });

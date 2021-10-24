@@ -9,11 +9,12 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 COPY yarn.lock ./
+COPY .yarn ./
 
 RUN apk update
 RUN apk add curl python3 --no-cache --virtual build-dependencies build-base gcc
 
-RUN yarn install --production=true
+RUN yarn install --production=true --immutable
 
 COPY . .
 

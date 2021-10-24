@@ -34,7 +34,7 @@ export class EmailSender {
           url: config.getString(ConfigKey.ServiceBaseUrl),
         },
       })
-      .then(res => true)
+      .then(_res => true)
       .catch(e => {
         this.logger.error({ message: e as Error });
         return false;
@@ -55,7 +55,7 @@ export class EmailSender {
           url: config.getString(ConfigKey.PasswordResetUiUrl),
         },
       })
-      .then(res => true)
+      .then(_res => true)
       .catch(e => {
         this.logger.error({ message: e as Error });
         return false;

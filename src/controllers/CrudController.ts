@@ -21,7 +21,7 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     private readonly isPagingMandatory = true
   ) {}
 
-  getListHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getListHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const reqData = req.query as IListRequest<TBackend>;
 
     let query: Query<
@@ -80,7 +80,7 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     res.send(response.success(responseData));
   };
 
-  getHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
 
     let query: Query<
@@ -106,13 +106,13 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     }
   };
 
-  addHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  addHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const userId = (req.user as IUserSession).sub;
     const toSave = this.mapper.convertToBackend(req.body, undefined, `User(${userId})`);
 
     const saveModel = new this.model(toSave);
 
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve, _reject) => {
       saveModel.save((error, doc) => {
         if (isMongooseValidationError(error)) {
           this.logger.info({ message: error });
@@ -129,7 +129,7 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     });
   };
 
-  updateHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  updateHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
     const toUpdate = await this.model.findById(entityId).exec();
     if (toUpdate === null) {
@@ -141,7 +141,7 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     const userId = (req.user as IUserSession).sub;
     const updateModel = this.mapper.convertToBackend(req.body, toUpdate, `User(${userId})`);
 
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve, _reject) => {
       updateModel.save((error, doc) => {
         if (isMongooseValidationError(error)) {
           this.logger.info({ message: error });
@@ -158,7 +158,7 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     });
   };
 
-  deleteHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  deleteHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
 
     let query: Query<

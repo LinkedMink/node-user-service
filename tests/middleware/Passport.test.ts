@@ -1,7 +1,7 @@
 import passport from "passport";
 import path from "path";
 
-import { addJwtStrategy } from "../../src/middleware/Passport";
+import { addJwtStrategy } from "../../src/middleware/PassportJwt";
 
 describe(path.basename(__filename, ".test.ts"), () => {
   test("addJwtStrategy should use passport JwtStrategy", () => {
@@ -45,6 +45,6 @@ describe(path.basename(__filename, ".test.ts"), () => {
 
     // Assert
     expect(doneFunc).toBeCalledWith(null, jwtPayload);
-    expect(mockReq.user).toEqual(jwtPayload);
+    expect(mockReq.user).toMatchObject(jwtPayload);
   });
 });

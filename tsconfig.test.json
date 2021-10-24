@@ -1,7 +1,5 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./coverage/build"
-  },
-  "include": ["tests"]
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": ["src", "tests", "jest.config.ts"]
 }
