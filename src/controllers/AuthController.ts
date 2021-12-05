@@ -106,7 +106,7 @@ export class AuthController {
       const token = sign(
         payload,
         config.getFileBuffer(ConfigKey.JwtSecretKeyFile),
-        this.signOptions(user.id)
+        this.signOptions(user.id as string)
       );
 
       const data = response.success({ token } as IBearerToken);

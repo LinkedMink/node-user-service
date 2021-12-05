@@ -108,7 +108,11 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
 
   addHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const userId = (req.user as IUserSession).sub;
-    const toSave = this.mapper.convertToBackend(req.body, undefined, `User(${userId})`);
+    const toSave = this.mapper.convertToBackend(
+      req.body as TFrontend,
+      undefined,
+      `User(${userId})`
+    );
 
     const saveModel = new this.model(toSave);
 
@@ -139,7 +143,11 @@ export class CrudController<TFrontend, TBackend extends Document<ObjectId>> {
     }
 
     const userId = (req.user as IUserSession).sub;
-    const updateModel = this.mapper.convertToBackend(req.body, toUpdate, `User(${userId})`);
+    const updateModel = this.mapper.convertToBackend(
+      req.body as TFrontend,
+      toUpdate,
+      `User(${userId})`
+    );
 
     await new Promise<void>((resolve, _reject) => {
       updateModel.save((error, doc) => {
