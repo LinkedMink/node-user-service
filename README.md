@@ -1,24 +1,33 @@
 # Node User Service
+
+![Build State](https://github.com/LinkedMink/node-user-service/actions/workflows/build-main.yml/badge.svg)
+
 This service authenticates users against records in a MongoDB. When authenticated, users
-are issued a JWT token with a set of claims describing operations a user can perform. 
-It's designed to be used in a microservice architecture where claims are defined by associated 
+are issued a JWT token with a set of claims describing operations a user can perform.
+It's designed to be used in a microservice architecture where claims are defined by associated
 services other than a core claims for managing users and claims.
 
 ## Microservice Collection
+
 This project is part of a collection of microservices for supporting a larger project.
 
 ## Getting Started
-### Install Prerequisites 
+
+### Install Prerequisites
+
 #### Required
+
 The application was tested with these major versions:
-* MongoDB 4.2
-* Node.js 14
+
+- MongoDB 4.2
+- Node.js 14
 
 #### Recommended
-* Docker
-* Kubernetes Provider
 
-This package doesn't target any specific platform or provider. Sample files for Kubernetes 
+- Docker
+- Kubernetes Provider
+
+This package doesn't target any specific platform or provider. Sample files for Kubernetes
 deployment are included.
 
 Install the npm packages.
@@ -29,6 +38,7 @@ npm install
 ```
 
 ### Database
+
 Create the user service database and a user that can access it.
 
 ```javascript
@@ -52,8 +62,9 @@ npm run addUser myuser@email.com StrongPass*1 UserManage ClaimManage
 ```
 
 ### Config
-You will need to generate a private/public key pair. This is used to sign the JWT tokens. 
-The node-user-service uses the private key to sign while the consuming services will use the 
+
+You will need to generate a private/public key pair. This is used to sign the JWT tokens.
+The node-user-service uses the private key to sign while the consuming services will use the
 public key to validate.
 
 ```sh
@@ -61,12 +72,12 @@ ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
 openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 ```
 
-Create a .env file in the root of the project directory. A few environmental variables 
+Create a .env file in the root of the project directory. A few environmental variables
 are required for the application to run.
 
 ```sh
 MONGO_DB_CONNECTION_STRING=mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database.collection][?options]]
-# The path to a file containing the JWT private key. 
+# The path to a file containing the JWT private key.
 JWT_SECRET_KEY_FILE=jwtRS256.key
 # A sensible name to give as the issuing authority and intended audience
 # https://tools.ietf.org/html/rfc7519#section-4.1
@@ -81,7 +92,8 @@ npm start
 ```
 
 ### Deployment
-Docker isn't required to run this service, but in a microservice architecture, use of containers 
+
+Docker isn't required to run this service, but in a microservice architecture, use of containers
 has become ubiquitous. Create the Docker image and push it up to a Docker registry.
 
 ```sh
@@ -104,7 +116,7 @@ docker run -d \
   linkedmink/node-user-service
 ```
 
-The project contains a sample deployment.yaml file for deploying to a Kubernetes cluster. Edit the 
+The project contains a sample deployment.yaml file for deploying to a Kubernetes cluster. Edit the
 file as necessary. Then apply the changes to your cluster.
 
 ```sh

@@ -1052,24 +1052,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@linkedmink/multilevel-aging-cache-ioredis@npm:~0.5.1":
-  version: 0.5.1
-  resolution: "@linkedmink/multilevel-aging-cache-ioredis@npm:0.5.1"
+"@linkedmink/multilevel-aging-cache-ioredis@npm:0.5.2-0":
+  version: 0.5.2-0
+  resolution: "@linkedmink/multilevel-aging-cache-ioredis@npm:0.5.2-0"
   peerDependencies:
-    "@linkedmink/multilevel-aging-cache": 0.5.1
-    ioredis: ">= 4.23.0 < 5.0"
-  checksum: c1ee5bc3fd93a030082d3f954d43d770e14678d5c25deb53860d171f5f289f8d26166689bc3b87b28d3eb4c82c1af5b5ce29aa88ec4a103e8e9a2690aeae1892
+    "@linkedmink/multilevel-aging-cache": "*"
+    ioredis: ^4.23.0
+  checksum: bc670525d40f9af2a7f1b5d214b4cb688798a9d9880adf9a01ed328ac0569f4cda8c23cfd8d4472bea409b95263d7ba512f6d3c16a6127d4eaf8b22e71c6f04e
   languageName: node
   linkType: hard
 
-"@linkedmink/multilevel-aging-cache@npm:~0.5.1":
-  version: 0.5.1
-  resolution: "@linkedmink/multilevel-aging-cache@npm:0.5.1"
+"@linkedmink/multilevel-aging-cache@npm:0.5.2-0":
+  version: 0.5.2-0
+  resolution: "@linkedmink/multilevel-aging-cache@npm:0.5.2-0"
   dependencies:
     bintrees: ^1.0.2
   peerDependencies:
-    winston: 3.x
-  checksum: 2d08c19d18e1463c1c84f07144312bfa93a54bb4b168ab09f78b5e78f1c3aed5fd0937ba046dc9d86abb56cad128c6a018d55149f4debcdd86332398e5db1fc4
+    winston: ^3.0.0
+  checksum: b604d42c8c819a6fdfd6b190531add872704357de857f78786d711d365ea9f1375c69b1b2976ddde855f264c38907fa6642f861eadb5beba528fec435bde98ef
   languageName: node
   linkType: hard
 
@@ -1077,8 +1077,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@linkedmink/node-user-service@workspace:."
   dependencies:
-    "@linkedmink/multilevel-aging-cache": ~0.5.1
-    "@linkedmink/multilevel-aging-cache-ioredis": ~0.5.1
+    "@linkedmink/multilevel-aging-cache": 0.5.2-0
+    "@linkedmink/multilevel-aging-cache-ioredis": 0.5.2-0
     "@linkedmink/passport-mutual-key-challenge": ~0.1.4
     "@tsconfig/node16": ^1.0.2
     "@types/bcrypt": ^5.0.0
@@ -1111,7 +1111,7 @@ __metadata:
     lint-staged: ^12.1.2
     mongoose: ^5.13.13
     nodemailer: ^6.7.2
-    openapi-types: ^9.3.1
+    openapi-types: ^10.0.0
     openapi-validator-middleware: ^3.2.4
     passport: ^0.5.0
     passport-jwt: ^4.0.0
@@ -6512,10 +6512,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-types@npm:^9.3.1":
-  version: 9.3.1
-  resolution: "openapi-types@npm:9.3.1"
-  checksum: 44b7132b159666877b1659dcfb48ea34d45222dd96a14626d57830401dfad801d2cba5dc9e88471faa4f1c2f7670d814601d91e156d6a05ecccc60c65660ebbc
+"openapi-types@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "openapi-types@npm:10.0.0"
+  checksum: 8cc8b5bf40ea10b1f9c56fb05aada74bfe3d9e94e141464561a5c3cd0a933906e57d9bf4e059219ec8e63a97a69e0655d21c9dd3f4de1ff4f71672d10664cfc0
   languageName: node
   linkType: hard
 
