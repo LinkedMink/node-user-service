@@ -4,6 +4,7 @@
 !.yarn/plugins
 !.yarn/releases
 coverage
+data
 node_modules
 src
 tests

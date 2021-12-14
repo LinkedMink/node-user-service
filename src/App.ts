@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 import express, { RequestHandler } from "express";
+import { Server } from "http";
 // import validator from "openapi-validator-middleware";
 import passport from "passport";
-
 import { config } from "./infastructure/Config";
 import { ConfigKey } from "./infastructure/ConfigKey";
 import { connectSingletonDatabase } from "./infastructure/Database";
 import { initializeLogger, Logger } from "./infastructure/Logger";
+import { loadOpenApiDoc } from "./infastructure/OpenApi";
 import { corsMiddleware } from "./middleware/Cors";
 import { getErrorMiddleware } from "./middleware/Error";
 import { logRequestMiddleware } from "./middleware/LogRequest";
@@ -17,14 +18,12 @@ import { addMutualStrategy } from "./middleware/PassportMutual";
 import { accountRouter } from "./routes/AccountRouter";
 import { authenticateRouter } from "./routes/AuthenticateRouter";
 import { getClaimRouter } from "./routes/ClaimRouter";
-import { getPasswordRouter } from "./routes/PasswordRouter";
+import { healthRouter } from "./routes/HealthRouter";
 import { getOpenApiRouter } from "./routes/OpenApiRouter";
-import { pingRouter } from "./routes/PingRouter";
+import { getPasswordRouter } from "./routes/PasswordRouter";
 import { registerRouter } from "./routes/RegisterRouter";
 import { getSettingRouter } from "./routes/SettingRouter";
 import { getUserRouter } from "./routes/UserRouter";
-import { loadOpenApiDoc } from "./infastructure/OpenApi";
-import { Server } from "http";
 
 export const App = async (): Promise<Server> => {
   initializeLogger();
@@ -54,7 +53,7 @@ export const App = async (): Promise<Server> => {
     Logger.get().verbose({ message: error as Error });
   }
 
-  app.use("/", pingRouter);
+  app.use("/", healthRouter);
   app.use("/account", accountRouter);
   app.use("/authenticate", authenticateRouter);
   app.use("/claims", getClaimRouter());

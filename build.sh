@@ -2,6 +2,7 @@
 
 IMAGE_NAME="node-user-service"
 ARCHITECTURES="linux/amd64,linux/arm64"
+#DOCKER_CONTENT_TRUST=1
 DOCKER_ARGS=""
 
 if [ -z "$DOCKER_SCOPE" ]; then
@@ -9,7 +10,7 @@ if [ -z "$DOCKER_SCOPE" ]; then
 fi
 
 if [ -z "$DOCKER_REGISTRY" ]; then
-  DOCKER_REGISTRY="registry.linkedmink.space/" 
+  DOCKER_REGISTRY="" 
 fi
 
 if [ -z "$KUBERNETES_NAMESPACE" ]; then
@@ -20,10 +21,10 @@ startTime=$(date +"%s")
 echo "---------- Build Started: $startTime ----------"
 
 if [ "$2" = "prod" ]; then
-  npm run build:prod
+  yarn run build:prod
   DOCKER_ARGS="--build-arg ENVIRONMENT=production"
 else
-  npm run build
+  yarn run build
 fi
 
 if [ "$1" = "deploy" ]; then

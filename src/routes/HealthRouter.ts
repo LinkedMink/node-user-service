@@ -3,20 +3,20 @@ import { Request, Response } from "express";
 
 import { config } from "../infastructure/Config";
 import { response } from "../models/responses/IResponseData";
-import { IPingMark } from "../models/responses/IPingMark";
+import { IHealthResponse } from "../models/responses/IHealthResponse";
 
-export const pingRouter = Router();
+export const healthRouter = Router();
 
-pingRouter.get("/", (req: Request, res: Response) => {
+healthRouter.get("/", (_req: Request, res: Response) => {
   if (config.isEnvironmentProd) {
     res.send(
-      response.success<IPingMark>({
+      response.success<IHealthResponse>({
         mark: Date.now(),
       })
     );
   } else {
     res.send(
-      response.success<IPingMark>({
+      response.success<IHealthResponse>({
         mark: Date.now(),
         application: config.packageJson.name,
         version: config.packageJson.version,

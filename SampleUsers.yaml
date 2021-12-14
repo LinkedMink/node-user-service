@@ -4,6 +4,7 @@ Users:
   - type: 'EmailPassword'
     email: 'my-email@sample.com'
     password: 'my-pa$$-key'
+    isEmailVerified: true
   claims:
   - 'UserSettings'
 - username: 'service-account-id'

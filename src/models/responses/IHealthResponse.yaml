@@ -1,6 +1,6 @@
 components:
   schemas:
-    IPingMark:
+    IHealthResponse:
       type: object
       properties:
         mark:
@@ -15,10 +15,10 @@ components:
           type: string
           nullable: true
           example: 0.9.7
-    PingMarkResponse:
+    HealthResponse:
       allOf:
       - $ref: '#/components/schemas/IResponseData'
       - type: object
         properties:
           data:
-            $ref: '#/components/schemas/IPingMark'
+            $ref: '#/components/schemas/IHealthResponse'
