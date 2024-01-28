@@ -1,0 +1,28 @@
+FROM oven/bun:1-alpine
+
+ARG ENVIRONMENT=production
+
+ENV NODE_ENV ENVIRONMENT
+ENV IS_CONTAINER_ENV true
+
+RUN chown bun:bun /home/bun/app
+USER bun
+
+WORKDIR /home/bun/app
+
+COPY --chown=1000:1000 . .
+
+# TODO Error
+#16 0.037 bun install v1.0.25 (a8ff7be6)
+#16 0.037 error parsing lockfile: BufferOverflow
+#16 0.037 ignoring lockfile
+# RUN bun install --frozen-lockfile --production
+RUN bun pm migrate --force
+
+RUN bun install --frozen-lockfile --production
+
+RUN ls -la ./
+
+EXPOSE 8080
+
+CMD [ "bun", "dist/bin/Server.mjs" ]

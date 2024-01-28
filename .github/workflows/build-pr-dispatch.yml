@@ -1,0 +1,20 @@
+---
+name: Build Pull Requests and Dispatch
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request: {}
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    uses: LinkedMink/.github/.github/workflows/build-npm-package.yml@main
+    with:
+      uploadBuild: false

@@ -1,0 +1,10 @@
+components:
+  schemas:
+    BearerToken:
+      type: object
+      properties:
+        token:
+          type: string
+          description: An encoded JWT token with the properties [JwtPayload](#model-JwtPayload) when decoded
+    BearerTokenResponse:
+      $ref: '#/components/schemas/BearerToken'

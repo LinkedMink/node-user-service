@@ -1,0 +1,44 @@
+paths:
+  /account:
+    get:
+      description: Get a user's profile
+      tags: [Account]
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: The user record matching the input token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountModelResponse'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    put:
+      description: Update a user's account
+      tags: [Account]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IAccountModel'
+      responses:
+        200:
+          description: The newly created user record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+    delete:
+      description: Delete a user's account
+      tags: [Account]
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'

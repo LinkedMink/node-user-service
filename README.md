@@ -30,13 +30,9 @@ The application was tested with these major versions:
 This package doesn't target any specific platform or provider. Sample files for Kubernetes
 deployment are included.
 
-Install the npm packages using yarn.
-
 ```sh
-# Ensure yarn is installed globally
-npm install -g yarn
 cd node-user-service
-yarn install
+npm install
 ```
 
 ### Database
@@ -63,8 +59,8 @@ To add users and authorization claims, populate a yaml file with seed claims and
 of the data format. Seed the database with the initial user and claims.
 
 ```sh
-yarn run addClaims -- MyClaims.yaml
-yarn run addUsers -- MyUsers.yaml
+npm run addClaims -- MyClaims.yaml
+npm run addUsers -- MyUsers.yaml
 ```
 
 ### Config
@@ -89,7 +85,7 @@ cp template.env .env
 The application should now be runnable locally.
 
 ```sh
-yarn start
+npm start
 ```
 
 ### Deployment
@@ -136,5 +132,5 @@ out the latest version to a Kubernetes cluster.
 
 ```sh
 # Edit build.sh or supply environment variables to override
-KUBERNETES_NAMESPACE=my-app build.sh deploy
+KUBERNETES_NAMESPACE=my-app deploy/k8s-build.sh deploy
 ```

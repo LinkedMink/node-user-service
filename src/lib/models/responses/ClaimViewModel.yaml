@@ -1,0 +1,18 @@
+components:
+  schemas:
+    ClaimViewModel:
+      type: object
+      properties:
+        name:
+          type: string
+          pattern: '[a-zA-Z0-9_-]+'
+        applications:
+          type: array
+          items:
+            type: string
+            pattern: '[a-zA-Z0-9_-]+'
+      required:
+        - name
+        - applications
+    ClaimViewModelResponse:
+      $ref: '#/components/schemas/ClaimViewModel'

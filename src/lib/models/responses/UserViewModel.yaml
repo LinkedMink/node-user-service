@@ -1,0 +1,35 @@
+components:
+  schemas:
+    UserViewModel:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        isEmailVerified:
+          type: boolean
+        isLocked:
+          type: boolean
+        isLockedDate:
+          type: string
+          format: date-time
+        authenticationDates:
+          type: array
+          items:
+            type: string
+            format: date-time
+        claims:
+          type: array
+          items:
+            type: string
+            pattern: '[a-zA-Z0-9_-]+'
+      required:
+        - email
+        - isEmailVerified
+        - isLocked
+        - claims
+    UserViewModelResponse:
+      $ref: '#/components/schemas/UserViewModel'

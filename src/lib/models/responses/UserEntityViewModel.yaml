@@ -1,0 +1,10 @@
+components:
+  schemas:
+    UserEntityViewModel:
+      type: object
+      properties:
+        userId:
+          type: string
+          pattern: '[a-fA-F0-9]{24}'
+      required:
+        - userId

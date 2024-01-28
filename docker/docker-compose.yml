@@ -1,0 +1,30 @@
+---
+services:
+  node-user-service:
+    image: linkedmink/node-user-service:nodejs
+    command: [ "node", "--enable-source-maps", "dist/bin/Server.mjs" ]
+    # image: linkedmink/node-user-service:bun
+    # command: [ "bun", "dist/bin/Server.mjs" ]
+    ports:
+      - 8080:8080
+    restart: always
+    environment:
+      - MONGO_DB_CONNECTION_STRING=mongodb://[username]:[password]@localhost:27017/userServiceDB
+      - REDIS_MODE=Single
+      - REDIS_HOSTS={"host":"localhost", "port":6379}
+      - JWT_SECRET_KEY_FILE=/run/secrets/jwtRS256.key
+      - JWT_AUDIENCE=client.linkedmink.net
+      - JWT_ISSUER=api.linkedmink.net
+      - USER_DEFAULT_CLAIMS=UserSettings
+    secrets:
+      - source: jwt-key
+        target: jwtRS256.key
+
+secrets:
+  jwt-key:
+    file: ./jwtRS256.key
+
+networks:
+  default:
+    name: mongodb-bridge
+    external: true

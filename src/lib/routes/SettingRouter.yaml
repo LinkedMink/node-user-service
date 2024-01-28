@@ -1,0 +1,96 @@
+paths:
+  /settings:
+    get:
+      description: Get the details of a list of Settings
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/listPageSize'
+        - $ref: '#/components/parameters/listPageNumber'
+        - $ref: '#/components/parameters/listSort'
+        - $ref: '#/components/parameters/listQuery'
+      responses:
+        200:
+          description: The retrieved Settings list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SettingViewModelResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+    post:
+      description: Save a new Settings
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ISettingsModel'
+      responses:
+        200:
+          description: The added Settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingViewModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+  /settings/{id}:
+    get:
+      description: Get the details of a specific Settings
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          description: The retrieved Settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingViewModelResponse'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    put:
+      description: Update an existing Settings
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ISettingsModel'
+      responses:
+        200:
+          description: The updated Settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingViewModelResponse'
+        400:
+          $ref: '#/components/responses/400ModelValidation'
+        404:
+          $ref: '#/components/responses/404NotFound'
+    delete:
+      description: Delete a specific Settings
+      tags: [Settings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        200:
+          $ref: '#/components/responses/200Null'
+        404:
+          $ref: '#/components/responses/404NotFound'

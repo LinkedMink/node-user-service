@@ -1,0 +1,25 @@
+components:
+  schemas:
+    EditRecordViewModel:
+      type: object
+      properties:
+        createdDate:
+          type: string
+          format: date-time
+          readOnly: true
+        createdBy:
+          type: string
+          readOnly: true
+        createdByType:
+          type: string
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          readOnly: true
+        modifiedBy:
+          type: string
+          readOnly: true
+        modifiedByType:
+          type: string
+          readOnly: true

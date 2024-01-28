@@ -1,0 +1,26 @@
+components:
+  schemas:
+    MessageViewModel:
+      type: object
+      properties:
+        message:
+          type: string
+  responses:
+    400BadRequest:
+      description: The supplied parameters are invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrors"
+    401Auth:
+      description: The user could not be authenticated
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageViewModel"
+    403Forbidden:
+      description: The supplied user does not have permission to perform this action
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageViewModel"

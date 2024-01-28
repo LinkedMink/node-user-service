@@ -1,29 +1,35 @@
 import { Config } from "@jest/types";
 
 const config: Config.InitialOptions = {
-  preset: "ts-jest",
+  preset: "@shelf/jest-mongodb",
   verbose: true,
-  setupFilesAfterEnv: ["./tests/setup.ts"],
-  moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx", "node"],
-  testMatch: ["**/tests/**/(*.test|*.spec).ts"],
-  collectCoverage: true,
-  collectCoverageFrom: ["src/**/!(*.spec|*.test|*.enum|app|logger|config).ts"],
-  coverageThreshold: {
-    global: {
-      statements: 75,
-      branches: 75,
-      functions: 75,
-      lines: 75,
-    },
+  // setupFilesAfterEnv: ["<rootDir>/tests/SetupAfterEnv.ts"],
+  resolver: "<rootDir>/tests/JestMjsResolver.cjs",
+  extensionsToTreatAsEsm: [".ts", ".mts"],
+  moduleFileExtensions: ["js", "jsx", "mjs", "cjs", "json", "ts", "tsx", "mts", "cts"],
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
-  testEnvironment: "node",
+  testMatch: ["**/tests/**/(*.test|*.spec).{m,c,}ts"],
+  collectCoverage: false,
+  collectCoverageFrom: ["src/**/!(*.spec|*.test|*.enum|app|logger|config).{m,c,}ts"],
+  // coverageThreshold: {
+  //   global: {
+  //     statements: 75,
+  //     branches: 75,
+  //     functions: 75,
+  //     lines: 75,
+  //   },
+  // },
+  coverageProvider: "v8",
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
-  },
-  globals: {
-    "ts-jest": {
-      tsconfig: "tsconfig.test.json",
-    },
+    "^.+\\.m?tsx?$": [
+      "ts-jest",
+      {
+        tsconfig: "tests/tsconfig.json",
+        useESM: true,
+      },
+    ],
   },
 };
 

@@ -1,7 +1,7 @@
 import passport from "passport";
 import path from "path";
 
-import { addJwtStrategy } from "../../src/middleware/PassportJwt";
+import { addJwtStrategy } from "../../src/lib/middleware/passport/PassportJwt.mjs";
 
 describe(path.basename(__filename, ".test.ts"), () => {
   test("addJwtStrategy should use passport JwtStrategy", () => {

@@ -1,0 +1,25 @@
+components:
+  schemas:
+    SettingViewModel:
+      type: object
+      properties:
+        userId:
+          type: string
+          pattern: "[a-fA-F0-9]{24}"
+        name:
+          type: string
+          pattern: '[a-zA-Z0-9_-]+'
+        applications:
+          type: array
+          items:
+            type: string
+            pattern: '[a-zA-Z0-9_-]+'
+        data:
+          type: object
+      required:
+        - userId
+        - name
+        - applications
+        - data
+    SettingViewModelResponse:
+      $ref: '#/components/schemas/SettingViewModel'

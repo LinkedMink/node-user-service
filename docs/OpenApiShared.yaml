@@ -29,45 +29,13 @@ components:
           schemaPath:
             type: string
   responses:
-    200Null:
-      description: The request was successful
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StringResponse"
-    400BadRequest:
-      description: The supplied parameters are invalid
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StringResponse"
     400ModelValidation:
       description: The supplied parameters are invalid
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ValidationErrors"
-    401Auth:
-      description: The user could not be authenticated
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StringResponse"
-    403Forbidden:
-      description: The supplied user does not have permission to perform this action
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StringResponse"
     404NotFound:
       description: The requested item wasn't found
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StringResponse"
     500Internal:
       description: An unspecified error has occurred
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StringResponse"
