@@ -1,6 +1,6 @@
 {
   "name": "@linkedmink/node-user-service",
-  "version": "0.12.1-0",
+  "version": "0.12.1",
   "description": "This service authenticates users against records in a MongoDB and issues JWT tokens with claims (permissions) embedded in them. It's designed to be used in a microservice architecture where claims are defined by associated services.",
   "homepage": "https://github.com/LinkedMink/node-user-service#readme",
   "bugs": {
