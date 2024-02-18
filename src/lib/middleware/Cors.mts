@@ -1,36 +1,17 @@
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import { config } from "../infrastructure/Config.mjs";
 import { ConfigKey } from "../infrastructure/ConfigKey.mjs";
-import { isString } from "../infrastructure/TypeCheck.mjs";
 
-export const CORS_ERROR = "Not allowed by CORS";
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age#delta-seconds
+ */
+const ALLOW_PREFLIGHT_MAX_AGE = 86400;
 
-type ReportOriginFunction = (err: Error | null, allow?: boolean) => void;
-type OriginFunction = (requestOrigin: string | undefined, callback: ReportOriginFunction) => void;
-
-interface ICorsOptions {
-  origin: string | OriginFunction;
-  optionsSuccessStatus: number;
-}
-
-const originsData = config.getJsonOrString<string[]>(ConfigKey.AllowedOrigins);
-
-let origin: string | OriginFunction;
-if (isString(originsData)) {
-  origin = originsData;
-} else {
-  origin = (origin: string | undefined, callback: ReportOriginFunction): void => {
-    if (origin !== undefined && originsData.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(CORS_ERROR));
-    }
+export const corsMiddleware = () => {
+  const corsOptions: CorsOptions = {
+    origin: config.getJsonOrString<string[]>(ConfigKey.AllowedOrigins),
+    maxAge: ALLOW_PREFLIGHT_MAX_AGE,
   };
-}
 
-const corsOptions: ICorsOptions = {
-  origin,
-  optionsSuccessStatus: 200,
+  return cors(corsOptions);
 };
-
-export const corsMiddleware = cors(corsOptions);

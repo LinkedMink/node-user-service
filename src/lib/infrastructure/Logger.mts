@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { LoggerOptions, Logger as WinstonLogger, format, loggers, transports } from "winston";
@@ -72,7 +71,7 @@ export const initializeLogger = (): void => {
       format.label({ label, message: false }),
       format.timestamp(),
       format.printf(info => {
-        const label = info.label ? ` ${chalk.bold(info.label as string)}` : "";
+        const label = info.label ? ` ${info.label as string}` : "";
         const message = (info.stack ? (info.stack as string) : info.message) as string;
         return `${info.timestamp as string} ${info.level}${label}: ${message}`;
       })

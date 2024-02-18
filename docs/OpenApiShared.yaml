@@ -29,6 +29,8 @@ components:
           schemaPath:
             type: string
   responses:
+    200Null:
+      description: The request was successful 
     400ModelValidation:
       description: The supplied parameters are invalid
       content:

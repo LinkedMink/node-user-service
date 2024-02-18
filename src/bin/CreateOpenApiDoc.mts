@@ -11,7 +11,7 @@ const logger = Logger.get();
 const main = async (): Promise<ExitCode> => {
   logger.info("Generate OpenAPI Doc - Start");
 
-  const swaggerDoc = generateOpenApiDoc();
+  const swaggerDoc = await generateOpenApiDoc();
   if (!swaggerDoc) {
     logger.info("Failed to generate OpenAPI Doc");
     return ExitCode.UnspecifiedError;

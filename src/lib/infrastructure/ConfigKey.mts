@@ -1,6 +1,7 @@
 export enum ConfigKey {
   AppName = "APP_NAME",
   AllowedOrigins = "ALLOWED_ORIGINS",
+  EnableCompression = "ENABLE_COMPRESSION",
   ListenPort = "LISTEN_PORT",
   LogFile = "LOG_FILE",
   LogLevel = "LOG_LEVEL",
@@ -34,6 +35,7 @@ export enum ConfigKey {
 export const configDefaultMap: Map<ConfigKey, string | undefined> = new Map([
   [ConfigKey.AppName, "LinkedMink"],
   [ConfigKey.AllowedOrigins, "*"],
+  [ConfigKey.EnableCompression, String(true)],
   [ConfigKey.ListenPort, "8080"],
   [ConfigKey.LogFile, "combined.log"],
   [ConfigKey.LogLevel, "info"],

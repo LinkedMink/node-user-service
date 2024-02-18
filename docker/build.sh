@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
+# Usage: build.sh [true]
+
+set -e
 
 IMAGE_NAME="node-user-service"
-ARCHITECTURES="linux/amd64,linux/arm64"
 VERSION=$(npm pkg get version | sed 's/"//g')
+
+if [ "$1" == true ]; then
+  DOCKER_BUILD_OPTIONS="--push"
+  ARCHITECTURES="linux/amd64,linux/arm64" 
+else
+  DOCKER_BUILD_OPTIONS="--load"
+  ARCHITECTURES="linux/amd64"
+fi
 
 if [ -z "$DOCKER_REGISTRY" ]; then
   DOCKER_REGISTRY="" 
@@ -30,21 +40,21 @@ docker buildx build ./docker/package \
   --file "docker/Dockerfile.nodejs" \
   --platform "${ARCHITECTURES}" \
   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:latest" \
-  --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:nodejs" \
   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}" \
-  --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}-nodejs" \
   --progress "plain" \
-  --push
+  ${DOCKER_BUILD_OPTIONS}
 
-docker buildx build ./docker/package \
-  --build-arg ENVIRONMENT=production \
-  --file "docker/Dockerfile.bun" \
-  --platform "${ARCHITECTURES}" \
-  --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:bun" \
-  --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}" \
-  --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}-bun" \
-  --progress "plain" \
-  --push
+  # --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:nodejs" \
+  # --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}-nodejs" \
+# docker buildx build ./docker/package \
+#   --build-arg ENVIRONMENT=production \
+#   --file "docker/Dockerfile.bun" \
+#   --platform "${ARCHITECTURES}" \
+#   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:bun" \
+#   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}" \
+#   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}-bun" \
+#   --progress "plain" \
+#   --push
 
 endTime=$(date +"%s")
 elapsed="$((endTime - startTime))"

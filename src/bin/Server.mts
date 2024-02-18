@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
+import compression from "compression";
 import express from "express";
-// import validator from "openapi-validator-middleware";
 import passport from "passport";
 import { config } from "../lib/infrastructure/Config.mjs";
 import { ConfigKey } from "../lib/infrastructure/ConfigKey.mjs";
 import { connectSingletonDatabase } from "../lib/infrastructure/Database.mjs";
 import { initializeLogger, Logger } from "../lib/infrastructure/Logger.mjs";
-import { loadOpenApiDoc } from "../lib/infrastructure/OpenApi.mjs";
+import { loadOpenApiDoc, OPENAPI_DOCUMENT_PATH } from "../lib/infrastructure/OpenApi.mjs";
 import { corsMiddleware } from "../lib/middleware/Cors.mjs";
 import { getErrorMiddleware } from "../lib/middleware/Error.mjs";
 import { logRequestMiddleware } from "../lib/middleware/LogRequest.mjs";
@@ -31,14 +31,17 @@ const app = express();
 app.use(logRequestMiddleware());
 app.use(express.json());
 
-app.use(corsMiddleware);
+if (config.getBool(ConfigKey.EnableCompression)) {
+  app.use(compression());
+}
+
+app.use(corsMiddleware());
 
 addJwtStrategy(passport);
 addLocalStrategy(passport);
 app.use(passport.initialize());
 
 const openApiDoc = await loadOpenApiDoc();
-// await validator.initAsync(OPENAPI_DOCUMENT_PATH);
 
 try {
   const openApiRouter = await getOpenApiRouter(openApiDoc);

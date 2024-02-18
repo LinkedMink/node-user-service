@@ -14,8 +14,6 @@ COPY --chown=1000:1000 . .
 
 RUN npm ci --omit dev
 
-RUN ls -la ./
-
 EXPOSE 8080
 
 CMD [ "node", "--enable-source-maps", "dist/bin/Server.mjs" ]

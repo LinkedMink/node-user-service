@@ -4,7 +4,7 @@ import { PackageJson } from "type-fest";
 import { configDefaultMap, ConfigKey } from "./ConfigKey.mjs";
 
 enum Environment {
-  Local = "local",
+  Development = "development",
   UnitTest = "test",
   Production = "production",
 }
@@ -14,7 +14,7 @@ export class EnvironmentalConfig {
   private readonly jsonData = new Map<ConfigKey, unknown>();
   private readonly packageJsonValue: PackageJson;
   private readonly environment =
-    (process.env.NODE_ENV?.toLowerCase() as Environment) ?? Environment.Local;
+    (process.env.NODE_ENV?.toLowerCase() as Environment) ?? Environment.Development;
 
   constructor() {
     const dotEnvFile = `.env.${this.environment}`;
@@ -27,8 +27,8 @@ export class EnvironmentalConfig {
     this.packageJsonValue = JSON.parse(data) as PackageJson;
   }
 
-  public get isEnvironmentLocal(): boolean {
-    return this.environment === Environment.Local;
+  public get isEnvironmentDevelopment(): boolean {
+    return this.environment === Environment.Development;
   }
 
   public get isEnvironmentUnitTest(): boolean {
