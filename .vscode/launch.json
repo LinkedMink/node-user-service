@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Attach to Container",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "address": "localhost",
+      "port": 9230,
+      "localRoot": "${workspaceFolder}/dist",
+      "remoteRoot": "/home/node/app/dist",
+      "outFiles": ["${workspaceFolder}/dist/**/*.(m|c|)js", "!**/node_modules/**"]
+    },
+    {
       "command": "npm start",
       "name": "Run Server",
       "request": "launch",

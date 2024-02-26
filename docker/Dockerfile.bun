@@ -2,7 +2,7 @@ FROM oven/bun:1-alpine
 
 ARG ENVIRONMENT=production
 
-ENV NODE_ENV ENVIRONMENT
+ENV NODE_ENV $ENVIRONMENT
 ENV IS_CONTAINER_ENV true
 
 RUN chown bun:bun /home/bun/app

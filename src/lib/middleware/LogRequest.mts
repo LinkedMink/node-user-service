@@ -8,9 +8,11 @@ export const logRequestMiddleware = (): RequestHandler => {
     const start = Date.now();
     logger.http(`Start ${req.method} ${req.originalUrl}`);
 
-    next();
+    res.on("finish", function () {
+      const elapsed = Date.now() - start;
+      logger.http(`Ended ${req.method} ${req.originalUrl} ${res.statusCode} ${elapsed} ms`);
+    });
 
-    const elapsed = Date.now() - start;
-    logger.http(`Ended ${req.method} ${req.originalUrl} ${res.statusCode} ${elapsed} ms`);
+    next();
   };
 };
