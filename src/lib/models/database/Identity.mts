@@ -76,17 +76,20 @@ export const emailPasswordSchema = new mongoose.Schema<EmailPasswordIdentity>(
   options
 );
 
-emailPasswordSchema.post("validate", async function (this) {
-  if (this.isNew || this.modifiedPaths().includes("password")) {
-    this.password = await bcrypt.hash(
-      this.password,
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+emailPasswordSchema.post("validate", async function (doc, next) {
+  if (doc.isNew || doc.modifiedPaths().includes("password")) {
+    doc.password = await bcrypt.hash(
+      doc.password,
       config.getNumber(ConfigKey.UserPassHashCostFactor)
     );
   }
 
-  if (this.modifiedPaths().includes("email")) {
-    this.isEmailVerified = false;
+  if (doc.modifiedPaths().includes("email")) {
+    doc.isEmailVerified = false;
   }
+
+  next();
 });
 
 export const publicKeySchema = new mongoose.Schema<PublicKeyIdentity>(
