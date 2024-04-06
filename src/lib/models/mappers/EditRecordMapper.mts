@@ -1,4 +1,4 @@
-import { EditRecordDocument, EditRecordModel, EditRecordType } from "../database/EditRecord.mjs";
+import { EditRecordDocument, EditRecordType } from "../database/EditRecord.mjs";
 import { EditRecordViewModel } from "../responses/EditRecordViewModel.mjs";
 import { DocumentMapper } from "./DocumentMapper.mjs";
 
@@ -29,7 +29,7 @@ export class EditRecordMapper implements DocumentMapper<EditRecordViewModel, Edi
       }
     }
 
-    const document = existing ? existing.set(data) : new EditRecordModel(data);
+    const document = existing ? existing.set(data) : (data as EditRecordDocument);
     return document;
   };
 }

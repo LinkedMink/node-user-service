@@ -4,8 +4,11 @@ import { CrudController } from "../controllers/CrudController.mjs";
 import { authenticateJwt, authorizeJwtClaim } from "../middleware/Authorization.mjs";
 import { UserSession } from "../middleware/passport/PassportJwt.mjs";
 import { DocumentMapper } from "../models/mappers/DocumentMapper.mjs";
+import { MongooseDocument } from "../types/Mongoose.mjs";
 
-export type GetFilterFunction<T> = (user: UserSession) => FilterQuery<T>;
+export type GetFilterFunction<T extends object> = (
+  user: UserSession
+) => FilterQuery<MongooseDocument<T>>;
 
 export const filterByUserId: GetFilterFunction<Document<ObjectId>> = (user: UserSession) => ({
   userId: user.sub,

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import winston from "winston";
 import { config } from "./Config.mjs";
 import { ConfigKey } from "./ConfigKey.mjs";
 import { Logger } from "./Logger.mjs";
@@ -51,6 +52,14 @@ export const connectSingletonDatabase = async (): Promise<typeof mongoose> => {
       autoCreate: true,
       autoIndex: true,
     });
+
+    if (
+      winston.config.npm.levels[config.getString(ConfigKey.LogLevel)] >=
+      winston.config.npm.levels.debug
+    ) {
+      singletonMongoose.set("debug", { shell: true });
+    }
+
     return singletonMongoose;
   } catch (error) {
     logger.error(`MongoDB initial connect failed: ${maskedConnectionString}`);

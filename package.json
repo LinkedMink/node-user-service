@@ -67,7 +67,6 @@
     "@shelf/jest-mongodb": "^4.1.0",
     "@tsconfig/node20": "^20.1.2",
     "@types/bcrypt": "^5.0.0",
-    "@types/bun": "^1.0.4",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.12",
     "@types/email-templates": "^10.0.0",
@@ -97,7 +96,7 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.7.0",
     "type-fest": "^4.10.1",
-    "typescript": "~5.3.3",
+    "typescript": "^5.3.3",
     "yaml": "^2.1.0"
   },
   "optionalDependencies": {

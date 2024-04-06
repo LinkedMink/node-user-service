@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { Model, QueryWithHelpers } from "mongoose";
+import { Model } from "mongoose";
 import { createMessageObj } from "../functions/Response.mjs";
 import { GetFilterFunction } from "../infrastructure/CreateCrudRouter.mjs";
 import { Logger } from "../infrastructure/Logger.mjs";
@@ -24,7 +24,7 @@ export class CrudController<TFrontend, TBackend extends object> {
   getListHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const reqData = req.query as IListRequest<MongooseDocument<TBackend>>;
 
-    let query: QueryWithHelpers<MongooseDocument<TBackend>[], MongooseDocument<TBackend>>;
+    let query: ReturnType<typeof this.model.find<MongooseDocument<TBackend>>>;
     if (reqData.query) {
       try {
         if (this.getFilterFunc) {
@@ -78,7 +78,7 @@ export class CrudController<TFrontend, TBackend extends object> {
   getHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
 
-    let query: QueryWithHelpers<MongooseDocument<TBackend> | null, MongooseDocument<TBackend>>;
+    let query: ReturnType<typeof this.model.findById<MongooseDocument<TBackend>>>;
     if (this.getFilterFunc) {
       const conditions = Object.assign(
         { id: entityId },
@@ -155,7 +155,7 @@ export class CrudController<TFrontend, TBackend extends object> {
   deleteHandler = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const entityId = req.params.entityId;
 
-    let query: QueryWithHelpers<MongooseDocument<TBackend> | null, MongooseDocument<TBackend>>;
+    let query: ReturnType<typeof this.model.findByIdAndDelete<MongooseDocument<TBackend>>>;
     if (this.getFilterFunc) {
       const conditions = Object.assign(
         { id: entityId },

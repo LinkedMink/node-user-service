@@ -67,5 +67,3 @@ editRecordSchema.pre("validate", function editRecordPreValidateFunc(this, next):
 
   next();
 });
-
-export const EditRecordModel = mongoose.model<EditRecord>("EditRecord", editRecordSchema);

@@ -37,24 +37,12 @@ cp ./package-lock.json ./docker/package
 
 docker buildx build ./docker/package \
   --build-arg ENVIRONMENT=production \
-  --file "docker/Dockerfile.nodejs" \
+  --file "docker/Dockerfile" \
   --platform "${ARCHITECTURES}" \
   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:latest" \
   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}" \
   --progress "plain" \
   ${DOCKER_BUILD_OPTIONS}
-
-  # --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:nodejs" \
-  # --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}-nodejs" \
-# docker buildx build ./docker/package \
-#   --build-arg ENVIRONMENT=production \
-#   --file "docker/Dockerfile.bun" \
-#   --platform "${ARCHITECTURES}" \
-#   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:bun" \
-#   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}" \
-#   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}-bun" \
-#   --progress "plain" \
-#   --push
 
 endTime=$(date +"%s")
 elapsed="$((endTime - startTime))"

@@ -1,10 +1,8 @@
 ---
 services:
   node-user-service:
-    image: linkedmink/node-user-service:nodejs
+    image: linkedmink/node-user-service
     command: [ "node", "--enable-source-maps", "dist/bin/Server.mjs" ]
-    # image: linkedmink/node-user-service:bun
-    # command: [ "bun", "dist/bin/Server.mjs" ]
     ports:
       - 8080:8080
     restart: always

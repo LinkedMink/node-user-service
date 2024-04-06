@@ -10,10 +10,11 @@ USER node
 RUN mkdir /home/node/app
 WORKDIR /home/node/app
 
-COPY --chown=1000:1000 . .
+COPY . .
 
-RUN npm ci --omit dev
+RUN npm ci --omit dev \
+    $([[ "$ENVIRONMENT" == "production" ]] && echo -n '--omit optional')
 
-EXPOSE 8080
+EXPOSE 8080/tcp
 
 CMD [ "node", "--enable-source-maps", "dist/bin/Server.mjs" ]
