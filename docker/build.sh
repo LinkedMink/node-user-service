@@ -26,16 +26,7 @@ elif [[ "$DOCKER_SCOPE" != "*/" ]]; then
   DOCKER_SCOPE="${DOCKER_SCOPE}/"
 fi
 
-startTime=$(date +"%s")
-echo "---------- Build Started: $startTime ----------"
-
-npm run build:prod
-
-PACKAGE_ARCHIVE=$(npm pack | tail -1)
-tar --extract --verbose --file="$PACKAGE_ARCHIVE" --directory="docker"
-cp ./package-lock.json ./docker/package
-
-docker buildx build ./docker/package \
+docker buildx build ./ \
   --build-arg ENVIRONMENT=production \
   --file "docker/Dockerfile" \
   --platform "${ARCHITECTURES}" \
@@ -43,7 +34,3 @@ docker buildx build ./docker/package \
   --tag "${DOCKER_REGISTRY}${DOCKER_SCOPE}${IMAGE_NAME}:${VERSION}" \
   --progress "plain" \
   ${DOCKER_BUILD_OPTIONS}
-
-endTime=$(date +"%s")
-elapsed="$((endTime - startTime))"
-echo "---------- Build Finished: ${elapsed} seconds ----------"

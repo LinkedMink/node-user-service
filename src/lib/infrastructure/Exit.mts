@@ -49,7 +49,7 @@ export const executeOnExit = (handler: ExitFunc): void => {
   });
 
   const handleSignal = (signal: NodeJS.Signals) => {
-    logger.verbose(`Received OS Signal=${signal}, running exit cleanup`);
+    logger.debug(`Received OS Signal=${signal}, running exit cleanup`);
     process.exit(getSignalExitCode(signal));
   };
 

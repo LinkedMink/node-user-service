@@ -3,20 +3,22 @@
 .vscode/
 coverage/
 data/
-deploy/
+dist/
+docker/
 node_modules/
 tests/
 
-./**/*.yaml
+**/*.yaml
 .editorconfig
 *.env*
 .eslintrc.cjs
 .git*
 .lintstagedrc.mjs
-.npmignore
+.npm*
 .prettier*
-*.log
+**/*.log
 jest*
 *.key*
+*.tgz
 README.md
-tsconfig.json
+Sample*.yaml

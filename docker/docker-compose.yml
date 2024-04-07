@@ -2,9 +2,17 @@
 services:
   node-user-service:
     image: linkedmink/node-user-service
-    command: [ "node", "--enable-source-maps", "dist/bin/Server.mjs" ]
+    command: [ "node", "--enable-source-maps", "bin/Server.mjs" ]
+    # command:
+    #   [
+    #     "node",
+    #     "--enable-source-maps",
+    #     "--inspect=0.0.0.0:9229",
+    #     "bin/Server.mjs",
+    #   ]
     ports:
-      - 8080:8080
+      - "127.0.0.1:8080:8080/tcp"
+      # - "127.0.0.1:9229:9229/tcp"
     restart: always
     environment:
       - MONGO_DB_CONNECTION_STRING=mongodb://[username]:[password]@localhost:27017/userServiceDB

@@ -57,7 +57,11 @@ export const connectSingletonDatabase = async (): Promise<typeof mongoose> => {
       winston.config.npm.levels[config.getString(ConfigKey.LogLevel)] >=
       winston.config.npm.levels.debug
     ) {
-      singletonMongoose.set("debug", { shell: true });
+      singletonMongoose.set("debug", (collectionName, methodName, ...methodArgs) =>
+        logger.debug(
+          `${collectionName}.${methodName}(${methodArgs.map(a => JSON.stringify(a)).join(", ")})`
+        )
+      );
     }
 
     return singletonMongoose;

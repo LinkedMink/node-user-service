@@ -1,10 +1,27 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { LoggerOptions, Logger as WinstonLogger, format, loggers, transports } from "winston";
+import { MESSAGE } from "triple-beam";
+import type { ConditionalExcept, OmitIndexSignature } from "type-fest";
+import {
+  LeveledLogMethod,
+  LoggerOptions,
+  config as WinstonConfig,
+  Logger as WinstonLogger,
+  format,
+  loggers,
+  transports,
+} from "winston";
 import TransportStream from "winston-transport";
 import { config } from "./Config.mjs";
 import { ConfigKey } from "./ConfigKey.mjs";
 import { isError, isString } from "./TypeCheck.mjs";
+
+const { verbose: _1, silly: _2, ...LEVELS } = WinstonConfig.npm.levels;
+
+// TODO SetReturnType<LeveledLogMethod, AppLogger> signature not working
+export type AppLogger = ConditionalExcept<WinstonLogger, LeveledLogMethod> & {
+  [K in keyof OmitIndexSignature<typeof LEVELS>]: LeveledLogMethod;
+};
 
 /**
  * Expose the logger options, so that output can be customized
@@ -29,7 +46,7 @@ export class Logger {
    * @param label The label of the module we're logging
    * @return An instance of the logger
    */
-  static get(label: string = Logger.GlobalLabel): WinstonLogger {
+  static get(label: string = Logger.GlobalLabel): AppLogger {
     if (!loggers.has(label)) {
       loggers.add(label, Logger.optionsFuncVal(label));
     }
@@ -37,7 +54,7 @@ export class Logger {
     return loggers.get(label);
   }
 
-  static fromModuleUrl(moduleUrl: string): WinstonLogger {
+  static fromModuleUrl(moduleUrl: string): AppLogger {
     const moduleFilename = path.basename(fileURLToPath(moduleUrl));
     const moduleName = moduleFilename.substring(
       0,
@@ -63,18 +80,17 @@ export class Logger {
 /**
  * Should execute this as the first operation, so that any instances will be constructed with the specified options
  */
-export const initializeLogger = (): void => {
+export const initializeLogger = (): AppLogger => {
   const getLoggerOptions = (label: string): LoggerOptions => {
     const combined = format.combine(
       format.errors({ stack: true }),
-      format.colorize(),
-      format.label({ label, message: false }),
+      format.label({ label, message: true }),
+      format.cli({ levels: LEVELS }),
       format.timestamp(),
-      format.printf(info => {
-        const label = info.label ? ` ${info.label as string}` : "";
-        const message = (info.stack ? (info.stack as string) : info.message) as string;
-        return `${info.timestamp as string} ${info.level}${label}: ${message}`;
-      })
+      format.printf(
+        info =>
+          `\x1b[1m${info.timestamp as string}\x1b[0m ${info[MESSAGE] as string}${info.stack ? "\n" + info.stack : ""}`
+      )
     );
 
     const outputs: TransportStream[] = [];
@@ -97,6 +113,7 @@ export const initializeLogger = (): void => {
 
     return {
       level: config.getString(ConfigKey.LogLevel),
+      levels: LEVELS,
       transports: outputs,
     } as LoggerOptions;
   };
@@ -112,5 +129,7 @@ export const initializeLogger = (): void => {
     logger.error(`unhandledRejection: ${Logger.format(error)}`);
   });
 
-  logger.verbose("Logger Initialized");
+  logger.debug("Logger Initialized");
+
+  return logger;
 };

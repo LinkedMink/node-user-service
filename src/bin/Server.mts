@@ -6,8 +6,8 @@ import passport from "passport";
 import { config } from "../lib/infrastructure/Config.mjs";
 import { ConfigKey } from "../lib/infrastructure/ConfigKey.mjs";
 import { connectSingletonDatabase } from "../lib/infrastructure/Database.mjs";
-import { initializeLogger, Logger } from "../lib/infrastructure/Logger.mjs";
-import { loadOpenApiDoc, OPENAPI_DOCUMENT_PATH } from "../lib/infrastructure/OpenApi.mjs";
+import { initializeLogger } from "../lib/infrastructure/Logger.mjs";
+import { loadOpenApiDoc } from "../lib/infrastructure/OpenApi.mjs";
 import { corsMiddleware } from "../lib/middleware/Cors.mjs";
 import { getErrorMiddleware } from "../lib/middleware/Error.mjs";
 import { logRequestMiddleware } from "../lib/middleware/LogRequest.mjs";
@@ -23,7 +23,7 @@ import { registerRouter } from "../lib/routes/RegisterRouter.mjs";
 import { getSettingRouter } from "../lib/routes/SettingRouter.mjs";
 import { getUserRouter } from "../lib/routes/UserRouter.mjs";
 
-initializeLogger();
+const logger = initializeLogger();
 void connectSingletonDatabase();
 
 const app = express();
@@ -43,13 +43,12 @@ app.use(passport.initialize());
 
 const openApiDoc = await loadOpenApiDoc();
 
-try {
-  const openApiRouter = await getOpenApiRouter(openApiDoc);
+const openApiRouter = await getOpenApiRouter(openApiDoc);
+if (openApiRouter) {
+  logger.info("Swagger UI Path: /docs");
   app.use("/docs", openApiRouter);
-  Logger.get().info("Swagger UI Path: /docs");
-} catch (error) {
-  Logger.get().info("Swagger Disabled");
-  Logger.get().verbose({ message: error as Error });
+} else {
+  logger.info("Swagger UI Disabled: no swagger-ui-express module");
 }
 
 app.use("/", healthRouter);
