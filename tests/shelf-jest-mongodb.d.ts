@@ -1,4 +1,4 @@
-import { MongoMemoryServer } from "mongodb-memory-server-core";
+import type { MongoMemoryServer } from "mongodb-memory-server-core";
 
 export declare type MongoDbMemoryServerOptions = ConstructorParameters<typeof MongoMemoryServer>[0];
 

@@ -76,7 +76,6 @@ export const emailPasswordSchema = new mongoose.Schema<EmailPasswordIdentity>(
   options
 );
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
 emailPasswordSchema.post("validate", async function (doc, next) {
   if (doc.isNew || doc.modifiedPaths().includes("password")) {
     doc.password = await bcrypt.hash(

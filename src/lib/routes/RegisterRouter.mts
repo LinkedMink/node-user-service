@@ -108,7 +108,7 @@ registerRouter.get("/:email/:code", [
     try {
       await user.save();
       res.send(createMessageObj("Successfully verified email"));
-    } catch (error) {
+    } catch {
       res.status(500);
       res.send(createMessageObj("An error occurred"));
     }
@@ -146,7 +146,7 @@ registerRouter.get("/:email", [
     try {
       await user.save();
       await sendEmailWithCode(res, email, identity.temporaryKey);
-    } catch (error) {
+    } catch {
       res.status(500);
       res.send(createMessageObj("An error occurred"));
     }

@@ -37,7 +37,7 @@ export class CrudController<TFrontend, TBackend extends object> {
         } else {
           query = this.model.find(reqData.query);
         }
-      } catch (e) {
+      } catch {
         res.status(400);
         res.send(createMessageObj("The supplied query is invalid"));
         return;
@@ -53,7 +53,7 @@ export class CrudController<TFrontend, TBackend extends object> {
     if (reqData.sort) {
       try {
         query = query.sort(reqData.sort);
-      } catch (e) {
+      } catch {
         res.status(400);
         res.send(createMessageObj("The supplied sort is invalid"));
         return;
@@ -116,6 +116,7 @@ export class CrudController<TFrontend, TBackend extends object> {
         res.status(400).send(error.errors);
       } else if (error) {
         this.logger.error({ message: error });
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw error;
       }
     }

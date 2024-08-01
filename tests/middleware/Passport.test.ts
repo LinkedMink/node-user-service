@@ -4,6 +4,12 @@ import path from "path";
 import { addJwtStrategy } from "../../src/lib/middleware/passport/PassportJwt.mjs";
 
 describe(path.basename(__filename, ".test.ts"), () => {
+  beforeAll(() => {
+    process.env.JWT_AUDIENCE = "testAudience";
+    process.env.JWT_ISSUER = "testIssuer";
+    process.env.JWT_SECRET_KEY_FILE = "test.key";
+  });
+
   test("addJwtStrategy should use passport JwtStrategy", () => {
     // Arrange
     const passportSpy = jest.spyOn(passport, "use");

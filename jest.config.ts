@@ -4,11 +4,10 @@ const config: Config.InitialOptions = {
   preset: "@shelf/jest-mongodb",
   verbose: true,
   // setupFilesAfterEnv: ["<rootDir>/tests/SetupAfterEnv.ts"],
-  resolver: "<rootDir>/tests/JestMjsResolver.cjs",
-  extensionsToTreatAsEsm: [".ts", ".mts"],
+  // resolver: "<rootDir>/tests/JestMjsResolver.cjs",
   moduleFileExtensions: ["js", "jsx", "mjs", "cjs", "json", "ts", "tsx", "mts", "cts"],
   moduleNameMapper: {
-    "^(\\.{1,2}/.*)\\.js$": "$1",
+    "^(\\.{1,2}/.*)\\.m?js$": "$1",
   },
   testMatch: ["**/tests/**/(*.test|*.spec).{m,c,}ts"],
   collectCoverage: false,
@@ -27,7 +26,6 @@ const config: Config.InitialOptions = {
       "ts-jest",
       {
         tsconfig: "tests/tsconfig.json",
-        useESM: true,
       },
     ],
   },

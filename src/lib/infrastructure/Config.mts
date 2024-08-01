@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import fs from "node:fs";
 import { PackageJson } from "type-fest";
 import { configDefaultMap, ConfigKey } from "./ConfigKey.mjs";
@@ -17,11 +16,6 @@ export class EnvironmentalConfig {
     (process.env.NODE_ENV?.toLowerCase() as Environment) ?? Environment.Development;
 
   constructor() {
-    const dotEnvFile = `.env.${this.environment}`;
-    if (fs.existsSync(dotEnvFile)) {
-      dotenv.config({ path: dotEnvFile });
-    }
-
     const filePath = "./package.json";
     const data = fs.readFileSync(filePath, "utf8");
     this.packageJsonValue = JSON.parse(data) as PackageJson;

@@ -6,7 +6,6 @@ import { Logger } from "../../src/lib/infrastructure/Logger.mjs";
 export class MockTransport extends Transport {
   private callsValue: any[] = [];
   get calls(): any[] {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.callsValue;
   }
 
@@ -18,7 +17,6 @@ export class MockTransport extends Transport {
     this.callsValue = [];
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   log(info: any, next: () => void): void {
     this.callsValue.push(info);
     next();

@@ -22,4 +22,4 @@ const config = {
   singleAttributePerLine: true,
 };
 
-module.exports = config;
+export default config;

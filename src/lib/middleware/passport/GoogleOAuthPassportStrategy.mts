@@ -36,7 +36,7 @@ export class GoogleOAuthPassportStrategy extends Strategy {
       } else {
         this.fail(401);
       }
-    } catch (_e) {
+    } catch {
       this.fail(401);
     }
   }

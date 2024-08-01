@@ -1,4 +1,4 @@
-FROM node:20-alpine as build
+FROM node:20-alpine AS build
 
 ARG ENVIRONMENT=production
 
@@ -8,12 +8,12 @@ RUN --mount=type=cache,target=/var/cache/apk/ \
 USER node
 WORKDIR /home/node/build
 
-COPY package.json package-lock.json ./
+COPY --chown=node:node package.json package-lock.json ./
 RUN --mount=type=cache,target=/home/node/.npm/,uid=1000,gid=1000 \
     npm ci --loglevel info \
     $([[ "$ENVIRONMENT" == "production" ]] && echo -n '--omit optional')
 
-COPY ./ ./
+COPY --chown=node:node ./ ./
 
 RUN if [[ "$ENVIRONMENT" == "production" ]] ; then \
       npm run build:prod ; else \
@@ -22,7 +22,7 @@ RUN if [[ "$ENVIRONMENT" == "production" ]] ; then \
 RUN npm prune --omit dev \
     $([[ "$ENVIRONMENT" == "production" ]] && echo -n '--omit optional')
 
-FROM node:20-alpine as runtime
+FROM node:20-alpine AS runtime
 
 ARG ENVIRONMENT=production
 ENV NODE_ENV=$ENVIRONMENT IS_CONTAINER_ENV=true

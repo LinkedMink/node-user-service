@@ -8,7 +8,7 @@ VERSION=$(npm pkg get version | sed 's/"//g')
 
 if [ "$1" == true ]; then
   DOCKER_BUILD_OPTIONS="--push"
-  ARCHITECTURES="linux/amd64,linux/arm64" 
+  ARCHITECTURES="linux/amd64,linux/amd64/v3,linux/arm64" 
 else
   DOCKER_BUILD_OPTIONS="--load"
   ARCHITECTURES="linux/amd64"
